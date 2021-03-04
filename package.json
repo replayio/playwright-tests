@@ -1,0 +1,22 @@
+{
+  "name": "playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright harness and tests used by replay CI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RecordReplay/playwright-tests.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/RecordReplay/playwright-tests/issues"
+  },
+  "homepage": "https://github.com/RecordReplay/playwright-tests#readme",
+  "dependencies": {
+    "playwright": "1.8.1"
+  }
+}
