@@ -102,8 +102,8 @@ async function runTest(test: string) {
   if (gUseContainer) {
     const tmpRecordingFile = `recordings-${(Math.random() * 1e9) | 0}.log`;
     const tmpRecordingPath = `${__dirname}/${tmpRecordingFile}`;
-    if (fs.existsSync(gRecordingFile)) {
-      fs.copyFileSync(gRecordingFile, tmpRecordingPath);
+    if (fs.existsSync(gRecordingFile || "")) {
+      fs.copyFileSync(gRecordingFile || "", tmpRecordingPath);
     }
 
     const script = `
@@ -133,7 +133,7 @@ ts-node playwright-tests/${test}
     ], { stdio: "inherit" });
 
     if (fs.existsSync(tmpRecordingPath)) {
-      fs.copyFileSync(tmpRecordingPath, gRecordingFile);
+      fs.copyFileSync(tmpRecordingPath, gRecordingFile || "");
       fs.unlinkSync(tmpRecordingPath);
     }
 
