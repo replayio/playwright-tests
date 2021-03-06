@@ -72,7 +72,7 @@ function updateBrowser() {
 
     spawnSync("docker", ["image", "pull", "recordreplayinc/playwright:latest"], { stdio: "inherit" });
     return;
-   }
+  }
 
   if (process.platform == "darwin") {
     if (!gNeedUpdate && fs.existsSync(`${BrowserSubdir}/firefox`)) {

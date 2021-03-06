@@ -23,6 +23,7 @@ setTimeout(async () => {
 
   console.log("ClosingBrowser");
   await browser.close();
+  process.exit(0);
 }, 0);
 
 async function login(page: Page) {
