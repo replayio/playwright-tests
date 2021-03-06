@@ -33,9 +33,7 @@ const editors = [
 ];
 
 (async () => {
-  const browser = await firefox.launch({
-    headless: false,
-  });
+  const browser = await firefox.launch();
   const context = await browser.newContext();
 
   const page = await context.newPage();

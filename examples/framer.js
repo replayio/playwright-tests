@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+const { firefox } = require("playwright");
 const browserSession = require("./framer-session.json");
 
 async function login(page) {
@@ -15,9 +15,7 @@ async function login(page) {
 }
 
 (async () => {
-  const browser = await chromium.launch({
-    headless: false,
-  });
+  const browser = await firefox.launch();
   const context = await browser.newContext({ storageState: browserSession });
   const page = await context.newPage();
 

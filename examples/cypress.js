@@ -2,7 +2,7 @@ const { firefox } = require("playwright");
 const browserSession = require("../session.json");
 
 async function test() {
-  const browser = await firefox.launch({ headless: false, slowMo: 50 });
+  const browser = await firefox.launch({ slowMo: 50 });
   const context = await browser.newContext({ storageState: browserSession });
   const page = await context.newPage();
 

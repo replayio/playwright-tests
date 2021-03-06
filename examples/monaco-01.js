@@ -1,9 +1,7 @@
-const { chromium } = require("playwright");
+const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await chromium.launch({
-    headless: false,
-  });
+  const browser = await firefox.launch();
   const context = await browser.newContext();
 
   // Open new page
