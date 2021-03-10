@@ -28,3 +28,25 @@ The image can also be built directly with `docker build --no-cache -t recordrepl
 ## Playwright version
 
 All runs using scripts in this repository are currently version locked to playwright 1.8.1, due to the changing names for firefox subdirectories (e.g. firefox-1225) between playwright versions.  This would be nice to improve.
+
+## Running the playwright examples
+
+1. `npm ci` Install dependencies
+2. `node examples/airbnb.js` Runs the airbnb example
+
+
+> You can disable `headless` mode to view the browser 
+
+```js
+  const browser = await firefox.launch({
+    headless: false
+  });
+ ```
+
+ > Playwright's [CLI](https://playwright.dev/docs/cli/) is a great way to record new tests
+
+```
+npx playwright codegen airbnb.com
+```
+
+
