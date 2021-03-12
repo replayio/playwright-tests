@@ -1,38 +1,21 @@
-const { firefox } = require("playwright");
+const { example, action } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch({});
-  const context = await browser.newContext();
+example("Find a thai restaurant on yelp", async (page) => {
+  await action("Search for a thai restaurant", async () => {
+    await page.goto("https://www.yelp.com/");
 
-  // Open new page
-  const page = await context.newPage();
+    // NOTE: (plumbers, delivery, takeout) is not locale friendly
+    await page.click('input[placeholder="plumbers, delivery, takeout..."]');
+    await page.fill("input[placeholder]", "thai");
+    await page.click("//span[normalize-space(.)='Search']/span[1]");
+  });
 
-  // Go to https://www.yelp.com/
-  await page.goto("https://www.yelp.com/");
-
-  // Click input[placeholder="plumbers, delivery, takeout..."]
-  await page.click('input[placeholder="plumbers, delivery, takeout..."]');
-
-  // Fill input[placeholder="plumbers, delivery, takeout..."]
-  await page.fill(
-    'input[placeholder="plumbers, delivery, takeout..."]',
-    "thai"
+  await action("Click on the first result", () =>
+    Promise.all([
+      // waiting on url 'https://www.yelp.com/biz/thaibodia-bistro-campbell-campbell'
+      // NOTE: we need a more general selector
+      page.waitForNavigation(),
+      page.click("h4 a"),
+    ])
   );
-
-  // Click //span[normalize-space(.)='Search']/span[1]
-  await page.click("//span[normalize-space(.)='Search']/span[1]");
-  // assert.equal(page.url(), 'https://www.yelp.com/search?find_desc=Thai+Food&find_loc=Willow+Glen,+San+Jose,+CA&ns=1');
-
-  // Click text="Thaibodia Bistro - Campbell"
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://www.yelp.com/biz/thaibodia-bistro-campbell-campbell' }*/),
-    page.click('text="Thaibodia Bistro - Campbell"'),
-  ]);
-
-  // Close page
-  await page.close();
-
-  // ---------------------
-  await context.close();
-  await browser.close();
-})();
+});
