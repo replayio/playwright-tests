@@ -1,37 +1,25 @@
-const { firefox } = require("playwright");
+import { it, expect } from "@playwright/test";
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
-
-  // Open new page
-  const page = await context.newPage();
-
-  // Go to https://microsoft.github.io/monaco-editor/playground.html
+it("is a basic test with the page", async ({ page }) => {
   await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
 
-  // Click //div[normalize-space(.)='    language: "javascript"']
   await page.click("//div[normalize-space(.)='    language: \"javascript\"']");
 
-  // Press ArrowUp
   await page.press(
     'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
     "ArrowUp"
   );
 
-  // Press ArrowRight with modifiers
   await page.press(
     'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
     "Meta+ArrowRight"
   );
 
-  // Press ArrowLeft
   await page.press(
     'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
     "ArrowLeft"
   );
 
-  // Press ArrowLeft
   await page.press(
     'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
     "ArrowLeft"
@@ -67,14 +55,5 @@ language: "javascript"
     "ArrowUp"
   );
 
-  // Click button[aria-label="Press CMD + return to run the code."]
   await page.click('button[aria-label="Press CMD + return to run the code."]');
-
-  await new Promise(r => {});
-  // Close page
-  await page.close();
-
-  // ---------------------
-  await context.close();
-  await browser.close();
-})();
+});

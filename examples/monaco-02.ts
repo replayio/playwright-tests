@@ -1,4 +1,4 @@
-const { firefox } = require("playwright");
+import { it, expect } from "@playwright/test";
 
 const editors = [
   "creating-the-editor-hello-world",
@@ -31,23 +31,12 @@ const editors = [
   "extending-language-services-configure-javascript-defaults",
   "extending-language-services-configure-json-defaults",
 ];
+for (const editor of editors) {
+  it(`${editor}`, async ({ page }) => {
+    await page.goto(
+      "https://microsoft.github.io/monaco-editor/playground.html"
+    );
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
-
-  const page = await context.newPage();
-
-  await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
-
-  for (const editor of editors) {
-    console.log(editor);
     await page.selectOption(".sample-switcher", editor);
-    await page.waitForTimeout(500);
-  }
-
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  });
+}

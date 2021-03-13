@@ -1,16 +1,6 @@
-const { firefox } = require("playwright");
+import { it, expect } from "@playwright/test";
 
-/*
- * Search for "store"
- * Select a couple of results
- */
-
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
-
-  const page = await context.newPage();
-
+it("Search for 'store'", async ({ page }) => {
   await page.goto("https://vscode-web-test-playground.azurewebsites.net/");
 
   await page.click('text="Click to Continue"');
@@ -35,17 +25,16 @@ const { firefox } = require("playwright");
     "div[aria-label=\"Found 'store' at column 13 in line 'export var storeHouses = [6,13];'\"] >> text=\"store\""
   );
 
-  await page.click("//div[normalize-space(.)='large.ts~/sample-folder25']/div[2]");
+  await page.click(
+    "//div[normalize-space(.)='large.ts~/sample-folder25']/div[2]"
+  );
 
-  await page.click("//div[normalize-space(.)='large.ts~/sample-folder25']/div[2]");
+  await page.click(
+    "//div[normalize-space(.)='large.ts~/sample-folder25']/div[2]"
+  );
 
   await page.click(
     "div[aria-label=\"Found 'store' at column 21 in line '				if (nextSpace==storeHouses[this.turn]) {'\"] >> text=\"store\""
   );
-  await page.waitForTimeout(8000);
-
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await page.waitForTimeout(2000);
+});

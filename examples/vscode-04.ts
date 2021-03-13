@@ -1,15 +1,6 @@
-const { firefox } = require("playwright");
+import { it, expect } from "@playwright/test";
 
-/*
- * Open VS Code and create a new file
- */
-
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
-
-  const page = await context.newPage();
-
+it("Open VS Code and create a new file", async ({ page }) => {
   await page.goto("https://vscode-web-test-playground.azurewebsites.net/");
 
   await page.click('text="Click to Continue"');
@@ -21,12 +12,18 @@ const { firefox } = require("playwright");
   await page.click('span[aria-label="New File"]');
   await page.fill('textarea[aria-label="Untitled-1"]', "sdf");
   await page.press('textarea[aria-label="Untitled-1"]', "Meta+s");
-  await page.fill('input[aria-label="Type to narrow down results."]', "/sample-folder/sdf");
-  await page.press('input[aria-label="Type to narrow down results."]', "ArrowRight");
-  await page.fill('input[aria-label="Type to narrow down results."]', "/sample-folder/sdf.js");
+  await page.fill(
+    'input[aria-label="Type to narrow down results."]',
+    "/sample-folder/sdf"
+  );
+  await page.press(
+    'input[aria-label="Type to narrow down results."]',
+    "ArrowRight"
+  );
+  await page.fill(
+    'input[aria-label="Type to narrow down results."]',
+    "/sample-folder/sdf.js"
+  );
   await page.press('input[aria-label="Type to narrow down results."]', "Enter");
   await page.waitForTimeout(5000);
-
-  await context.close();
-  await browser.close();
-})();
+});

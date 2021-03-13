@@ -18,5 +18,8 @@
   "homepage": "https://github.com/RecordReplay/playwright-tests#readme",
   "dependencies": {
     "playwright": "1.8.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^0.192.0"
   }
 }

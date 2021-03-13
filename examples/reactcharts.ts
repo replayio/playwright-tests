@@ -1,4 +1,4 @@
-const { firefox } = require("playwright");
+import { it, expect } from "@playwright/test";
 
 const examples = [
   'text="Line Chart"',
@@ -17,19 +17,10 @@ const examples = [
   'text="Stress Test"',
 ];
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
-
-  const page = await context.newPage();
-
-  await page.goto("https://react-charts.tanstack.com/examples/bubble");
-
-  for (const example of examples) {
+for (const example of examples) {
+  it(example, async ({ page }) => {
+    await page.goto("https://react-charts.tanstack.com/examples/bubble");
     await page.click(example);
     await page.waitForTimeout(2000);
-  }
-
-  await context.close();
-  await browser.close();
-})();
+  });
+}
