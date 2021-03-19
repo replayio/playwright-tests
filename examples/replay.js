@@ -3,7 +3,9 @@
 const playwright = require("playwright");
 
 (async () => {
-  const browser = await playwright.firefox.launch();
+  const browser = await playwright.firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto("https://replay.io/view?id=053e7a46-c023-4843-8787-9b0254c077bf");

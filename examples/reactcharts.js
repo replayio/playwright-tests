@@ -18,7 +18,9 @@ const examples = [
 ];
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();

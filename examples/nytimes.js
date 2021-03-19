@@ -1,13 +1,19 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
 
+  
   await page.goto("https://www.nytimes.com/");
 
+  // issue was here // 
+  await page.waitForTimeout(1000);
+  
   await page.click(
     'div[data-testid="masthead-mini-nav"] li[data-testid="mini-nav-item"] >> text="World"'
   );

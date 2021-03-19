@@ -1,7 +1,9 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const page = await browser.newPage();
 
   console.log("Visiting page");

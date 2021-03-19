@@ -6,7 +6,10 @@ const { firefox } = require("playwright");
  */
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
@@ -29,6 +32,7 @@ const { firefox } = require("playwright");
     'textarea[aria-label="Search: Type Search Term and press Enter to search"]',
     "Enter"
   );
+  
   await page.waitForTimeout(1000);
 
   await page.click(

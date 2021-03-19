@@ -5,7 +5,9 @@ const { firefox } = require("playwright");
  */
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
@@ -21,6 +23,8 @@ const { firefox } = require("playwright");
   await page.click("//span[normalize-space(.)='import { useState } from \"react\";']");
 
   await page.goto("https://codesandbox.io/s/0d68e?file=/src/App.js:36-41");
+    
+  await page.waitForTimeout(1000);
 
   await page.close();
 

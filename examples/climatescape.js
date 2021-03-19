@@ -1,7 +1,9 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
@@ -19,9 +21,11 @@ const { firefox } = require("playwright");
   await page.click("text=/.*It uses the Internet of Things.*/");
 
   await page.click('text="Energy Efficiency"');
+  await page.waitForTimeout(100);
 
   await page.close();
 
   await context.close();
   await browser.close();
+  
 })();

@@ -14,4 +14,5 @@ const { firefox } = require("playwright");
   await page.close();
   await context.close();
   await browser.close();
+  // working fine //
 })();

@@ -1,7 +1,9 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
@@ -31,6 +33,7 @@ const { firefox } = require("playwright");
 
   await page.click('text="Keyword"');
 
+  await page.waitForTimeout(1000);
   await context.close();
   await browser.close();
 })();

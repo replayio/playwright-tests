@@ -1,17 +1,22 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   const page = await context.newPage();
 
   await page.goto("https://realadvisor.ch/");
 
+  await page.waitForTimeout(1000);
   await page.click('input[placeholder="Enter your address..."]');
 
+  await page.waitForTimeout(1000);
   await page.click("//span[normalize-space(.)='Buy']");
 
+  await page.waitForTimeout(2000);
   await page.goto("https://realadvisor.ch/en/property-for-sale");
 
   await Promise.all([

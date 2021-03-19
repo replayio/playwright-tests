@@ -1,79 +1,46 @@
-const { firefox } = require("playwright");
-
+const { firefox } = require('playwright');
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless: false
+  });
   const context = await browser.newContext();
-
   // Open new page
   const page = await context.newPage();
-
   // Go to https://microsoft.github.io/monaco-editor/playground.html
-  await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
+  await page.goto('https://microsoft.github.io/monaco-editor/playground.html');
 
-  // Click //div[normalize-space(.)='    language: "javascript"']
-  await page.click("//div[normalize-space(.)='    language: \"javascript\"']");
+  // Select creating-the-editor-editor-basic-options
+  await page.selectOption('select', 'creating-the-editor-editor-basic-options');
 
-  // Press ArrowUp
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "ArrowUp"
-  );
+  // assert.equal(page.url(), 'https://microsoft.github.io/monaco-editor/playground.html#creating-the-editor-editor-basic-options');
+  // Select creating-the-editor-hard-wrapping
+  await page.waitForTimeout(1000);
+  await page.selectOption('select', 'creating-the-editor-hard-wrapping');
 
-  // Press ArrowRight with modifiers
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "Meta+ArrowRight"
-  );
+  // assert.equal(page.url(), 'https://microsoft.github.io/monaco-editor/playground.html#creating-the-editor-hard-wrapping');
+  // Select creating-the-editor-syntax-highlighting-for-html-elements
+  await page.waitForTimeout(1000);
+  await page.selectOption('select', 'creating-the-editor-syntax-highlighting-for-html-elements');
 
-  // Press ArrowLeft
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "ArrowLeft"
-  );
+  // assert.equal(page.url(), 'https://microsoft.github.io/monaco-editor/playground.html#creating-the-editor-syntax-highlighting-for-html-elements');
+  // Select creating-the-editor-hello-world
+  await page.waitForTimeout(1000);
 
-  // Press ArrowLeft
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "ArrowLeft"
-  );
+  await page.selectOption('select', 'creating-the-editor-hello-world');
 
-  await page.fill(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    ``
-  );
+  // assert.equal(page.url(), 'https://microsoft.github.io/monaco-editor/playground.html#creating-the-editor-hello-world');
+  // Click text=CSS
+  await page.waitForTimeout(1000);
+  await page.click('text=CSS');
 
-  // Fill textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]
-  await page.type(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    `
-// The Monaco Editor can be easily created, given an
-// empty container and an options literal.
-// Two members of the literal are "value" and "language".
-// The editor takes the full size of its container.
+  // Click span:has-text("HTML")
+  await page.waitForTimeout(1000);
+  await page.click('span:has-text("HTML")');
+  // Click text=Run
+  await page.click('text=Run');
 
-monaco.editor.create(document.getElementById("container"), {
-value: "function hello() {alert('Hello world!');}",
-language: "javascript"
-`
-  );
 
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "ArrowUp"
-  );
-
-  await page.press(
-    'textarea[aria-label="Editor content;Press Alt+F1 for Accessibility Options."]',
-    "ArrowUp"
-  );
-
-  // Click button[aria-label="Press CMD + return to run the code."]
-  await page.click('button[aria-label="Press CMD + return to run the code."]');
-
-  await new Promise(r => {});
-  // Close page
-  await page.close();
-
+  await page.waitForTimeout(2000);
   // ---------------------
   await context.close();
   await browser.close();

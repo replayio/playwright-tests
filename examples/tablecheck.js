@@ -1,33 +1,32 @@
-const { firefox } = require("playwright");
+// not working for firefox // 
 
+const { chromium } = require('playwright');
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await chromium.launch({
+    headless: false,
+    slowMo:2000
+  });
   const context = await browser.newContext();
 
+  // Open new page
   const page = await context.newPage();
 
-  await page.goto("https://www.tablecheck.com/en/japan");
+  // Go to https://www.tablecheck.com/en/japan
+  await page.goto('https://www.tablecheck.com/en/japan');
 
-  await page.click('input[placeholder="Area, cuisine or restaurant"]');
+  // Click [placeholder="Area, cuisine or restaurant"]
+  await page.click('[placeholder="Area, cuisine or restaurant"]');
 
-  await page.fill('input[placeholder="Area, cuisine or restaurant"]', "tokyo");
+  // Fill [placeholder="Area, cuisine or restaurant"]
+  await page.fill('[placeholder="Area, cuisine or restaurant"]', 'japan');
+  
+  // Click text=Central Japan International Airport Station
+  await page.click('text=Central Japan International Airport Station');
 
-  await page.click("//span[normalize-space(.)='Tokyo']");
+  // Click button:has-text("Search")
+  await page.click('button:has-text("Search")');
 
-  await page.click('text="Search"');
-
-  await page.click("//div[3]/div/div[1]/button/span/span[2]/span[normalize-space(.)='Filters']");
-
-  await page.click(
-    "//div[normalize-space(@role)='dialog']/div/div[2]/div/div[2]/div/div[normalize-space(.)='¥ 0No Limit']/div[2]"
-  );
-
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://www.tablecheck.com/en/japan/search?budgetMax=Infinity&budgetMin=10500&datetime=2021-03-04T03:00:00.000Z&distance=2km&lat=35.689722222222&locationText=Tokyo&lon=139.69222222222&people=2&serviceMode=dining' }*/),
-    page.click('text="Search"'),
-  ]);
-
-  await page.close();
+  await page.waitForTimeout(3000);
 
   await context.close();
   await browser.close();

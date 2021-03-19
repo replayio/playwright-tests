@@ -11,13 +11,18 @@ async function login(page) {
   await page.click("//button[normalize-space(.)='Next']/div[2]");
 
   await Promise.all([
+    
     page.waitForNavigation(/*{ url: 'https://airtable.com/tblyhHslxp7TfMogc/viwj1iaRkCjrzVOAf?blocks=hide' }*/),
-    page.click("//button[normalize-space(.)='Allow']/div[2]"),
+    
+    // selector issue fixed //
+    page.click('xpath=/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div/div[1]/div/div/button'),
   ]);
 }
 
 (async () => {
-  const browser = await firefox.launch();
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext({ storageState: browserSession });
   const page = await context.newPage();
 
@@ -28,10 +33,11 @@ async function login(page) {
   }
 
   await context.storageState({ path: "./airtable-session.json" });
-  await page.waitForTimeout(100000);
+  await page.waitForTimeout(100);
 
   await page.close();
 
   await context.close();
   await browser.close();
+  // working fine //
 })();

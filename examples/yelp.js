@@ -14,8 +14,8 @@ example("Find a thai restaurant on yelp", async (page) => {
     Promise.all([
       // waiting on url 'https://www.yelp.com/biz/thaibodia-bistro-campbell-campbell'
       // NOTE: we need a more general selector
-      page.waitForNavigation(),
-      page.click("h4 a"),
+     // page.waitForNavigation 
+     page.click("h4 a"),
     ])
   );
 });

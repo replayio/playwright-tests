@@ -1,7 +1,9 @@
 const { firefox } = require("playwright");
 
 (async () => {
-  const browser = await firefox.launch({});
+  const browser = await firefox.launch({
+    headless:false
+  });
   const context = await browser.newContext();
 
   // Open new page
@@ -47,6 +49,7 @@ const { firefox } = require("playwright");
   await Promise.all([
     page.waitForNavigation(/*{ url: 'https://discord.com/channels/707230275175841915/812032733869244436' }*/),
     page.click(
+      // error here //
       "//div[starts-with(normalize-space(.), 'ChilledCowThe friendliest community on Discord 🧡 Join now to meet amazing peopl') and normalize-space(@role)='button']/div[1]/div[1]/img"
     ),
   ]);
