@@ -30,6 +30,24 @@ function wrapped(cbk, pageLog = log) {
   };
 }
 
+function bindPageActions(page) {
+  const actions = {};
+
+  // Create page-bound actions
+  const pageLog = (...args) => {
+    log(...args);
+    return page.evaluate((extArgs) => {
+      console.log("Test Step:", ...extArgs);
+    }, args);
+  };
+  const pageAction = wrapped(async (cbk) => await cbk(page, actions), pageLog);
+
+  actions.log = pageLog;
+  actions.action = pageAction;
+
+  return actions;
+}
+
 const action = wrapped(async (cbk) => await cbk());
 
 const example = wrapped(async (cbk) => {
@@ -39,18 +57,9 @@ const example = wrapped(async (cbk) => {
 
   log("Browser launched");
 
-  // Create page-bound actions
-  const pageLog = (...args) => {
-    log(...args);
-    return page.evaluate((extArgs) => {
-      console.log("Test Step:", ...extArgs);
-    }, args);
-  };
-  const pageAction = wrapped(async (cbk) => await cbk(), pageLog);
-
   await action(
     "Running example",
-    async () => await cbk(page, { log: pageLog, action: pageAction })
+    async () => await cbk(page, bindPageActions(page))
   );
 
   await page.close();
