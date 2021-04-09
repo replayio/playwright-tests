@@ -1,6 +1,6 @@
-const { example, action } = require("../src/helpers");
+const { example } = require("../src/helpers");
 
-example("Find a thai restaurant on yelp", async (page) => {
+example("Find a thai restaurant on yelp", async (page, { action }) => {
   await action("Search for a thai restaurant", async () => {
     await page.goto("https://www.yelp.com/");
 
