@@ -1,27 +1,20 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const search = (text) => async (page) => {
+  await page.click("#global-search-trigger");
+  await page.fill("#global-search input", text);
+  await page.press("#global-search input", "Enter");
+  await page.waitForNavigation();
+};
 
-  const page = await context.newPage();
-
+example("ESPN", async (page, { action }) => {
   await page.goto("https://www.espn.com/");
 
-  await page.click('nav[id="global-nav"] >> text="NBA"');
+  await action("Navigate to Golden State Warriors", async () => {
+    await page.hover('#global-nav >> text="NBA"');
+    await page.waitForTimeout(300);
+    await page.click('.team >> text="Golden State Warriors"');
+  });
 
-  await page.goto("https://www.espn.com/nba/");
-
-  await page.click('a[id="global-search-trigger"]');
-
-  await page.fill('input[placeholder="Search Sports, Teams or Players..."]', "warriors");
-
-  await page.press('input[placeholder="Search Sports, Teams or Players..."]', "Enter");
-
-  await page.goto("https://www.espn.com/search/_/q/warriors");
-
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await action("Search for Steph Curry", search("Steph Curry"));
+});
