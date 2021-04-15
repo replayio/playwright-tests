@@ -1,7 +1,6 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
 const editors = [
-  "creating-the-editor-hello-world",
   "creating-the-editor-editor-basic-options",
   "creating-the-editor-hard-wrapping",
   "creating-the-editor-syntax-highlighting-for-html-elements",
@@ -32,22 +31,59 @@ const editors = [
   "extending-language-services-configure-json-defaults",
 ];
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  editor: `.monaco-editor`,
+  get input() {
+    return `${this.editor} textarea.inputarea`;
+  },
+  get lines() {
+    return `${this.editor} .view-line`;
+  },
+  tabs: ".tabArea",
+  get run() {
+    return `${this.tabs} button`;
+  },
+  tabByText(text) {
+    return `${this.tabs} .tab >> :text="${text}"`;
+  },
+  select: ".sample-switcher",
+  runner: "#runner",
+  runnerContainer: "#container",
+};
 
-  const page = await context.newPage();
+const clearInput = async (page) => {
+  await page.click(selectors.editor);
 
+  await page.press(selectors.input, "Meta+A");
+  await page.press(selectors.input, "Backspace");
+};
+
+example("Monaco Editor", async (page, { action }) => {
   await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
 
-  for (const editor of editors) {
-    console.log(editor);
-    await page.selectOption(".sample-switcher", editor);
-    await page.waitForTimeout(500);
-  }
+  await action("Iterate samples", async (page, { log }) => {
+    for (const editor of editors) {
+      await page.selectOption(selectors.select, editor);
+      await page.waitForTimeout(1000);
+    }
+  });
 
-  await page.close();
+  await action("Clear input", clearInput);
 
-  await context.close();
-  await browser.close();
-})();
+  await action("Add code and run", async (page) => {
+    await page.type(
+      selectors.input,
+      `// The Monaco Editor can be easily created, given an
+// empty container and an options literal.
+// Two members of the literal are "value" and "language".
+// The editor takes the full size of its container.
+
+monaco.editor.create(document.getElementById("container"), {
+value: "asyncfunction hello() {alert('Hello world!');}",
+language: "javascript"
+`
+    );
+
+    await page.click(selectors.run);
+  });
+});
