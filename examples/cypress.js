@@ -1,20 +1,22 @@
-const { firefox } = require("playwright");
-const browserSession = require("../session.json");
+const { example } = require("../src/helpers");
 
-async function test() {
-  const browser = await firefox.launch({ slowMo: 50 });
-  const context = await browser.newContext({ storageState: browserSession });
-  const page = await context.newPage();
+const selectors = {
+  run: "a.run-list-item",
+  flakyText: '[data-cy="test-overview-test-link"]',
+  section: "[data-cy=collapsing-section]",
+  sectionToggleButton: "button",
+};
 
-  const url = "https://dashboard.cypress.io/projects/7s5okt/runs";
+example("Cypress", async (page, { action }) => {
+  await page.goto("https://dashboard.cypress.io/projects/7s5okt/runs");
 
-  await page.goto(url);
+  await action("View flaky test result", async (page) => {
+    await page.click(selectors.run);
+    await page.click(selectors.flakyText);
+  });
 
-  await page.click("a.run-list-item");
-  await page.click('[data-cy="test-overview-test-link"]');
-  await page.click(".test-results__test-result-title-container");
-
-  await browser.close();
-}
-
-test();
+  await action("Expand runtime environment section", async (page) => {
+    const envSelector = `${selectors.section}:nth-of-type(4) ${selectors.sectionToggleButton}`;
+    await page.click(envSelector);
+  });
+});
