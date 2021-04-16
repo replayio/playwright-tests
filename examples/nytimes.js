@@ -1,25 +1,35 @@
-const { firefox } = require("playwright");
+const { example, action } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  nav: 'div[data-testid="masthead-mini-nav"]',
+  navItem: '[data-testid="mini-nav-item"]',
+  navItemByText(text) {
+    return `${this.nav} ${this.navItem} >> text="${text}"`;
+  },
+  searchButton: 'button[data-test-id="search-button"]',
+  searchInput: "input[data-testid='search-input']",
+  menuButton: "#desktop-sections-button",
+  menuItemByText(text) {
+    return `[data-testid="desktop-nav"] a[data-name="${text}"]`;
+  },
+};
 
-  const page = await context.newPage();
+example("nytimes.com", async (page, { action }) => {
+  // using a lighter-weight starting page than the root
+  await page.goto("https://www.nytimes.com/sitemap");
 
-  await page.goto("https://www.nytimes.com/");
+  await page.click(selectors.menuButton);
+  await Promise.all([
+    page.waitForNavigation({ timeout: 60000 }),
+    page.click(selectors.menuItemByText("World")),
+  ]);
 
-  await page.click(
-    'div[data-testid="masthead-mini-nav"] li[data-testid="mini-nav-item"] >> text="World"'
-  );
-
-  await page.click('button[data-test-id="search-button"]');
-
-  await page.fill('input[data-testid="search-input"]', "climate");
-
-  await page.press('input[data-testid="search-input"]', "Enter");
-
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await Promise.all([
+    page.waitForNavigation(),
+    action("Search for 'climate'", async () => {
+      await page.click(selectors.searchButton);
+      await page.fill(selectors.searchInput, "climate");
+      await page.press(selectors.searchInput, "Enter");
+    }),
+  ]);
+});
