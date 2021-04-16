@@ -1,24 +1,17 @@
 // Generic test runner for loading a static website, waiting a bit, and then finishing.
-const { launch, cleanup } = require("../utils");
+const { example } = require("../src/helpers");
 
-if (!process.env.STATIC_WEBSITE) {
+let url = process.env.STATIC_WEBSITE;
+if (!url) {
   throw new Error("Target website not specified");
 }
+if (!url.startsWith("http")) {
+  url = "https://" + url;
+}
 
-(async () => {
-  const page = await launch();
+const timeout = +process.env.STATIC_WEBSITE_DURATION || 30000;
 
-  let url = process.env.STATIC_WEBSITE;
-  if (!url.startsWith("http")) {
-    url = "https://" + url;
-  }
-
-  const timeout = +process.env.STATIC_WEBSITE_DURATION || 30000;
-
-  console.log("Visiting page");
+example(`Load static website ${url}`, async page => {
   await page.goto(url);
   await new Promise(resolve => setTimeout(resolve, timeout));
-
-  console.log("Saving recording");
-  await cleanup();
-})();
+});

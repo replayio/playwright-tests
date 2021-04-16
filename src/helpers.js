@@ -1,8 +1,8 @@
 const playwright = require("playwright");
 
-const browserName = "firefox";
+let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
 const launchOptions = {
-  headless: false,
+  headless: !!process.env.PLAYWRIGHT_HEADLESS,
 };
 
 let depth = 0;

@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { spawnSync } from "child_process";
+import { currentPlatform } from "./utils";
 
 const Usage = `
 Usage: ts-node run.ts options
@@ -10,12 +11,15 @@ Options:
   --env <key> <value>  Set environment variable in tests.
   <test>               Run given test once.
 
-On macOS, browsers are installed at $REPLAY_PLAYWRIGHT_BROWSER, defaulting to $HOME/.replay-playwright-browser
+When not running in a container, browsers are installed at $REPLAY_PLAYWRIGHT_BROWSER, defaulting to $HOME/.replay-playwright-browser
 `;
 
 let gNeedUpdate = false;
 let gRecordingFile: string | undefined;
-let gUseContainer = process.platform == "linux";
+
+// Container runs aren't supported with chromium yet.
+let gUseContainer = process.platform == "linux" && !process.env.PLAYWRIGHT_CHROMIUM;
+
 const gTests: string[] = [];
 const gEnvironment: Record<string, string> = {};
 for (let i = 2; i < process.argv.length; i++) {
@@ -141,23 +145,23 @@ ts-node playwright-tests/${test}
     return;
   }
 
-  if (process.platform == "darwin") {
-    const driver = process.env.RECORD_REPLAY_DRIVER || `${BrowserSubdir}/macOS-recordreplay.so`;
-
-    spawnSync("ts-node", [`${__dirname}/${test}`], {
-      stdio: "inherit",
-      env: {
-        ...process.env,
-        ...gEnvironment,
-        PLAYWRIGHT_BROWSERS_PATH: BrowserDir,
-        RECORD_REPLAY_DRIVER: driver,
-        RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
-        RECORD_REPLAY_SERVER: server,
-        RECORD_ALL_CONTENT: "1",
-      },
-    });
-    return;
+  let driver = process.env.RECORD_REPLAY_DRIVER;
+  if (!driver) {
+    driver = `${BrowserSubdir}/${currentPlatform()}-recordreplay.so`;
   }
+
+  spawnSync("ts-node", [`${__dirname}/${test}`], {
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      ...gEnvironment,
+      PLAYWRIGHT_BROWSERS_PATH: BrowserDir,
+      RECORD_REPLAY_DRIVER: driver,
+      RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
+      RECORD_REPLAY_SERVER: server,
+      RECORD_ALL_CONTENT: "1",
+    },
+  });
 }
 
 async function main() {

@@ -30,3 +30,14 @@ export function waitForTime(ms: number) {
 }
 
 export const MsPerSecond = 1000;
+
+export function currentPlatform(): string {
+  switch (process.platform) {
+    case "darwin":
+      return "macOS";
+    case "linux":
+      return "linux";
+    default:
+      throw new Error(`Platform ${process.platform} not supported`);
+  }
+}
