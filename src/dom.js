@@ -5,6 +5,12 @@ function getBoundingClientRect(selector) {
   };
 }
 
+async function waitForTitleChange(page) {
+  const title = await page.evaluate(() => document.title);
+  await page.waitForFunction((prevTitle) => document.title != prevTitle, title);
+}
+
 module.exports = {
   getBoundingClientRect,
+  waitForTitleChange,
 };
