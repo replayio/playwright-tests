@@ -1,26 +1,30 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
+const { waitForTitleChange } = require("../src/dom");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  search: '.notion-topbar >> text="Search"',
+  searchMenu: ".notion-quick-find-menu",
+  get searchField() {
+    return `${this.searchMenu} input`;
+  },
+  get searchResult() {
+    return `${this.searchMenu} section [role=button]`;
+  },
+};
 
-  const page = await context.newPage();
+example("Notion - Replay Docs", async (page, { action }) => {
+  await page.goto(
+    "https://www.notion.so/replayio/Replay-Docs-56758667f53a4d51b7c6fc7a641adb02"
+  );
 
-  await page.goto("https://www.notion.so/replayio/Replay-Docs-56758667f53a4d51b7c6fc7a641adb02");
+  await action("Search for 'help'", async () => {
+    await page.click(selectors.search);
+    await page.click(selectors.searchField);
 
-  await page.click('text="Replay Docs"');
+    await page.fill(selectors.searchField, "help");
+    await page.press(selectors.searchField, "Enter");
+    await page.click(selectors.searchResult);
+  });
 
-  await page.click("//div[normalize-space(.)='Search' and normalize-space(@role)='button']");
-
-  await page.click('input[placeholder="Search in Replay Docs…"]');
-
-  await page.fill('input[placeholder="Search in Replay Docs…"]', "help");
-  await page.waitForTimeout(3000);
-  await page.press('input[placeholder="Search in Replay Docs…"]', "Enter");
-
-  await page.waitForTimeout(5000);
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await waitForTitleChange(page);
+});
