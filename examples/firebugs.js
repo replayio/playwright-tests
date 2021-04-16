@@ -1,36 +1,29 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  searchInput: ".search-field input",
+  filters: ".filters",
+  menu: "[role=menu]",
+  filter: function (label) {
+    return `${this.filters} >> text="${label}"`;
+  },
+  menuItem: function (label) {
+    return `${this.menu} >> text="${label}"`;
+  },
+};
 
-  const page = await context.newPage();
+const filter = (type, value) => async (page) => {
+  await page.click(selectors.filter(type));
+  await page.click(selectors.menuItem(value));
+};
 
+example("firebugs.dev", async (page, { action }) => {
   await page.goto("https://firebugs.dev/");
 
-  await page.goto("https://firebugs.dev/#bugs/DevTools/Debugger");
+  await page.click(selectors.searchInput);
+  await page.fill(selectors.searchInput, "break");
 
-  await page.click('input[placeholder="Search..."]');
-
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://firebugs.dev/#bugs/DevTools/Debugger' }*/),
-    page.fill('input[placeholder="Search..."]', "break"),
-  ]);
-
-  await page.click('text="-"');
-
-  await page.click('text="Bug"');
-
-  await page.click('text="Priority"');
-
-  await page.click('div[role="menuitem"]');
-
-  await page.click('text="Keyword"');
-
-  await page.click('text="-"');
-
-  await page.click('text="Keyword"');
-
-  await context.close();
-  await browser.close();
-})();
+  await action("Filter by bugs", filter("Type", "Bug"));
+  await action("Filter by priority", filter("Priority", "P3"));
+  await action("Filter by keyword", filter("Keyword", "Good First Bugs"));
+});
