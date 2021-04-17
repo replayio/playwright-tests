@@ -1,42 +1,63 @@
-const { firefox } = require("playwright");
+const { example, action } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  addressSearch: {
+    root: "[class$=HeroAddressSearch]",
+    get buy() {
+      return `${this.root} .tab a[href *= 'property-for-sale']`;
+    },
+    get input() {
+      return `${this.root} input`;
+    },
+    get submit() {
+      return `${this.root} button:not([hidden])`;
+    },
+  },
+  results: {
+    root: "[class$=AggregatesListings]",
+    get sort() {
+      return `${this.root} [class$=chipStyle]`;
+    },
+    get listing() {
+      return `${this.root} [class$=AggregatesListingCard] a`;
+    },
+  },
+  listing: "[class $= AggregatesListingDialog]",
+  filter: {
+    root: "[class$=Filter] [class $=FilterDialog]",
+    optionByText: function (text) {
+      return `${this.root} [role=button] >> text="${text}"`;
+    },
+  },
+};
 
-  const page = await context.newPage();
-
+example("RealAdvisor", async (page) => {
   await page.goto("https://realadvisor.ch/");
 
-  await page.click('input[placeholder="Enter your address..."]');
-
-  await page.click("//span[normalize-space(.)='Buy']");
-
-  await page.goto("https://realadvisor.ch/en/property-for-sale");
-
   await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://realadvisor.ch/en/buy/house-apartment' }*/),
-    page.click('text="Search"'),
+    page.waitForNavigation(),
+    page.click(selectors.addressSearch.buy),
   ]);
 
-  await page.goto("https://realadvisor.ch/en/buy/house-apartment");
+  await action("Search for listings", async () => {
+    await page.click(selectors.addressSearch.input);
+    await page.click(selectors.addressSearch.submit);
+  });
 
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://realadvisor.ch/en/rent/house-apartment' }*/),
-    page.click(
-      "//div[1]/div[normalize-space(@role)='group']/button[2]/span[1][normalize-space(.)='Rent']"
-    ),
-  ]);
+  await action("Sort by Most Recent", async () => {
+    await page.click(selectors.results.sort);
+    await page.click(selectors.filter.optionByText("Most recent"));
+    await page.waitForSelector("[class*=useGridLoadingStyle]", {
+      state: "detached",
+    });
+  });
 
-  await page.click('text="Our recommendations"');
-
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://realadvisor.ch/en/rent/house-apartment?sortBy="createdAt"&sortDirection="DESC"' }*/),
-    page.click('text="Most recent"'),
-  ]);
-
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await action("Open first listing", async () => {
+    // TODO: Bit of flakiness bevause the listing entry still exists while
+    // loading so giving a little time for it to be replaced with the valid
+    // entry post filter
+    await page.waitForTimeout(500);
+    await page.click(selectors.results.listing);
+    await page.waitForSelector(selectors.listing);
+  });
+});
