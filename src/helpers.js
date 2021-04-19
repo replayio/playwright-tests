@@ -62,6 +62,10 @@ const example = wrapped(async (cbk) => {
     async () => await cbk(page, bindPageActions(page))
   );
 
+  // Adding a short delay after the script to allow space for trailing script
+  // execution
+  await page.waitForTimeout(100);
+
   await page.close();
   await context.close();
   await browser.close();
