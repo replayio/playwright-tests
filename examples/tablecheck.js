@@ -1,34 +1,78 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
+const { getBoundingClientRect } = require("../src/dom");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  search: {
+    root: "[role=combobox]",
+    get input() {
+      return `${this.root} input`;
+    },
+    button: "button >> text=Search",
+    get option() {
+      return `${this.root} [role=listbox] li`;
+    },
+    optionByText(text) {
+      return `${this.option} >> text=${text}`;
+    },
+  },
+  results: {
+    filter: {
+      // Site includes 2 nav bars for different screen resolutions so the test finds
+      // the visible one for a wide screen
+      open: "[class*=InlineDialogContainer] + button >> text=Filter",
+      dialog: "[role=dialog]",
+      get slider() {
+        return `${this.dialog} h6 + * .rc-slider`;
+      },
+      get search() {
+        return `text="Search"`;
+      },
+    },
+    item: "[class*=ReactVirtualized] a",
+  },
+};
 
-  const page = await context.newPage();
+const getSliderBounds = getBoundingClientRect(selectors.results.filter.slider);
 
+example("TableCheck", async (page, { action }) => {
   await page.goto("https://www.tablecheck.com/en/japan");
 
-  await page.click('input[placeholder="Area, cuisine or restaurant"]');
+  await action("Search for Tokyo", async (page, { log }) => {
+    await page.click(selectors.search.input);
+    await page.type(selectors.search.input, "tokyo");
+    await page.click(selectors.search.optionByText("Tokyo"));
+    await page.click(selectors.search.button);
+  });
 
-  await page.fill('input[placeholder="Area, cuisine or restaurant"]', "tokyo");
+  await page.waitForSelector(selectors.results.item);
 
-  await page.click("//span[normalize-space(.)='Tokyo']");
+  await action("Filter by budget", async (page, { log }) => {
+    await page.click(selectors.results.filter.open);
+    await page.waitForTimeout(1000); // animation timeout
 
-  await page.click('text="Search"');
+    const bounds = await getSliderBounds(page);
+    const center = bounds.top + bounds.height / 2;
 
-  await page.click("//div[3]/div/div[1]/button/span/span[2]/span[normalize-space(.)='Filters']");
+    log("Set min and max budget");
+    await page.mouse.click(
+      bounds.left + Math.round(bounds.width * 0.25),
+      center
+    );
 
-  await page.click(
-    "//div[normalize-space(@role)='dialog']/div/div[2]/div/div[2]/div/div[normalize-space(.)='¥ 0No Limit']/div[2]"
-  );
+    await page.mouse.click(
+      bounds.left + Math.round(bounds.width * 0.75),
+      center
+    );
 
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://www.tablecheck.com/en/japan/search?budgetMax=Infinity&budgetMin=10500&datetime=2021-03-04T03:00:00.000Z&distance=2km&lat=35.689722222222&locationText=Tokyo&lon=139.69222222222&people=2&serviceMode=dining' }*/),
-    page.click('text="Search"'),
-  ]);
+    await Promise.all([
+      page.waitForSelector(selectors.results.filter.dialog, {
+        state: "detached",
+      }),
+      page.click(selectors.results.filter.search),
+    ]);
+    // allow a little time for the search to run and old results to be removed
+    await page.waitForTimeout(500);
+  });
 
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+  await page.waitForSelector(selectors.results.item);
+});
