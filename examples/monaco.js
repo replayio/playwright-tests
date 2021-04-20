@@ -1,5 +1,7 @@
 const { example } = require("../src/helpers");
 
+const { selectors: monacoSelectors, clearInput } = require("./shared/monaco");
+
 const editors = [
   "creating-the-editor-editor-basic-options",
   "creating-the-editor-hard-wrapping",
@@ -32,13 +34,6 @@ const editors = [
 ];
 
 const selectors = {
-  editor: `.monaco-editor`,
-  get input() {
-    return `${this.editor} textarea.inputarea`;
-  },
-  get lines() {
-    return `${this.editor} .view-line`;
-  },
   tabs: ".tabArea",
   get run() {
     return `${this.tabs} button`;
@@ -49,13 +44,6 @@ const selectors = {
   select: ".sample-switcher",
   runner: "#runner",
   runnerContainer: "#container",
-};
-
-const clearInput = async (page) => {
-  await page.click(selectors.editor);
-
-  await page.press(selectors.input, "Meta+A");
-  await page.press(selectors.input, "Backspace");
 };
 
 example("Monaco Editor", async (page, { action }) => {
@@ -72,7 +60,7 @@ example("Monaco Editor", async (page, { action }) => {
 
   await action("Add code and run", async (page) => {
     await page.type(
-      selectors.input,
+      monacoSelectors.input,
       `// The Monaco Editor can be easily created, given an
 // empty container and an options literal.
 // Two members of the literal are "value" and "language".
