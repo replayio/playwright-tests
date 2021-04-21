@@ -1,3 +1,5 @@
+import { spawnSync, SpawnSyncOptions } from "child_process";
+
 export function randomElement<T>(array: T[]): T {
   const index = (Math.random() * array.length) | 0;
   return array[index];
@@ -40,4 +42,18 @@ export function currentPlatform(): string {
     default:
       throw new Error(`Platform ${process.platform} not supported`);
   }
+}
+
+export function spawnChecked(cmd: string, args: string[], options?: SpawnSyncOptions) {
+  const prettyCmd = [cmd].concat(args).join(" ");
+  console.error(prettyCmd);
+
+  const rv = spawnSync(cmd, args, options);
+
+  if (rv.status != 0 || rv.error) {
+    console.error(rv.error);
+    throw new Error(`Spawned process failed with exit code ${rv.status}`);
+  }
+
+  return rv;
 }

@@ -1,6 +1,5 @@
 import * as fs from "fs";
-import { spawnSync } from "child_process";
-import { currentPlatform } from "./utils";
+import { currentPlatform, spawnChecked } from "./utils";
 
 const Usage = `
 Usage: ts-node run.ts options
@@ -76,13 +75,13 @@ function mkdirSyncIfNotExists(dir: string) {
 function updateBrowser() {
   if (gUseContainer) {
     if (!gNeedUpdate) {
-      const { stdout } = spawnSync("docker", ["image", "ls", "recordreplayinc/playwright:latest"]);
+      const { stdout } = spawnChecked("docker", ["image", "ls", "recordreplayinc/playwright:latest"]);
       if (stdout.includes("recordreplayinc/playwright")) {
         return;
       }
     }
 
-    spawnSync("docker", ["image", "pull", "recordreplayinc/playwright:latest"], { stdio: "inherit" });
+    spawnChecked("docker", ["image", "pull", "recordreplayinc/playwright:latest"], { stdio: "inherit" });
     return;
   }
 
@@ -104,22 +103,22 @@ function updateBrowser() {
    ? `${currentPlatform()}-replay-chromium.tar.xz`
    : `${currentPlatform()}-replay-playwright.tar.xz`;
 
-  spawnSync("rm", ["-rf", BrowserSubdir]);
+  spawnChecked("rm", ["-rf", BrowserSubdir]);
 
   mkdirSyncIfNotExists(BrowserDir);
   mkdirSyncIfNotExists(BrowserSubdir);
-  spawnSync("wget", [`https://replay.io/downloads/${archive}`], {
+  spawnChecked("wget", [`https://replay.io/downloads/${archive}`], {
     cwd: BrowserSubdir,
     stdio: "inherit",
   });
-  spawnSync("wget", [`https://replay.io/downloads/${currentPlatform()}-recordreplay.so`], {
+  spawnChecked("wget", [`https://replay.io/downloads/${currentPlatform()}-recordreplay.so`], {
     cwd: BrowserSubdir,
     stdio: "inherit",
   });
-  spawnSync("tar", ["xf", archive], { cwd: BrowserSubdir });
+  spawnChecked("tar", ["xf", archive], { cwd: BrowserSubdir });
 
   if (gChromium) {
-    spawnSync("mv", ["replay-chromium", subdirContents], { cwd: BrowserSubdir, stdio: "inherit" });
+    spawnChecked("mv", ["replay-chromium", subdirContents], { cwd: BrowserSubdir, stdio: "inherit" });
   }
 }
 
@@ -147,7 +146,7 @@ ts-node playwright-tests/${test}
       envArgs.push("-e", `${key}=${value}`);
     }
 
-    spawnSync("docker", [
+    spawnChecked("docker", [
       "run",
       "-v", `${__dirname}:/playwright-tests`,
       "-e", `RECORD_REPLAY_RECORDING_ID_FILE=/playwright-tests/${tmpRecordingFile}`,
@@ -174,7 +173,7 @@ ts-node playwright-tests/${test}
     driver = `${BrowserSubdir}/${currentPlatform()}-recordreplay.so`;
   }
 
-  spawnSync("ts-node", [`${__dirname}/${test}`], {
+  spawnChecked("ts-node", [`${__dirname}/${test}`], {
     stdio: "inherit",
     env: {
       ...process.env,
