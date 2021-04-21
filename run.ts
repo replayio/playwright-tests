@@ -7,9 +7,12 @@ Usage: ts-node run.ts options
 Options:
   --update             Force update to playwright browser.
   --recordings <path>  File to store recording IDs.
-  --container          Use docker container for running tests (default on linux).
+  --container          Use docker container for running tests (default on linux/gecko).
   --env <key> <value>  Set environment variable in tests.
   <test>               Run given test once.
+
+Set $PLAYWRIGHT_CHROMIUM to use chromium.
+Set $PLAYWRIGHT_HEADLESS to run tests with a headless browser.
 
 When not running in a container, browsers are installed at $REPLAY_PLAYWRIGHT_BROWSER, defaulting to $HOME/.replay-playwright-browser
 `;
@@ -19,6 +22,8 @@ let gRecordingFile: string | undefined;
 
 // Container runs aren't supported with chromium yet.
 let gUseContainer = process.platform == "linux" && !process.env.PLAYWRIGHT_CHROMIUM;
+
+const gChromium = !!process.env.PLAYWRIGHT_CHROMIUM;
 
 const gTests: string[] = [];
 const gEnvironment: Record<string, string> = {};
@@ -56,8 +61,11 @@ if (gTests.length && !gRecordingFile) {
 
 const BrowserDir = process.env.REPLAY_PLAYWRIGHT_BROWSER || `${process.env.HOME}/.replay-playwright-browser`;
 
-// This will need updating when we move to a more recent version of playwright.
-const BrowserSubdir = `${BrowserDir}/firefox-1225`;
+// These will need updating when we move to a more recent version of playwright.
+const BrowserSubdirGecko = `${BrowserDir}/firefox-1225`;
+const BrowserSubdirChromium = `${BrowserDir}/chromium-844399`;
+
+const BrowserSubdir = gChromium ? BrowserSubdirChromium : BrowserSubdirGecko;
 
 function mkdirSyncIfNotExists(dir: string) {
   try {
@@ -78,25 +86,40 @@ function updateBrowser() {
     return;
   }
 
-  if (process.platform == "darwin") {
-    if (!gNeedUpdate && fs.existsSync(`${BrowserSubdir}/firefox`)) {
-      return;
-    }
+  if (!gChromium && process.platform == "linux") {
+    throw new Error("Running on linux/gecko requires container");
+  }
 
-    spawnSync("rm", ["-rf", BrowserSubdir]);
+  if (gChromium && process.platform != "linux") {
+    throw new Error("NYI");
+  }
 
-    mkdirSyncIfNotExists(BrowserDir);
-    mkdirSyncIfNotExists(BrowserSubdir);
-    spawnSync("wget", ["https://replay.io/downloads/macOS-replay-playwright.tar.xz"], {
-      cwd: BrowserSubdir,
-      stdio: "inherit",
-    });
-    spawnSync("wget", ["https://replay.io/downloads/macOS-recordreplay.so"], {
-      cwd: BrowserSubdir,
-      stdio: "inherit",
-    });
-    spawnSync("tar", ["xf", "macOS-replay-playwright.tar.xz"], { cwd: BrowserSubdir });
+  const subdirContents = gChromium ? "chrome-linux" : "firefox";
+
+  if (!gNeedUpdate && fs.existsSync(`${BrowserSubdir}/${subdirContents}`)) {
     return;
+  }
+
+  const archive = gChromium
+   ? `${currentPlatform()}-replay-chromium.tar.xz`
+   : `${currentPlatform()}-replay-playwright.tar.xz`;
+
+  spawnSync("rm", ["-rf", BrowserSubdir]);
+
+  mkdirSyncIfNotExists(BrowserDir);
+  mkdirSyncIfNotExists(BrowserSubdir);
+  spawnSync("wget", [`https://replay.io/downloads/${archive}`], {
+    cwd: BrowserSubdir,
+    stdio: "inherit",
+  });
+  spawnSync("wget", [`https://replay.io/downloads/${currentPlatform()}-recordreplay.so`], {
+    cwd: BrowserSubdir,
+    stdio: "inherit",
+  });
+  spawnSync("tar", ["xf", archive], { cwd: BrowserSubdir });
+
+  if (gChromium) {
+    spawnSync("mv", ["replay-chromium", subdirContents], { cwd: BrowserSubdir, stdio: "inherit" });
   }
 }
 
