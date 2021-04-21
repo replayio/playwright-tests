@@ -1,35 +1,49 @@
-const { firefox } = require("playwright");
+const { waitForFrameNavigated } = require("../src/dom");
+const { example } = require("../src/helpers");
+
+const selectors = {
+  chart: ".ReactChart",
+  exampleByText: (text) => `text="${text}"`,
+};
 
 const examples = [
-  'text="Line Chart"',
-  'text="Bar Chart"',
-  'text="Column Chart"',
-  'text="Axis Options"',
-  'text="Custom Tooltip"',
-  'text="Synced Cursors"',
-  'text="Grouping Modes"',
-  'text="Tooltip Options"',
-  'text="Dynamic Box"',
-  'text="Sparklines"',
-  'text="Mixed Types"',
-  'text="Multiple Axes"',
-  'text="Dark Mode"',
-  'text="Stress Test"',
+  "Line Chart",
+  "Bar Chart",
+  "Column Chart",
+  "Axis Options",
+  "Custom Tooltip",
+  "Synced Cursors",
+  "Grouping Modes",
+  "Tooltip Options",
+  "Dynamic Box",
+  "Sparklines",
+  "Mixed Types",
+  "Multiple Axes",
+  "Dark Mode",
 ];
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const waitForSandbox = waitForFrameNavigated(/csb.app/);
 
-  const page = await context.newPage();
-
-  await page.goto("https://react-charts.tanstack.com/examples/bubble");
+example("React-charts", async (page, { action }) => {
+  await page.goto("https://react-charts.tanstack.com/docs/overview");
 
   for (const example of examples) {
-    await page.click(example);
-    await page.waitForTimeout(2000);
-  }
+    await action(example, async (page, { log }) => {
+      await page.click(selectors.exampleByText(example));
 
-  await context.close();
-  await browser.close();
-})();
+      log("Waiting for sample to load");
+
+      const contentFrame = await waitForSandbox(page);
+
+      try {
+        await contentFrame.waitForSelector(selectors.chart);
+      } catch (e) {
+        // TODO: waitForSelector currently fails with replay but works with
+        // firefox so we're falling back to a generic timeout in that case
+        if (contentFrame.isDetached()) {
+          await page.waitForTimeout(5000);
+        }
+      }
+    });
+  }
+});
