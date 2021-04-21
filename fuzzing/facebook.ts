@@ -1,15 +1,13 @@
-import { firefox, Page } from "playwright";
+import { Page } from "playwright";
 import { waitForTime, MsPerSecond, randomElement, randomString } from "../utils";
+const { example } = require("../src/helpers");
 
 // Credentials for a facebook test account need to be specified via the environment.
 if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASSWORD) {
   throw new Error("Facebook credentials not specified");
 }
 
-setTimeout(async () => {
-  const browser = await firefox.launch();
-  const page = await browser.newPage();
-
+example("Facebook", async page => {
   await page.goto("https://facebook.com");
   await login(page);
 
@@ -20,11 +18,7 @@ setTimeout(async () => {
   }
 
   await waitForTime(5000);
-
-  console.log("ClosingBrowser");
-  await browser.close();
-  process.exit(0);
-}, 0);
+});
 
 async function login(page: Page) {
   await page.fill("#email", process.env.FACEBOOK_USER || "");
