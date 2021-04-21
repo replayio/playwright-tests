@@ -1,14 +1,58 @@
 // Playwright script for inspecting a simple recording.
 
-const playwright = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await playwright.firefox.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  await page.goto("https://replay.io/view?id=053e7a46-c023-4843-8787-9b0254c077bf");
-  await switchToDevtools(page);
-  await selectSource(page, "doc_rr_basic.html");
+const selectors = {
+  toggle: {
+    root: "button.view-toggle",
+    get viewer() {
+      return `${this.root} .option >> text="Viewer"`;
+    },
+    get devtools() {
+      return `${this.root} .option >> text="DevTools"`;
+    },
+  },
+  toolbar: {
+    root: "#toolbox-toolbar",
+    nthButton: function (n) {
+      return `${this.root} .toolbar-panel-button:nth-child(${n})`;
+    },
+    get transcript() {
+      return `${this.nthButton(1)} button`;
+    },
+    get sourceExplorer() {
+      return `${this.nthButton(2)} button`;
+    },
+    get pauseInfo() {
+      return `${this.nthButton(3)} button`;
+    },
+  },
+  devtools: {
+    welcome: {
+      goToFile: "*css=[role=button] >> text=go to file",
+      searchFunctions: "*css=[role=button] >> text=search functions",
+      findInFiles: "*css=[role=button] >> text=find in files",
+      allShortcuts: "*css=[role=button] >> text=show all shortcuts",
+    },
+    search: {
+      input: ".search-field input",
+    },
+    code: {
+      lineNumber: ".CodeMirror-linenumber",
+      lineByNumber(number) {
+        return `${this.lineNumber}:text("${number}")`;
+      },
+      hitTooltip: ".static-tooltip",
+    },
+  },
+};
+
+example("Replay", async (page, { action, step }) => {
+  await page.goto(
+    "http://localhost:8080/view?id=053e7a46-c023-4843-8787-9b0254c077bf"
+  );
+  await step("Switch to Devtools", () => page.click(selectors.toggle.devtools));
+  await step("Select source", selectSource("doc_rr_basic.html"));
 
   // We have to hover and check for breakpoint hits first. Clicking on the
   // breakpoint element first leads to the logpoint being cleared out by the
@@ -20,49 +64,50 @@ const playwright = require("playwright");
   // instead of line 20. If it hovers on line 19 and then clicks on line 20 then
   // the test will not finish.
 
-  await checkBreakpointHits(page, 20, 10);
-  await addBreakpoint(page, 20);
-  await waitForMessageCount(page, "updateNumber", 10);
-  await updateBreakpoint(page, "updateNumber", '"hello", number');
-  await jumpToMessage(page, "hello 7");
-  await selectPauseToolbar(page);
+  await action("Test breakpoints", async (page, { step }) => {
+    // TODO: I _think_ the line hover is missed because the listener is attached
+    // in an effect that hasn't fired yet. This brief delay allows time for that
+    // to occur but an app fix or alternate approach may be warranted.
+    await page.waitForTimeout(250);
+    await step("Check breakpoint hits on line 11", checkBreakpointHits(11, 10));
+    await step("Add breakpoint on line 20", () =>
+      page.click(selectors.devtools.code.lineByNumber(20))
+    );
+    await waitForMessageCount(page, "updateNumber", 10);
+    await step(
+      "Update breakpoint",
+      updateBreakpoint("updateNumber", '"hello", number')
+    );
+  });
+
+  await step("Jump to Hello 7", jumpToMessage("hello 7"));
+  await step("Switch to pause view", () =>
+    page.click(selectors.toolbar.pauseInfo)
+  );
 
   // await waitForScopeNode(page, "<this>: Window");
   // await waitForMessageCount(page, "42", 1);
+});
 
-  console.log(`Saving Recording`);
-  await browser.close();
-})();
-
-async function switchToDevtools(page) {
-  console.log(`switchToDevtools`, {});
-
-  await page.click("text=devtools");
+function selectSource(url) {
+  return async (page) => {
+    await page.click(selectors.devtools.welcome.goToFile);
+    await page.fill(selectors.devtools.search.input, url);
+    await page.press(selectors.devtools.search.input, "Enter");
+  };
 }
 
-async function selectSource(page, url) {
-  console.log(`selectSource`, { url });
-
-  await page.click("text=go to file");
-  await page.fill(".search-field input", url);
-  await page.press(".search-field input", "Enter");
-}
-
-async function checkBreakpointHits(page, line, count) {
-  console.log(`checkBreakpointHits`, { line, count });
-  return waitUntil(async () => {
-    await page.hover(`.CodeMirror-linenumber:text("${line}")`);
-    return page.waitForSelector(`.static-tooltip:text("${count} hits")`);
-  });
-}
-
-async function addBreakpoint(page, line) {
-  console.log(`addBreakpoint`, { line });
-  return page.click(`.CodeMirror-linenumber:text("${line}")`);
+function checkBreakpointHits(line, count) {
+  return async (page) => {
+    await page.hover(selectors.devtools.code.lineByNumber(line));
+    await page.waitForSelector(
+      `${selectors.devtools.code.hitTooltip} >> text=${count} hits`
+    );
+  };
 }
 
 async function waitForMessageCount(page, text, count) {
-  await waitUntil(async () => {
+  await waitUntil(page, async () => {
     const messages = await page.$$(".message-body");
     let matchCount = 0;
     for (const msg of messages) {
@@ -75,36 +120,39 @@ async function waitForMessageCount(page, text, count) {
   });
 }
 
-async function jumpToMessage(page, text) {
-  console.log(`jumpToMessage`, { text });
-
-  const msg = await waitUntil(async () => {
-    const messages = await page.$$(".message");
-    for (const msg of messages) {
-      const innerText = await msg.innerText();
-      if (innerText.includes(text)) {
-        return msg;
+function jumpToMessage(text) {
+  return async (page) => {
+    const msg = await waitUntil(page, async () => {
+      const messages = await page.$$(".message");
+      for (const msg of messages) {
+        const innerText = await msg.innerText();
+        if (innerText.includes(text)) {
+          return msg;
+        }
       }
-    }
-    return null;
-  });
+      return null;
+    });
 
-  await msg.hover();
+    await msg.hover();
 
-  const button = await msg.$(".overlay-container");
-  await button.dispatchEvent("click");
+    const button = await msg.$(".overlay-container");
+    await button.dispatchEvent("click");
+  };
 }
 
-async function updateBreakpoint(page, existingText, newText) {
-  console.log(`updateBreakpoint`, { existingText, newText });
+function updateBreakpoint(existingText, newText) {
+  return async (page) => {
+    await page.dispatchEvent(
+      `button:has(span:text("${existingText}"))`,
+      "click"
+    );
+    await page.waitForTimeout(200);
 
-  await page.dispatchEvent(`button:has(span:text("${existingText}"))`, "click");
-  await waitForTime(200);
-
-  await page.keyboard.press("Meta+A");
-  await page.keyboard.press("Delete");
-  await page.keyboard.type(newText);
-  await page.keyboard.press("Enter");
+    await page.keyboard.press("Meta+A");
+    await page.keyboard.press("Delete");
+    await page.keyboard.type(newText);
+    await page.keyboard.press("Enter");
+  };
 }
 
 async function selectPauseToolbar(page) {
@@ -114,7 +162,7 @@ async function selectPauseToolbar(page) {
 }
 
 async function waitForScopeNode(page, text) {
-  return waitUntil(async () => {
+  return waitUntil(page, async () => {
     const nodes = await page.$$(".tree-node");
     for (const node of nodes) {
       const innerText = await node.innerText();
@@ -127,23 +175,29 @@ async function waitForScopeNode(page, text) {
 }
 
 async function evaluateInConsole(page, text) {
-  await page.dispatchEvent(".jsterm-input-container .CodeMirror-scroll", "mousedown");
-  await waitForTime(200);
+  await page.dispatchEvent(
+    ".jsterm-input-container .CodeMirror-scroll",
+    "mousedown"
+  );
+  await page.waitForTimeout(200);
 
   await page.keyboard.type(text);
   await page.keyboard.press("Enter");
 }
 
-function waitForTime(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+async function waitUntil(page, predicate) {
+  return await Promise.race([
+    new Promise(async (resolve) => {
+      while (true) {
+        const rv = await predicate();
+        if (rv) {
+          resolve(rv);
+          break;
+        }
 
-async function waitUntil(predicate) {
-  while (true) {
-    const rv = await predicate();
-    if (rv) {
-      return rv;
-    }
-    await waitForTime(100);
-  }
+        await page.waitForTimeout(100);
+      }
+    }),
+    page.waitForTimeout(30000),
+  ]);
 }
