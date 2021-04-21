@@ -130,6 +130,7 @@ ts-node playwright-tests/${test}
       "-e", `RECORD_REPLAY_RECORDING_ID_FILE=/playwright-tests/${tmpRecordingFile}`,
       "-e", `RECORD_REPLAY_SERVER=${server}`,
       "-e", "RECORD_ALL_CONTENT=1",
+      "-e", "PLAYWRIGHT_HEADLESS=1",
       ...envArgs,
       "recordreplayinc/playwright:latest",
       "bash",
