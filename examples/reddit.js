@@ -1,21 +1,20 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext();
+const selectors = {
+  search: 'input[name="q"]',
+  // *css= tells this selector to return the <a> instead of the <button>
+  community: '*css=a >> button:text("Join")',
+};
 
-  const page = await context.newPage();
+example("Reddit", async (page, { action }) => {
+  // Lower-weight starting page to avoid load timeouts
+  await page.goto("https://www.reddit.com/topics/a-1/");
 
-  await page.goto("https://www.reddit.com/");
+  await action("Search for climate", async () => {
+    await page.fill(selectors.search, "climate");
+    await page.press(selectors.search, "Enter");
+  });
 
-  await page.fill('input[name="q"]', "climate");
-
-  await page.press('input[name="q"]', "Enter");
-
-  // await new Promise(r => {});
+  await page.click(selectors.community);
   await page.waitForLoadState("networkidle");
-  await page.close();
-
-  await context.close();
-  await browser.close();
-})();
+});
