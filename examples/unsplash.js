@@ -1,22 +1,41 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch();
-  const context = await browser.newContext({});
+const selectors = {
+  tag: 'a[href^="/s"]',
+  modal: ".ReactModalPortal",
+  search: {
+    input: 'input[data-test="homepage-header-search-form-input"]',
+    results: {
+      image: "figure img",
+      next: "a[title=Next]",
+      info: "button >> text='Info'",
+      get tag() {
+        return `${selectors.modal} ${selectors.tag}`;
+      },
+    },
+  },
+};
 
-  const page = await context.newPage();
-
+example("Unsplash", async (page, { action }) => {
   await page.goto("https://unsplash.com/");
-  await page.click('input[data-test="homepage-header-search-form-input"]');
-  await page.fill('input[data-test="homepage-header-search-form-input"]', "trees");
-  await page.press('input[data-test="homepage-header-search-form-input"]', "Enter");
-  await page.click('img[data-test="photo-grid-multi-col-img"]');
-  await page.click("//a[normalize-space(@title)='Next']/*[local-name()=\"svg\"]");
-  await page.click("//a[normalize-space(@title)='Next']/*[local-name()=\"svg\"]");
-  await page.click("//a[normalize-space(@title)='Next']/*[local-name()=\"svg\"]");
-  await page.click('text="Info"');
-  await page.close();
 
-  await context.close();
-  await browser.close();
-})();
+  await action("Search for trees", async () => {
+    await page.click(selectors.search.input);
+    await page.fill(selectors.search.input, "trees");
+    await page.press(selectors.search.input, "Enter");
+  });
+
+  await action("Navigate through results", async () => {
+    await page.click(selectors.search.results.image);
+    await page.click(selectors.search.results.next);
+    await page.click(selectors.search.results.next);
+    await page.click(selectors.search.results.next);
+  });
+
+  await action("Select tag", async () => {
+    await page.click(selectors.search.results.tag);
+    await page.waitForLoadState("networkidle");
+    await page.click(selectors.search.results.image);
+    await page.click(selectors.search.results.info);
+  });
+});
