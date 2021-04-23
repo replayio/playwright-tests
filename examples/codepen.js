@@ -1,3 +1,4 @@
+const { waitForFrameNavigated } = require("../src/dom");
 const { example } = require("../src/helpers");
 
 const box = (key) => ({
@@ -11,6 +12,7 @@ const box = (key) => ({
 });
 
 const selectors = {
+  start: "a[href=/pen/]",
   html: box("html"),
   css: box("css"),
   js: box("js"),
@@ -23,30 +25,14 @@ const enterText = (field, text) => async (page) => {
   }
 };
 
-const waitForPenRender = (callback) => async (page) =>
-  new Promise((resolve) =>
-    page.on("framenavigated", async (frame) => {
-      await callback(frame);
-      resolve();
-    })
-  );
+const waitForPenRender = waitForFrameNavigated(/cdpn.io/);
 
-const waitForHeader = waitForPenRender(async (frame) => {
-  await frame.waitForSelector('h1:text("Updated by JS")');
-});
-
-example("Create a codepen.io", async (page, { action }) => {
-  // Go to https://codepen.io/
+example("Create a codepen.io", async (page, { step }) => {
   await page.goto("https://codepen.io/");
-
-  // Click text="Start Coding"
-  await Promise.all([
-    page.waitForNavigation(/*{ url: 'https://codepen.io/pen/' }*/),
-    page.click('text="Start Coding"'),
-  ]);
+  await page.click(selectors.start);
 
   await page.click(selectors.html.pre);
-  await action(
+  await step(
     "Enter HTML",
     enterText(
       selectors.html.input,
@@ -61,7 +47,7 @@ example("Create a codepen.io", async (page, { action }) => {
   );
 
   await page.click(selectors.css.pre);
-  await action(
+  await step(
     "Enter CSS",
     enterText(
       selectors.css.input,
@@ -75,7 +61,7 @@ h1 {
   );
 
   await page.click(selectors.js.pre);
-  await action(
+  await step(
     "Enter JS",
     enterText(
       selectors.js.input,
@@ -87,5 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   );
 
-  await waitForHeader(page);
+  await step("Wait for Header", async (page) => {
+    const frame = await waitForPenRender(page);
+    // Leaving this selector in place since its content is driven by the test
+    await frame.waitForSelector('h1:text("Updated by JS")');
+  });
 });

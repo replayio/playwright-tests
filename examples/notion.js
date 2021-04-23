@@ -12,12 +12,12 @@ const selectors = {
   },
 };
 
-example("Notion - Replay Docs", async (page, { action }) => {
+example("Notion - Replay Docs", async (page, { step }) => {
   await page.goto(
     "https://www.notion.so/replayio/Replay-Docs-56758667f53a4d51b7c6fc7a641adb02"
   );
 
-  await action("Search for 'help'", async () => {
+  await step("Search for 'help'", async () => {
     await page.click(selectors.search);
     await page.click(selectors.searchField);
 

@@ -42,17 +42,17 @@ const login = (
   await page.click(selectors.loginButton);
 };
 
-example("repl.it", async (page, { action }) => {
+example("repl.it", async (page, { step }) => {
   await page.goto("https://replit.com/site/pricing");
 
-  await action("Login", login());
-  await action("Navigate to sample repl", async () => {
+  await step("Login", login());
+  await step("Navigate to sample repl", async () => {
     await page.click(selectors.myRepls);
     await page.click(`${selectors.item} >> text="Playwright Sample"`);
   });
 
-  await clearCode(page);
-  await action(
+  await step("Clearing code", clearCode);
+  await step(
     "Appending code",
     appendCode(`
 for (let i = 0; i < 10; i++) {

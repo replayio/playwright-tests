@@ -1,3 +1,6 @@
+// Utility method that clicks the return value of an async function (e.g. nthMatch)
+const asyncClick = (cbk) => (...args) => cbk(...args).then((m) => m.click());
+
 function getBoundingClientRect(selector) {
   return async (page) => {
     const el = await page.waitForSelector(selector);
@@ -28,6 +31,7 @@ function waitForFrameNavigated(url) {
 }
 
 module.exports = {
+  asyncClick,
   getBoundingClientRect,
   waitForTitleChange,
   waitForFrameNavigated,

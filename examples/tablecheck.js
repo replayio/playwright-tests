@@ -34,10 +34,10 @@ const selectors = {
 
 const getSliderBounds = getBoundingClientRect(selectors.results.filter.slider);
 
-example("TableCheck", async (page, { action }) => {
+example("TableCheck", async (page, { action, step }) => {
   await page.goto("https://www.tablecheck.com/en/japan");
 
-  await action("Search for Tokyo", async (page, { log }) => {
+  await step("Search for Tokyo", async (page) => {
     await page.click(selectors.search.input);
     await page.type(selectors.search.input, "tokyo");
     await page.click(selectors.search.optionByText("Tokyo"));
@@ -46,23 +46,24 @@ example("TableCheck", async (page, { action }) => {
 
   await page.waitForSelector(selectors.results.item);
 
-  await action("Filter by budget", async (page, { log }) => {
+  await action("Filter by budget", async (page, { step }) => {
     await page.click(selectors.results.filter.open);
     await page.waitForTimeout(1000); // animation timeout
 
-    const bounds = await getSliderBounds(page);
-    const center = bounds.top + bounds.height / 2;
+    step("Set min and max budget", async () => {
+      const bounds = await getSliderBounds(page);
+      const center = bounds.top + bounds.height / 2;
 
-    log("Set min and max budget");
-    await page.mouse.click(
-      bounds.left + Math.round(bounds.width * 0.25),
-      center
-    );
+      await page.mouse.click(
+        bounds.left + Math.round(bounds.width * 0.25),
+        center
+      );
 
-    await page.mouse.click(
-      bounds.left + Math.round(bounds.width * 0.75),
-      center
-    );
+      await page.mouse.click(
+        bounds.left + Math.round(bounds.width * 0.75),
+        center
+      );
+    });
 
     await Promise.all([
       page.waitForSelector(selectors.results.filter.dialog, {

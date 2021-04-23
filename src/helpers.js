@@ -6,9 +6,16 @@ const launchOptions = {
 };
 
 let depth = 0;
+const pad = () => "".padStart(depth * 2);
+const indent = (value) =>
+  String(value)
+    .split("\n")
+    .map((l) => pad() + l)
+    .join("\n");
+
 const log = (...args) => {
   if (depth) {
-    console.log("".padStart(depth * 2).substr(1), ...args);
+    console.log(pad().substr(1), ...args);
   } else {
     console.log(...args);
   }
@@ -22,8 +29,13 @@ function wrapped(cbk, pageLog = log, inline = false) {
       depth += i;
       return await cbk(...args);
     } catch (e) {
-      console.error(`Error in ${name}`);
-      console.error(e);
+      if (!e.handled) {
+        e.handled = true;
+        console.error(indent(`🛑 Error in ${name}\n`));
+        console.error(indent(e.stack));
+      }
+
+      throw e;
     } finally {
       depth -= i;
       if (!inline) await pageLog(`< ${name}`);
@@ -64,22 +76,24 @@ const example = wrapped(async (cbk) => {
 
   log("Browser launched");
 
-  await action(
-    "Running example",
-    async () => await cbk(page, bindPageActions(page))
-  );
+  try {
+    await action(
+      "Running example",
+      async () => await cbk(page, bindPageActions(page))
+    );
+  } catch (e) {
+    process.exit(1);
+  } finally {
+    // Adding a short delay after the script to allow space for trailing script
+    // execution
+    await page.waitForTimeout(100);
 
-  // Adding a short delay after the script to allow space for trailing script
-  // execution
-  await page.waitForTimeout(100);
-
-  await page.close();
-  await context.close();
-  await browser.close();
+    await page.close();
+    await context.close();
+    await browser.close();
+  }
 });
 
 module.exports = {
-  action,
   example,
-  log,
 };

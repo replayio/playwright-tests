@@ -16,23 +16,23 @@ const selectors = {
   },
 };
 
-example("Unsplash", async (page, { action }) => {
+example("Unsplash", async (page, { step }) => {
   await page.goto("https://unsplash.com/");
 
-  await action("Search for trees", async () => {
+  await step("Search for trees", async () => {
     await page.click(selectors.search.input);
     await page.fill(selectors.search.input, "trees");
     await page.press(selectors.search.input, "Enter");
   });
 
-  await action("Navigate through results", async () => {
+  await step("Navigate through results", async () => {
     await page.click(selectors.search.results.image);
     await page.click(selectors.search.results.next);
     await page.click(selectors.search.results.next);
     await page.click(selectors.search.results.next);
   });
 
-  await action("Select tag", async () => {
+  await step("Select tag", async () => {
     await page.click(selectors.search.results.tag);
     await page.waitForLoadState("networkidle");
     await page.click(selectors.search.results.image);

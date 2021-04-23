@@ -1,4 +1,4 @@
-const { example, action } = require("../src/helpers");
+const { example } = require("../src/helpers");
 
 const selectors = {
   addressSearch: {
@@ -31,7 +31,7 @@ const selectors = {
   },
 };
 
-example("RealAdvisor", async (page) => {
+example("RealAdvisor", async (page, { step }) => {
   await page.goto("https://realadvisor.ch/");
 
   await Promise.all([
@@ -39,12 +39,12 @@ example("RealAdvisor", async (page) => {
     page.click(selectors.addressSearch.buy),
   ]);
 
-  await action("Search for listings", async () => {
+  await step("Search for listings", async () => {
     await page.click(selectors.addressSearch.input);
     await page.click(selectors.addressSearch.submit);
   });
 
-  await action("Sort by Most Recent", async () => {
+  await step("Sort by Most Recent", async () => {
     await page.click(selectors.results.sort);
     await page.click(selectors.filter.optionByText("Most recent"));
     await page.waitForSelector("[class*=useGridLoadingStyle]", {
@@ -52,7 +52,7 @@ example("RealAdvisor", async (page) => {
     });
   });
 
-  await action("Open first listing", async () => {
+  await step("Open first listing", async () => {
     // TODO: Bit of flakiness bevause the listing entry still exists while
     // loading so giving a little time for it to be replaced with the valid
     // entry post filter
