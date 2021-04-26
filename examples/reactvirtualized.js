@@ -17,17 +17,17 @@ const scrollThroughList = async (page) => {
   }
 };
 
-example("react-virtualized", async (page, { action }) => {
+example("react-virtualized", async (page, { step }) => {
   await page.goto(
     "https://bvaughn.github.io/react-virtualized/#/components/List"
   );
 
-  await action("Scroll through list", scrollThroughList);
+  await step("Scroll through list", scrollThroughList);
 
-  await action("Toggle options", async () => {
+  await step("Toggle options", async () => {
     await page.click(selectors.dynamicHeightLabel);
     await page.click(selectors.scrollPlaceholderLabel);
   });
 
-  await action("Scroll through list", scrollThroughList);
+  await step("Scroll through list", scrollThroughList);
 });

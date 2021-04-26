@@ -22,15 +22,13 @@ const selectors = {
 
 // Navigates to either a story or a folder (if the path includes a trailing slash).
 // A leading slash is optional.
-const openStory = async (action, path, callback) => {
-  await action(`Open story: ${path}`, async (page, ...rest) => {
-    await page.click(selectors.storyByPath(path));
-    await page.waitForTimeout(500);
+const openStory = (path, callback) => async (page, ...rest) => {
+  await page.click(selectors.storyByPath(path));
+  await page.waitForTimeout(500);
 
-    if (callback) {
-      await callback(page, ...rest);
-    }
-  });
+  if (callback) {
+    await callback(page, ...rest);
+  }
 };
 
 module.exports = {

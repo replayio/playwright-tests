@@ -1,3 +1,4 @@
+const { waitForFrameNavigated } = require("../src/dom");
 const { example } = require("../src/helpers");
 
 const { selectors: monacoSelectors, clearInput } = require("./shared/monaco");
@@ -5,7 +6,9 @@ const { selectors: monacoSelectors, clearInput } = require("./shared/monaco");
 const editors = [
   "creating-the-editor-editor-basic-options",
   "creating-the-editor-hard-wrapping",
-  "creating-the-editor-syntax-highlighting-for-html-elements",
+  // This sample doesn't use the monaco editor so I've removed it for
+  // consistency in the test logic
+  // "creating-the-editor-syntax-highlighting-for-html-elements",
   "interacting-with-the-editor-adding-a-command-to-an-editor-instance",
   "interacting-with-the-editor-adding-an-action-to-an-editor-instance",
   "interacting-with-the-editor-revealing-a-position",
@@ -46,32 +49,43 @@ const selectors = {
   runnerContainer: "#container",
 };
 
-example("Monaco Editor", async (page, { action }) => {
+const waitForRunner = waitForFrameNavigated(/runner/);
+
+example("Monaco Editor", async (page, { action, step }) => {
   await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
 
   await action("Iterate samples", async (page, { log }) => {
     for (const editor of editors) {
+      log("Selecting", editor);
       await page.selectOption(selectors.select, editor);
-      await page.waitForTimeout(1000);
+      const frame = await waitForRunner(page);
+      await frame.waitForSelector(monacoSelectors.editor);
     }
   });
 
-  await action("Clear input", clearInput);
+  await action("Running custom sample", async () => {
+    await step("Clear input", clearInput);
 
-  await action("Add code and run", async (page) => {
-    await page.type(
-      monacoSelectors.input,
-      `// The Monaco Editor can be easily created, given an
+    await step("Add code and run", () =>
+      page.type(
+        monacoSelectors.input,
+        `// The Monaco Editor can be easily created, given an
 // empty container and an options literal.
 // Two members of the literal are "value" and "language".
 // The editor takes the full size of its container.
 
 monaco.editor.create(document.getElementById("container"), {
-value: "asyncfunction hello() {alert('Hello world!');}",
+value: "async function hello() {alert('Hello world!');}",
 language: "javascript"
-`
+  `
+      )
     );
-
-    await page.click(selectors.run);
+    await step("Running sample", async (page) => {
+      await page.click(selectors.run);
+      const frame = await page
+        .frames()
+        .filter((f) => /runner/.test(f.url()))[0];
+      await frame.waitForSelector(monacoSelectors.editor);
+    });
   });
 });

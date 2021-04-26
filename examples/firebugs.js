@@ -17,13 +17,13 @@ const filter = (type, value) => async (page) => {
   await page.click(selectors.menuItem(value));
 };
 
-example("firebugs.dev", async (page, { action }) => {
+example("firebugs.dev", async (page, { step }) => {
   await page.goto("https://firebugs.dev/");
 
   await page.click(selectors.searchInput);
   await page.fill(selectors.searchInput, "break");
 
-  await action("Filter by bugs", filter("Type", "Bug"));
-  await action("Filter by priority", filter("Priority", "P3"));
-  await action("Filter by keyword", filter("Keyword", "Good First Bugs"));
+  await step("Filter by bugs", filter("Type", "Bug"));
+  await step("Filter by priority", filter("Priority", "P3"));
+  await step("Filter by keyword", filter("Keyword", "Good First Bugs"));
 });

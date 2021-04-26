@@ -6,11 +6,11 @@ const selectors = {
   community: '*css=a >> button:text("Join")',
 };
 
-example("Reddit", async (page, { action }) => {
+example("Reddit", async (page, { step }) => {
   // Lower-weight starting page to avoid load timeouts
   await page.goto("https://www.reddit.com/topics/a-1/");
 
-  await action("Search for climate", async () => {
+  await step("Search for climate", async () => {
     await page.fill(selectors.search, "climate");
     await page.press(selectors.search, "Enter");
   });

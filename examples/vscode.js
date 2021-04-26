@@ -73,8 +73,8 @@ const selectFile = async (path, page, doubleClick = false) => {
   await page.waitForTimeout(250);
 };
 
-example("Visual Studio Code", async (page, { action }) => {
-  await action("Open Editor", async () => {
+example("Visual Studio Code", async (page, { action, step }) => {
+  await step("Open Editor", async () => {
     await page.goto("https://vscode-web-test-playground.azurewebsites.net/");
 
     await page.click('text="Click to Continue"');
@@ -86,14 +86,14 @@ example("Visual Studio Code", async (page, { action }) => {
     ]);
   });
 
-  await action("Open files", async () => {
+  await step("Open files", async () => {
     await selectFile("~/sample-folder/file.css", page);
     await selectFile("~/sample-folder/file.html", page);
     await selectFile("~/sample-folder/file.js", page, true);
     await selectFile("~/sample-folder/file.md", page, true);
   });
 
-  await action("Search files", async () => {
+  await step("Search files", async () => {
     await page.click(selectors.activityBar.itemByTitle("Search"));
     await page.click(selectors.search.input);
     await page.fill(selectors.search.input, "store");
@@ -110,7 +110,7 @@ example("Visual Studio Code", async (page, { action }) => {
     await page.click(selectors.activityBar.menu.itemByLabel("File"));
     await page.click(selectors.activityBar.menu.itemByLabel("New File"));
 
-    await action("Add content and save", async () => {
+    await step("Add content and save", async () => {
       await page.waitForSelector(selectors.editor.tabByTitle("Untitled"));
       await page.type(monacoSelectors.input, "Testing");
       await page.press(monacoSelectors.input, "Meta+s");

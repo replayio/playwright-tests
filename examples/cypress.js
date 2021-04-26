@@ -7,15 +7,15 @@ const selectors = {
   sectionToggleButton: "button",
 };
 
-example("Cypress", async (page, { action }) => {
+example("Cypress", async (page, { step }) => {
   await page.goto("https://dashboard.cypress.io/projects/7s5okt/runs");
 
-  await action("View flaky test result", async (page) => {
+  await step("View flaky test result", async (page) => {
     await page.click(selectors.run);
     await page.click(selectors.flakyText);
   });
 
-  await action("Expand runtime environment section", async (page) => {
+  await step("Expand runtime environment section", async (page) => {
     const envSelector = `${selectors.section}:nth-of-type(4) ${selectors.sectionToggleButton}`;
     await page.click(envSelector);
   });
