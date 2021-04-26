@@ -8,11 +8,24 @@ const selectors = {
   },
 };
 
-const clearInput = async (page) => {
-  await page.click(selectors.editor);
+const clearInput = async (page, { timeout } = {}) => {
+  await page.click(selectors.editor, { timeout });
 
   await page.press(selectors.input, "Meta+A");
   await page.press(selectors.input, "Backspace");
 };
 
-module.exports = { selectors, clearInput };
+const addInput = (field, text) => async (page) => {
+  for (let line of text.trim().split("\n")) {
+    await page.type(field, line);
+    await page.press(field, "Enter");
+
+    // Clear any auto-inserted content
+    await page.press(field, "Meta+Shift+ArrowLeft");
+    await page.press(field, "Delete");
+    await page.press(field, "Meta+Shift+ArrowDown");
+    await page.press(field, "Delete");
+  }
+};
+
+module.exports = { selectors, addInput, clearInput };
