@@ -14,18 +14,19 @@ const log = (...args) => {
   }
 };
 
-function wrapped(cbk, pageLog = log) {
+function wrapped(cbk, pageLog = log, inline = false) {
+  const i = inline ? 0 : 1;
   return async (name, ...args) => {
     try {
-      await pageLog(`> ${name}`);
-      depth++;
+      await pageLog(inline ? name : `> ${name}`);
+      depth += i;
       return await cbk(...args);
     } catch (e) {
       console.error(`Error in ${name}`);
       console.error(e);
     } finally {
-      depth--;
-      await pageLog(`< ${name}`);
+      depth -= i;
+      if (!inline) await pageLog(`< ${name}`);
     }
   };
 }
@@ -41,9 +42,15 @@ function bindPageActions(page) {
     }, args);
   };
   const pageAction = wrapped(async (cbk) => await cbk(page, actions), pageLog);
+  const pageStep = wrapped(
+    async (cbk) => await cbk(page, actions),
+    pageLog,
+    true
+  );
 
   actions.log = pageLog;
   actions.action = pageAction;
+  actions.step = pageStep;
 
   return actions;
 }
