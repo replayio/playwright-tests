@@ -1,7 +1,11 @@
 const { waitForFrameNavigated } = require("../src/dom");
 const { example } = require("../src/helpers");
 
-const { selectors: monacoSelectors, clearInput } = require("./shared/monaco");
+const {
+  selectors: monacoSelectors,
+  addInput,
+  clearInput,
+} = require("./shared/monaco");
 
 const editors = [
   "creating-the-editor-editor-basic-options",
@@ -66,20 +70,23 @@ example("Monaco Editor", async (page, { action, step }) => {
   await action("Running custom sample", async () => {
     await step("Clear input", clearInput);
 
-    await step("Add code and run", () =>
-      page.type(
+    await step(
+      "Add code",
+      addInput(
         monacoSelectors.input,
-        `// The Monaco Editor can be easily created, given an
+        `
+// The Monaco Editor can be easily created, given an
 // empty container and an options literal.
 // Two members of the literal are "value" and "language".
 // The editor takes the full size of its container.
 
 monaco.editor.create(document.getElementById("container"), {
-value: "async function hello() {alert('Hello world!');}",
-language: "javascript"
-  `
+  value: "async function hello() {alert('Hello world!');}",
+  language: "javascript"
+})`
       )
     );
+
     await step("Running sample", async (page) => {
       await page.click(selectors.run);
       const frame = await page
