@@ -15,9 +15,12 @@ const clearInput = async (page, { timeout } = {}) => {
   await page.press(selectors.input, "Backspace");
 };
 
-const addInput = (field, text) => async (page) => {
+const addInput = (field, text, options) => async (page) => {
   for (let line of text.trim().split("\n")) {
-    await page.type(field, line);
+    await page.type(field, line, options);
+    // Clear any auto-complete dialogs
+    await page.press(field, "Escape");
+
     await page.press(field, "Enter");
 
     // Clear any auto-inserted content
@@ -25,6 +28,8 @@ const addInput = (field, text) => async (page) => {
     await page.press(field, "Delete");
     await page.press(field, "Meta+Shift+ArrowDown");
     await page.press(field, "Delete");
+
+    await page.waitForTimeout(100);
   }
 };
 
