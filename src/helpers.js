@@ -1,4 +1,5 @@
 const playwright = require("playwright");
+require("dotenv").config();
 
 let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
 const launchOptions = {
