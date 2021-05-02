@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/RecordReplay/playwright-tests#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "playwright": "1.8.1"
   }
 }
