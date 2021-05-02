@@ -1,12 +1,6 @@
-const { firefox } = require("playwright");
+const { example } = require("../src/helpers");
 
-(async () => {
-  const browser = await firefox.launch({});
-  const context = await browser.newContext();
-
-  // Open new page
-  const page = await context.newPage();
-
+example("discord", async (page, { step }) => {
   // Go to https://discord.com/channels/197038439483310086/733488538393510049
   await page.goto(
     "https://discord.com/channels/679875946597056683/805450902940811285"
@@ -58,6 +52,4 @@ const { firefox } = require("playwright");
   await page.click('text="🏆｜highlights"');
   // assert.equal(page.url(), 'https://discord.com/channels/707230275175841915/762741027475685436');
   // ---------------------
-  await context.close();
-  await browser.close();
-})();
+});
