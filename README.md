@@ -12,7 +12,7 @@ The `examples` directory contains playwright scripts that perform a fixed series
 
 1. `npm ci` Install dependencies
 2. `./install_macOS.sh` Install Replay
-3. `PLAYWRIGHT_BROWSERS_PATH=$PWD/browsers RECORD_REPLAY_DRIVER=$PWD/browsers/firefox-1225/macOS-recordreplay.so RECORD_REPLAY_RECORDING_ID_FILE=$PWD/recordings.log RECORD_REPLAY_SERVER=wss://dispatch.replay.io RECORD_ALL_CONTENT=1 node examples/whatsmyuseragent.js` run test
+3. `PLAYWRIGHT_BROWSERS_PATH=$PWD/browsers RECORD_REPLAY_DRIVER=$PWD/browsers/firefox-1238/macOS-recordreplay.so RECORD_REPLAY_RECORDING_ID_FILE=$PWD/recordings.log RECORD_REPLAY_SERVER=wss://dispatch.replay.io RECORD_ALL_CONTENT=1 node examples/whatsmyuseragent.js` run test
 4. `cat recordings.log` to view the last recording
 
 ### Docker installation
@@ -29,7 +29,7 @@ The image can also be built directly with `docker build --no-cache -t recordrepl
 
 ### Playwright version
 
-All runs using scripts in this repository are currently version locked to playwright 1.8.1, due to the changing names for firefox subdirectories (e.g. firefox-1225) between playwright versions. This would be nice to improve.
+All runs using scripts in this repository are currently version locked to playwright 1.10.0, due to the changing names for firefox subdirectories (e.g. firefox-1238) between playwright versions. This would be nice to improve.
 
 ### Running the playwright examples
 

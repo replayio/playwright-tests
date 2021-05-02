@@ -20,7 +20,8 @@ let gNeedUpdate = false;
 let gRecordingFile: string | undefined;
 
 // Container runs aren't supported with chromium yet.
-let gUseContainer = process.platform == "linux" && !process.env.PLAYWRIGHT_CHROMIUM;
+let gUseContainer =
+  process.platform == "linux" && !process.env.PLAYWRIGHT_CHROMIUM;
 
 const gChromium = !!process.env.PLAYWRIGHT_CHROMIUM;
 
@@ -58,10 +59,12 @@ if (gTests.length && !gRecordingFile) {
   process.exit(1);
 }
 
-const BrowserDir = process.env.REPLAY_PLAYWRIGHT_BROWSER || `${process.env.HOME}/.replay-playwright-browser`;
+const BrowserDir =
+  process.env.REPLAY_PLAYWRIGHT_BROWSER ||
+  `${process.env.HOME}/.replay-playwright-browser`;
 
 // These will need updating when we move to a more recent version of playwright.
-const BrowserSubdirGecko = `${BrowserDir}/firefox-1225`;
+const BrowserSubdirGecko = `${BrowserDir}/firefox-1238`;
 const BrowserSubdirChromium = `${BrowserDir}/chromium-844399`;
 
 const BrowserSubdir = gChromium ? BrowserSubdirChromium : BrowserSubdirGecko;
@@ -75,13 +78,21 @@ function mkdirSyncIfNotExists(dir: string) {
 function updateBrowser() {
   if (gUseContainer) {
     if (!gNeedUpdate) {
-      const { stdout } = spawnChecked("docker", ["image", "ls", "recordreplayinc/playwright:latest"]);
+      const { stdout } = spawnChecked("docker", [
+        "image",
+        "ls",
+        "recordreplayinc/playwright:latest",
+      ]);
       if (stdout.includes("recordreplayinc/playwright")) {
         return;
       }
     }
 
-    spawnChecked("docker", ["image", "pull", "recordreplayinc/playwright:latest"], { stdio: "inherit" });
+    spawnChecked(
+      "docker",
+      ["image", "pull", "recordreplayinc/playwright:latest"],
+      { stdio: "inherit" }
+    );
     return;
   }
 
@@ -100,8 +111,8 @@ function updateBrowser() {
   }
 
   const archive = gChromium
-   ? `${currentPlatform()}-replay-chromium.tar.xz`
-   : `${currentPlatform()}-replay-playwright.tar.xz`;
+    ? `${currentPlatform()}-replay-chromium.tar.xz`
+    : `${currentPlatform()}-replay-playwright.tar.xz`;
 
   spawnChecked("rm", ["-rf", BrowserSubdir]);
 
@@ -111,14 +122,21 @@ function updateBrowser() {
     cwd: BrowserSubdir,
     stdio: "inherit",
   });
-  spawnChecked("wget", [`https://replay.io/downloads/${currentPlatform()}-recordreplay.so`], {
-    cwd: BrowserSubdir,
-    stdio: "inherit",
-  });
+  spawnChecked(
+    "wget",
+    [`https://replay.io/downloads/${currentPlatform()}-recordreplay.so`],
+    {
+      cwd: BrowserSubdir,
+      stdio: "inherit",
+    }
+  );
   spawnChecked("tar", ["xf", archive], { cwd: BrowserSubdir });
 
   if (gChromium) {
-    spawnChecked("mv", ["replay-chromium", subdirContents], { cwd: BrowserSubdir, stdio: "inherit" });
+    spawnChecked("mv", ["replay-chromium", subdirContents], {
+      cwd: BrowserSubdir,
+      stdio: "inherit",
+    });
   }
 }
 
@@ -146,18 +164,27 @@ ts-node playwright-tests/${test}
       envArgs.push("-e", `${key}=${value}`);
     }
 
-    spawnChecked("docker", [
-      "run",
-      "-v", `${__dirname}:/playwright-tests`,
-      "-e", `RECORD_REPLAY_RECORDING_ID_FILE=/playwright-tests/${tmpRecordingFile}`,
-      "-e", `RECORD_REPLAY_SERVER=${server}`,
-      "-e", "RECORD_ALL_CONTENT=1",
-      "-e", "PLAYWRIGHT_HEADLESS=1",
-      ...envArgs,
-      "recordreplayinc/playwright:latest",
-      "bash",
-      `/playwright-tests/${tmpScriptFile}`,
-    ], { stdio: "inherit" });
+    spawnChecked(
+      "docker",
+      [
+        "run",
+        "-v",
+        `${__dirname}:/playwright-tests`,
+        "-e",
+        `RECORD_REPLAY_RECORDING_ID_FILE=/playwright-tests/${tmpRecordingFile}`,
+        "-e",
+        `RECORD_REPLAY_SERVER=${server}`,
+        "-e",
+        "RECORD_ALL_CONTENT=1",
+        "-e",
+        "PLAYWRIGHT_HEADLESS=1",
+        ...envArgs,
+        "recordreplayinc/playwright:latest",
+        "bash",
+        `/playwright-tests/${tmpScriptFile}`,
+      ],
+      { stdio: "inherit" }
+    );
 
     if (fs.existsSync(tmpRecordingPath)) {
       fs.copyFileSync(tmpRecordingPath, gRecordingFile || "");
