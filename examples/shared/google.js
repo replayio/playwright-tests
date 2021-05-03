@@ -1,4 +1,7 @@
-async function loginToGoogle(email, password, { step, page }) {
+const password = process.env.TEST_REPLAY_PASSWORD;
+const email = "test@replay.io";
+
+async function loginToGoogle({ step, page }) {
   await step("logging into google", async () => {
     await page.click(
       ':is(button:has-text("Sign in with Google"), button:has-text("Continue with Google"))'

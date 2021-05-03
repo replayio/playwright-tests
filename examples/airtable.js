@@ -6,11 +6,7 @@ example("airtable", async (page, { step }) => {
     "https://airtable.com/tbl2B9XDcGl90oG58/viwA7GIBsYINpwH0O?blocks=hide"
   );
 
-  await loginToGoogle("test@replay.io", process.env.TEST_REPLAY_PASSWORD, {
-    step,
-    page,
-  });
-
+  await loginToGoogle({ step, page });
   await page.click("text=Views");
   await page.waitForTimeout(2000);
 

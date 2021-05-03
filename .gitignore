@@ -1,4 +1,5 @@
 node_modules
 browsers
 recordings.log
+metadata.log
 .env
