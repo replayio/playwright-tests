@@ -1,10 +1,10 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 require("dotenv").config();
 import * as fs from "fs";
 
 const API = "https://graphql.replay.io/v1/graphql";
 
-async function upload(name: any, query: any, variables: any) {
+async function upload(name, query, variables) {
   const headers = {};
   headers["x-hasura-admin-secret"] = process.env.HASURA_KEY;
 
@@ -25,7 +25,7 @@ async function upload(name: any, query: any, variables: any) {
   return body;
 }
 
-function lastLine(filename: any) {
+function lastLine(filename) {
   const text = fs.readFileSync(filename, "utf8").trim();
   const lines = text.split("\n");
   return lines[lines.length - 1];
