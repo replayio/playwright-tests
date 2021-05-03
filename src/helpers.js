@@ -77,31 +77,34 @@ const example = wrapped(async (cbk) => {
   const page = await context.newPage();
   const startTime = new Date();
   log("Browser launched");
+  let success;
 
-  try {
-    await action("Running example", async () => {
+  await action("Running example", async () => {
+    try {
       await cbk(page, bindPageActions(page));
-      await saveMetadata(page, startTime);
-    });
-  } catch (e) {
-    process.exit(1);
-  } finally {
-    // Adding a short delay after the script to allow space for trailing script
-    // execution
-    await page.waitForTimeout(100);
+      sucess = true;
+    } catch (e) {
+      success = false;
+    }
+    await saveMetadata(page, startTime, success);
+  });
 
-    await page.close();
-    await context.close();
-    await browser.close();
-  }
+  // Adding a short delay after the script to allow space for trailing script
+  // execution
+  await page.waitForTimeout(100);
+
+  await page.close();
+  await context.close();
+  await browser.close();
 });
 
-async function saveMetadata(page, startTime) {
+async function saveMetadata(page, startTime, success) {
   const last_screen = (await page.screenshot()).toString("base64");
+  const title = await page.title();
   const metadata = {
     url: await page.url(),
-    title: await page.title(),
-    recordingTitle: await page.title(),
+    title,
+    recordingTitle: `${success ? "" : "[FAILED] "} ${title}`,
     last_screen,
     duration: new Date() - startTime,
   };
