@@ -1,4 +1,5 @@
 const playwright = require("playwright");
+const fs = require("fs");
 require("dotenv").config();
 
 let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
@@ -74,14 +75,14 @@ const example = wrapped(async (cbk) => {
   const browser = await playwright[browserName].launch(launchOptions);
   const context = await browser.newContext();
   const page = await context.newPage();
-
+  const startTime = new Date();
   log("Browser launched");
 
   try {
-    await action(
-      "Running example",
-      async () => await cbk(page, bindPageActions(page))
-    );
+    await action("Running example", async () => {
+      await cbk(page, bindPageActions(page));
+      await saveMetadata(page, startTime);
+    });
   } catch (e) {
     process.exit(1);
   } finally {
@@ -94,6 +95,18 @@ const example = wrapped(async (cbk) => {
     await browser.close();
   }
 });
+
+async function saveMetadata(page, startTime) {
+  const last_screen = (await page.screenshot()).toString("base64");
+  const metadata = {
+    url: await page.url(),
+    title: await page.title(),
+    recordingTitle: await page.title(),
+    last_screen,
+    duration: new Date() - startTime,
+  };
+  fs.appendFileSync("./metadata.log", JSON.stringify(metadata) + "\n");
+}
 
 module.exports = {
   example,

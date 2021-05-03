@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { currentPlatform, spawnChecked } from "./utils";
+import { uploadMetadata } from "./src/metadata";
 
 const Usage = `
 Usage: ts-node run.ts options
@@ -213,6 +214,8 @@ ts-node playwright-tests/${test}
       RECORD_ALL_CONTENT: "1",
     },
   });
+
+  await uploadMetadata();
 }
 
 async function main() {
