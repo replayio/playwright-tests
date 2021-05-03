@@ -1,6 +1,6 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 require("dotenv").config();
-const fs = require("fs");
+import * as fs from "fs";
 
 const API = "https://graphql.replay.io/v1/graphql";
 
@@ -66,7 +66,7 @@ mutation UpdateTest(
 }    
 `;
 
-async function uploadMetadata() {
+export async function uploadMetadata() {
   const recordingId = lastLine("./recordings.log");
   const metadata = JSON.parse(lastLine("./metadata.log"));
 
@@ -85,5 +85,3 @@ async function uploadMetadata() {
     console.error("Failed to upload metadata", e);
   }
 }
-
-module.exports = { uploadMetadata };
