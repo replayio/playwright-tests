@@ -215,7 +215,7 @@ ts-node playwright-tests/${test}
     },
   });
 
-  await uploadMetadata();
+  await uploadMetadata(gRecordingFile);
 }
 
 async function main() {
