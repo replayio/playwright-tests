@@ -1,10 +1,10 @@
-import fetch from "node-fetch";
+const fetch = require("node-fetch");
 require("dotenv").config();
-import * as fs from "fs";
+const fs = require("fs");
 
 const API = "https://graphql.replay.io/v1/graphql";
 
-async function upload(name: any, query: any, variables: any) {
+async function upload(name, query, variables) {
   const headers = {
     "x-hasura-admin-secret": process.env.HASURA_KEY,
   };
@@ -26,7 +26,7 @@ async function upload(name: any, query: any, variables: any) {
   return body;
 }
 
-function lastLine(filename: any) {
+function lastLine(filename) {
   const text = fs.readFileSync(filename, "utf8").trim();
   const lines = text.split("\n");
   return lines[lines.length - 1];
@@ -67,7 +67,7 @@ mutation UpdateTest(
 }    
 `;
 
-export async function uploadMetadata() {
+async function uploadMetadata() {
   const recordingId = lastLine("./recordings.log");
   const metadata = JSON.parse(lastLine("./metadata.log"));
 
@@ -86,3 +86,5 @@ export async function uploadMetadata() {
     console.error("Failed to upload metadata", e);
   }
 }
+
+module.exports = { uploadMetadata }
