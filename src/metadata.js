@@ -82,6 +82,7 @@ async function uploadMetadata(gRecordingFile) {
 
   try {
     await upload(`UpdateTest`, UPDATE_TEST, variables);
+    console.log(`Uploaded Metadata for ${recordingId}`);
   } catch (e) {
     console.error("Failed to upload metadata", e);
   }
