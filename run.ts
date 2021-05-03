@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { currentPlatform, spawnChecked } from "./utils";
-import { uploadMetadata } from "./src/metadata";
+const { uploadMetadata } = require("./src/metadata");
 
 const Usage = `
 Usage: ts-node run.ts options
