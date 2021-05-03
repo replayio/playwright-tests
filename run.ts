@@ -65,7 +65,7 @@ const BrowserDir =
 
 // These will need updating when we move to a more recent version of playwright.
 const BrowserSubdirGecko = `${BrowserDir}/firefox-1238`;
-const BrowserSubdirChromium = `${BrowserDir}/chromium-844399`;
+const BrowserSubdirChromium = `${BrowserDir}/chromium-857950`;
 
 const BrowserSubdir = gChromium ? BrowserSubdirChromium : BrowserSubdirGecko;
 
@@ -101,7 +101,8 @@ function updateBrowser() {
   }
 
   if (gChromium && process.platform != "linux") {
-    throw new Error("NYI");
+    // NYI
+    return;
   }
 
   const subdirContents = gChromium ? "chrome-linux" : "firefox";
