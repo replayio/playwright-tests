@@ -67,8 +67,8 @@ mutation UpdateTest(
 }    
 `;
 
-async function uploadMetadata() {
-  const recordingId = lastLine("./recordings.log");
+async function uploadMetadata(gRecordingFile) {
+  const recordingId = lastLine(gRecordingFile);
   const metadata = JSON.parse(lastLine("./metadata.log"));
 
   const variables = {
