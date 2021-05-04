@@ -55,6 +55,7 @@ function bindPageActions(page) {
       console.log("Test Step:", ...extArgs);
     }, args);
   };
+
   const pageAction = wrapped(async (cbk) => await cbk(page, actions), pageLog);
   const pageStep = wrapped(
     async (cbk) => await cbk(page, actions),
@@ -76,16 +77,24 @@ const example = wrapped(async (cbk) => {
   const context = await browser.newContext();
   const page = await context.newPage();
   const startTime = new Date();
-  log("Browser launched");
-  let success;
+  const pageLog = (...args) => {
+    log(...args);
+    return page.evaluate((extArgs) => {
+      console.log("Test Step:", ...extArgs);
+    }, args);
+  };
+
+  pageLog("Browser launched");
+  let success = true;
 
   await action("Running example", async () => {
     try {
       await cbk(page, bindPageActions(page));
-      sucess = true;
     } catch (e) {
       success = false;
+      console.error(e);
     }
+    pageLog(`Test ${success ? "succeeded" : "failed"}`);
     await saveMetadata(page, startTime, success);
   });
 

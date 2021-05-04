@@ -215,7 +215,12 @@ ts-node playwright-tests/${test}
     },
   });
 
-  await uploadMetadata(gRecordingFile);
+  const recordingId = await uploadMetadata(gRecordingFile);
+  const replayHost = server.match(/.*dispatch\.(.*)/)[1];
+
+  console.log(
+    `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
+  );
 }
 
 async function main() {
