@@ -216,7 +216,7 @@ ts-node playwright-tests/${test}
   });
 
   const recordingId = await uploadMetadata(gRecordingFile);
-  const replayHost = server.match(/.*dispatch\.(.*)/)[1];
+  const replayHost = server.match(/.*dispatch\.(.*)/)![1];
 
   console.log(
     `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
