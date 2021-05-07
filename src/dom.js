@@ -1,9 +1,9 @@
 // Utility method that clicks the return value of an async function (e.g. nthMatch)
 const asyncClick = (cbk) => (...args) => cbk(...args).then((m) => m.click());
 
-function getBoundingClientRect(selector) {
+function getBoundingClientRect(selector, options) {
   return async (page) => {
-    const el = await page.waitForSelector(selector);
+    const el = await page.waitForSelector(selector, options);
     return await page.evaluate((e) => e.getBoundingClientRect().toJSON(), el);
   };
 }
@@ -19,7 +19,8 @@ function waitForFrameNavigated(url) {
       const fn = async (frame) => {
         const frameUrl = await frame.url();
         if (
-          url instanceof RegExp ? url.test(frameUrl) : frameUrl.includes(url)
+          !url ||
+          (url instanceof RegExp ? url.test(frameUrl) : frameUrl.includes(url))
         ) {
           page.off("framenavigated", fn);
           resolve(frame);
@@ -30,9 +31,27 @@ function waitForFrameNavigated(url) {
     });
 }
 
+function waitForFrameAttached(url) {
+  return (page) =>
+    new Promise((resolve) => {
+      const fn = async (frame) => {
+        const frameUrl = await frame.url();
+        if (
+          !url ||
+          (url instanceof RegExp ? url.test(frameUrl) : frameUrl.includes(url))
+        ) {
+          page.off("frameattached", fn);
+          resolve(frame);
+        }
+      };
+
+      page.on("frameattached", fn);
+    });
+}
 module.exports = {
   asyncClick,
   getBoundingClientRect,
   waitForTitleChange,
+  waitForFrameAttached,
   waitForFrameNavigated,
 };
