@@ -79,9 +79,9 @@ const example = wrapped(async (cbk) => {
   const startTime = new Date();
   const pageLog = (...args) => {
     log(...args);
-    return page.evaluate((extArgs) => {
+    page.evaluate((extArgs) => {
       console.log("Test Step:", ...extArgs);
-    }, args);
+    }, args).catch(e => {});
   };
 
   pageLog("Browser launched");
