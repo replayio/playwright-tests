@@ -1,4 +1,4 @@
-import { Page } from "playwright";
+import { Page } from "@recordreplay/playwright";
 import { waitForTime, MsPerSecond, randomElement, randomString } from "../utils";
 const { example } = require("../src/helpers");
 

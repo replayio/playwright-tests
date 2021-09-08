@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/RecordReplay/playwright-tests#readme",
   "dependencies": {
+    "@recordreplay/playwright": "1.10.2",
     "dotenv": "^8.2.0",
-    "node-fetch": "^2.6.1",
-    "playwright": "1.10.0"
+    "node-fetch": "^2.6.1"
   }
 }
