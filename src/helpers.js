@@ -15,13 +15,18 @@ const indent = (value) =>
     .map((l) => pad() + l)
     .join("\n");
 
-const log = (...args) => {
-  if (depth) {
-    console.log(pad().substr(1), ...args);
-  } else {
-    console.log(...args);
-  }
-};
+const _log =
+  (which) =>
+  (...args) => {
+    if (depth) {
+      console[which](new Date(), pad().substr(1), ...args);
+    } else {
+      console[which](new Date(), ...args);
+    }
+  };
+
+const log = _log("log");
+const error = _log("error");
 
 function wrapped(cbk, pageLog = log, inline = false) {
   const i = inline ? 0 : 1;
@@ -33,8 +38,7 @@ function wrapped(cbk, pageLog = log, inline = false) {
     } catch (e) {
       if (!e.handled) {
         e.handled = true;
-        console.error(indent(`🛑 Error in ${name}\n`));
-        console.error(indent(e.stack));
+        error(`🛑 Error in ${name}: ${e.message}`);
       }
 
       throw e;
@@ -79,9 +83,11 @@ const example = wrapped(async (cbk) => {
   const startTime = new Date();
   const pageLog = (...args) => {
     log(...args);
-    page.evaluate((extArgs) => {
-      console.log("Test Step:", ...extArgs);
-    }, args).catch(e => {});
+    page
+      .evaluate((extArgs) => {
+        console.log("Test Step:", ...extArgs);
+      }, args)
+      .catch((e) => {});
   };
 
   pageLog("Browser launched");
@@ -92,32 +98,44 @@ const example = wrapped(async (cbk) => {
       await cbk(page, bindPageActions(page));
     } catch (e) {
       success = false;
-      console.error(e);
+      error("Error:", e.message.split("\n")[0]);
     }
-    pageLog(`Test ${success ? "succeeded" : "failed"}`);
+    pageLog(
+      `${success ? "👍" : "💣"} Test ${success ? "succeeded" : "failed"}`
+    );
     await saveMetadata(page, startTime, success);
   });
 
-  // Adding a short delay after the script to allow space for trailing script
-  // execution
-  await page.waitForTimeout(100);
+  try {
+    // Adding a short delay after the script to allow space for trailing script
+    // execution
+    await page.waitForTimeout(100);
 
-  await page.close();
-  await context.close();
-  await browser.close();
+    await page.close();
+    await context.close();
+    await browser.close();
+  } catch (e) {
+    error("Error while shutting down browser:", e.message);
+  }
+
+  return success;
 });
 
 async function saveMetadata(page, startTime, success) {
-  const last_screen = (await page.screenshot()).toString("base64");
-  const title = await page.title();
-  const metadata = {
-    url: await page.url(),
-    title,
-    recordingTitle: `${success ? "" : "[FAILED] "} ${title}`,
-    last_screen,
-    duration: new Date() - startTime,
-  };
-  fs.appendFileSync("./metadata.log", JSON.stringify(metadata) + "\n");
+  try {
+    const last_screen = (await page.screenshot()).toString("base64");
+    const title = await page.title();
+    const metadata = {
+      url: await page.url(),
+      title,
+      recordingTitle: `${success ? "" : "[FAILED] "} ${title}`,
+      last_screen,
+      duration: new Date() - startTime,
+    };
+    fs.appendFileSync("./metadata.log", JSON.stringify(metadata) + "\n");
+  } catch (e) {
+    error("Unable to populate metadata from page:", e.message);
+  }
 }
 
 module.exports = {

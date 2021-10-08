@@ -202,25 +202,31 @@ ts-node playwright-tests/${test}
     driver = `${BrowserSubdir}/${currentPlatform()}-recordreplay.so`;
   }
 
-  spawnChecked("ts-node", [`${__dirname}/${test}`], {
-    stdio: "inherit",
-    env: {
-      ...process.env,
-      ...gEnvironment,
-      PLAYWRIGHT_BROWSERS_PATH: BrowserDir,
-      RECORD_REPLAY_DRIVER: driver,
-      RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
-      RECORD_REPLAY_SERVER: server,
-      RECORD_ALL_CONTENT: "1",
-    },
-  });
+  try {
+    spawnChecked("ts-node", [`${__dirname}/${test}`], {
+      stdio: "inherit",
+      env: {
+        ...process.env,
+        ...gEnvironment,
+        PLAYWRIGHT_BROWSERS_PATH: BrowserDir,
+        RECORD_REPLAY_DRIVER: driver,
+        RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
+        RECORD_REPLAY_SERVER: server,
+        RECORD_ALL_CONTENT: "1",
+      },
+    });
 
-  const recordingId = await uploadMetadata(gRecordingFile);
-  const replayHost = server.match(/.*dispatch\.(.*)/)![1];
+    const recordingId = await uploadMetadata(gRecordingFile);
+    const replayHost = server.match(/.*dispatch\.(.*)/)![1];
 
-  console.log(
-    `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
-  );
+    console.log(
+      new Date(),
+      `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
+    );
+  } catch (e) {
+    console.error(new Date(), "Test failed:", e.message);
+    process.exit(1);
+  }
 }
 
 async function main() {

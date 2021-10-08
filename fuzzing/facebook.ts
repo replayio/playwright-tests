@@ -7,7 +7,7 @@ if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASSWORD) {
   throw new Error("Facebook credentials not specified");
 }
 
-example("Facebook", async page => {
+example("Facebook", async (page: Page) => {
   await page.goto("https://facebook.com");
   await login(page);
 
