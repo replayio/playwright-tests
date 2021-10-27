@@ -1,3 +1,5 @@
+const env = require("dotenv").config();
+
 const PlaywrightTests = [
   { name: "examples/airbnb.js" },
   { name: "examples/airtable.js" },
@@ -24,6 +26,9 @@ const PlaywrightTests = [
   { name: "examples/unsplash.js" },
   { name: "examples/vscode.js" },
   { name: "examples/yelp.js" },
+  { name: "qawolf/facebook_create_and_delete_post.js", env },
+  { name: "qawolf/facebook_like_and_comment_on_post.js", env },
+  { name: "qawolf/facebook_view_friend_profile.js", env },
 ];
 
 module.exports = { PlaywrightTests };
