@@ -1,11 +1,12 @@
 const { assertElement, assertText } = require("qawolf");
 const faker = require("faker");
+require("dotenv").config();
 
-async function launch(
-  { browser: browserName, headless } = { headless: false }
-) {
+async function launch({ headless } = { headless: false }) {
   const playwright = require("@recordreplay/playwright");
-  const browser = await playwright[browserName || "chromium"].launch({
+  let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
+
+  const browser = await playwright[browserName].launch({
     headless,
   });
   const context = await browser.newContext();
