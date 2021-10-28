@@ -133,6 +133,7 @@ async function saveMetadata(page, startTime, success) {
       last_screen,
       duration: new Date() - startTime,
     };
+    console.log("Writing metadata to", getMetadataFile());
     fs.appendFileSync(getMetadataFile(), JSON.stringify(metadata) + "\n");
   } catch (e) {
     error("Unable to populate metadata from page:", e.message);
