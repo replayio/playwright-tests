@@ -224,7 +224,11 @@ ts-node playwright-tests/${test}
       `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
     );
   } catch (e) {
-    console.error(new Date(), "Test failed:", e.message);
+    const t = new Date();
+    console.error(t, "Test failed:", e.message);
+    if ("stach" in e && typeof e.stack === "string") {
+      e.stack.split("\n").forEach((s: string) => console.error(t, s));
+    }
     process.exit(1);
   }
 }
