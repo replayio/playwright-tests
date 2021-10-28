@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { currentPlatform, spawnChecked } from "./utils";
-const { uploadMetadata } = require("./src/metadata");
+const { uploadMetadata, setMetadataFile } = require("./src/metadata");
 
 const Usage = `
 Usage: ts-node run.ts options
@@ -38,6 +38,8 @@ for (let i = 2; i < process.argv.length; i++) {
     gUseContainer = true;
   } else if (arg == "--env") {
     gEnvironment[process.argv[++i]] = process.argv[++i];
+  } else if (arg === "--metadata") {
+    setMetadataFile(process.argv[++i]);
   } else {
     if (fs.existsSync(`${__dirname}/${arg}`)) {
       gTests.push(arg);
