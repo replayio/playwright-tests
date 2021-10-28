@@ -77,6 +77,12 @@ mutation UpdateTest(
 `;
 
 async function uploadMetadata(gRecordingFile) {
+  console.log(
+    "Uploading from recording file: ",
+    gRecordingFile,
+    "and metadata file",
+    gMetadataFile
+  );
   const recordingId = lastLine(gRecordingFile);
   const metadata = JSON.parse(lastLine(gMetadataFile));
 
