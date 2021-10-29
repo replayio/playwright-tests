@@ -1,4 +1,11 @@
-const { assertElement, assertNotElement, assertNotText, assertText, faker, logInToFacebook } = require("./helpers");
+const {
+  assertElement,
+  assertNotElement,
+  assertNotText,
+  assertText,
+  faker,
+  logInToFacebook,
+} = require("./helpers");
 
 (async () => {
   // log in to Facebook
