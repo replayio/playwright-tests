@@ -1,6 +1,5 @@
 const playwright = require("@recordreplay/playwright");
 const fs = require("fs");
-const { getMetadataFile } = require("./metadata");
 require("dotenv").config();
 
 let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
@@ -133,8 +132,11 @@ async function saveMetadata(page, startTime, success) {
       last_screen,
       duration: new Date() - startTime,
     };
-    console.log("Writing metadata to", getMetadataFile());
-    fs.appendFileSync(getMetadataFile(), JSON.stringify(metadata) + "\n");
+
+    let metadataFile =
+      process.env.RECORD_REPLAY_RECORDING_METADATA_FILE || "../metadata.log";
+    console.log("Writing metadata to", metadataFile);
+    fs.appendFileSync(metadataFile, JSON.stringify(metadata) + "\n");
   } catch (e) {
     error("Unable to populate metadata from page:", e.message);
   }

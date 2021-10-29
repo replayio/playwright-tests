@@ -3,15 +3,6 @@ require("dotenv").config();
 const fs = require("fs");
 
 const API = "https://graphql.replay.io/v1/graphql";
-let gMetadataFile = "./metadata.log";
-
-function setMetadataFile(path) {
-  gMetadataFile = path;
-}
-
-function getMetadataFile(path) {
-  return gMetadataFile;
-}
 
 async function upload(name, query, variables) {
   const headers = {
@@ -76,13 +67,14 @@ mutation UpdateTest(
 }    
 `;
 
-async function uploadMetadata(gRecordingFile) {
+async function uploadMetadata(gRecordingFile, gMetadataFile) {
   console.log(
-    "Uploading from recording file: ",
+    "Uploading from recording file ",
     gRecordingFile,
     "and metadata file",
     gMetadataFile
   );
+
   const recordingId = lastLine(gRecordingFile);
   const metadata = JSON.parse(lastLine(gMetadataFile));
 
@@ -104,4 +96,4 @@ async function uploadMetadata(gRecordingFile) {
   return recordingId;
 }
 
-module.exports = { uploadMetadata, getMetadataFile, setMetadataFile };
+module.exports = { uploadMetadata };

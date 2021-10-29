@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { currentPlatform, spawnChecked } from "./utils";
-const { uploadMetadata, setMetadataFile } = require("./src/metadata");
+const { uploadMetadata } = require("./src/metadata");
 
 const Usage = `
 Usage: ts-node run.ts options
@@ -19,6 +19,7 @@ When not running in a container, browsers are installed at $REPLAY_PLAYWRIGHT_BR
 
 let gNeedUpdate = false;
 let gRecordingFile: string | undefined;
+let gMetadataFile = "../metadata.log";
 
 // Container runs aren't supported with chromium yet.
 let gUseContainer =
@@ -39,7 +40,7 @@ for (let i = 2; i < process.argv.length; i++) {
   } else if (arg == "--env") {
     gEnvironment[process.argv[++i]] = process.argv[++i];
   } else if (arg === "--metadata") {
-    setMetadataFile(process.argv[++i]);
+    gMetadataFile = process.argv[++i];
   } else {
     if (fs.existsSync(`${__dirname}/${arg}`)) {
       gTests.push(arg);
@@ -213,12 +214,13 @@ ts-node playwright-tests/${test}
         PLAYWRIGHT_BROWSERS_PATH: BrowserDir,
         RECORD_REPLAY_DRIVER: driver,
         RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
+        RECORD_REPLAY_RECORDING_METADATA_FILE: gMetadataFile,
         RECORD_REPLAY_SERVER: server,
         RECORD_ALL_CONTENT: "1",
       },
     });
 
-    const recordingId = await uploadMetadata(gRecordingFile);
+    const recordingId = await uploadMetadata(gRecordingFile, gMetadataFile);
     const replayHost = server.match(/.*dispatch\.(.*)/)![1];
 
     console.log(
