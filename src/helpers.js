@@ -90,6 +90,14 @@ const example = wrapped(async (cbk) => {
       .catch((e) => {});
   };
 
+  function term() {
+    pageLog("SIGTERM Received. Closing browser");
+    // This doesn't forcibly close the browser so there may be lingering actions
+    // that have to complete (or timeout) before the browser closes.
+    browser.close();
+  }
+  process.on("SIGTERM", term);
+
   pageLog("Browser launched");
   let success = true;
 
@@ -117,6 +125,8 @@ const example = wrapped(async (cbk) => {
   } catch (e) {
     error("Error while shutting down browser:", e.message);
   }
+
+  process.off("SIGTERM", term);
 
   return success;
 });
