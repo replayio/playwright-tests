@@ -1,4 +1,11 @@
-const { assertElement, assertNotElement, assertNotText, assertText, faker, logInToFacebook } = require("./helpers");
+const {
+  assertElement,
+  assertNotElement,
+  assertNotText,
+  assertText,
+  faker,
+  logInToFacebook,
+} = require("./helpers");
 
 (async () => {
   // log in to Facebook
@@ -13,7 +20,7 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await page.click("text=All Friends");
 
   // assert friends are listed
-  await assertText(page, "1 Friend");
+  await assertText(page, "2 Friends");
   await assertText(page, "Mike Algdbbidiajhg Martinazzison");
 
   // view friend profile
@@ -39,5 +46,5 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await page.click('[alt="May be an image of 1 person, animal and nature"]');
   await assertElement(page, '[aria-label="Photo Viewer"]');
 
-  process.exit(0)
+  process.exit(0);
 })();
