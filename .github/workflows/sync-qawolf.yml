@@ -1,0 +1,33 @@
+name: Sync QA Wolf
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: sync tests and helpers
+        env:
+          QAWOLF_API_KEY: ${{ secrets.QAWOLF_API_KEY }}
+          QAWOLF_TEAM_ID: ${{ secrets.QAWOLF_TEAM_ID }}
+        run: |
+          cd .github/workflows/qawolf ; npm install ; cd ../../../
+          node ./.github/workflows/qawolf/sync.js
+
+      - name: setup git config
+        run: |
+          git config user.name "QA Wolf Bot"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          # Stage the file, commit and push
+          git add ./qawolf/*
+          git commit -am "QA Wolf sync"
+          git push
