@@ -16,10 +16,7 @@ Set $PLAYWRIGHT_HEADLESS to run tests with a headless browser.
 
 let gRecordingFile: string | undefined;
 let gMetadataFile = "../metadata.log";
-
-// Container runs aren't supported with chromium yet.
-let gUseContainer =
-  process.platform == "linux" && !process.env.PLAYWRIGHT_CHROMIUM;
+let gUseContainer = false;
 
 const gChromium = !!process.env.PLAYWRIGHT_CHROMIUM;
 
