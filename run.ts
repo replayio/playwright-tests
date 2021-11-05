@@ -14,7 +14,6 @@ Set $PLAYWRIGHT_CHROMIUM to use chromium.
 Set $PLAYWRIGHT_HEADLESS to run tests with a headless browser.
 `;
 
-let gNeedUpdate = false;
 let gRecordingFile: string | undefined;
 let gMetadataFile = "../metadata.log";
 
@@ -28,9 +27,7 @@ const gTests: string[] = [];
 const gEnvironment: Record<string, string> = {};
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i];
-  if (arg == "--update") {
-    gNeedUpdate = true;
-  } else if (arg == "--recordings") {
+  if (arg == "--recordings") {
     gRecordingFile = process.argv[++i];
   } else if (arg == "--container") {
     gUseContainer = true;
@@ -49,7 +46,7 @@ for (let i = 2; i < process.argv.length; i++) {
   }
 }
 
-if (!gNeedUpdate && !gTests.length) {
+if (!gTests.length) {
   console.log(Usage);
   process.exit(1);
 }
