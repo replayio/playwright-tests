@@ -227,10 +227,10 @@ ts-node playwright-tests/${test}
       new Date(),
       `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
     );
-  } catch (e) {
+  } catch (e: any) {
     const t = new Date();
     console.error(t, "Test failed:", e.message);
-    if ("stach" in e && typeof e.stack === "string") {
+    if ("stack" in e && typeof e.stack === "string") {
       e.stack.split("\n").forEach((s: string) => console.error(t, s));
     }
     process.exit(1);
