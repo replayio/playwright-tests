@@ -4,7 +4,7 @@ const { example } = require("../src/helpers");
 
 const selectors = {
   toggle: {
-    root: "button.view-toggle",
+    root: "[role='button'].view-toggle",
     get viewer() {
       return `${this.root} .option >> text="Viewer"`;
     },
@@ -49,7 +49,7 @@ const selectors = {
 
 example("Replay", async (page, { action, step }) => {
   await page.goto(
-    "http://localhost:8080/view?id=053e7a46-c023-4843-8787-9b0254c077bf"
+    "http://app.replay.io/recording/053e7a46-c023-4843-8787-9b0254c077bf"
   );
   await step("Switch to Devtools", () => page.click(selectors.toggle.devtools));
   await step("Select source", selectSource("doc_rr_basic.html"));
@@ -70,9 +70,10 @@ example("Replay", async (page, { action, step }) => {
     // to occur but an app fix or alternate approach may be warranted.
     await page.waitForTimeout(250);
     await step("Check breakpoint hits on line 11", checkBreakpointHits(11, 10));
-    await step("Add breakpoint on line 20", () =>
-      page.click(selectors.devtools.code.lineByNumber(20))
-    );
+    await step("Add breakpoint on line 20", async () => {
+      page.hover(selectors.devtools.code.lineByNumber(20));
+      page.click(selectors.devtools.code.lineByNumber(20));
+    });
     await waitForMessageCount(page, "updateNumber", 10);
     await step(
       "Update breakpoint",
@@ -142,10 +143,7 @@ function jumpToMessage(text) {
 
 function updateBreakpoint(existingText, newText) {
   return async (page) => {
-    await page.dispatchEvent(
-      `button:has(span:text("${existingText}"))`,
-      "click"
-    );
+    await page.dispatchEvent(`.expression >> text=${existingText}`, "click");
     await page.waitForTimeout(200);
 
     await page.keyboard.press("Meta+A");
