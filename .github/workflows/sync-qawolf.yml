@@ -18,7 +18,7 @@ jobs:
           QAWOLF_API_KEY: ${{ secrets.QAWOLF_API_KEY }}
           QAWOLF_TEAM_ID: ${{ secrets.QAWOLF_TEAM_ID }}
         run: |
-          cd .github/workflows/qawolf ; npm install ; cd ../../../
+          cd .github/workflows/qawolf ; npm install --no-package-lock ; cd ../../../
           node ./.github/workflows/qawolf/sync.js
 
       - name: setup git config
