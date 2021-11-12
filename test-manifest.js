@@ -1,4 +1,14 @@
+const fs = require("fs");
+const path = require("path");
 const env = require("dotenv").config();
+
+const qawolf = fs
+  .readdirSync(path.join(__dirname, "qawolf"))
+  .filter((name) => name.endsWith(".js"))
+  .map((name) => ({
+    name: `qawolf/${name}`,
+    env,
+  }));
 
 const PlaywrightTests = [
   { name: "examples/airbnb.js" },
@@ -26,9 +36,7 @@ const PlaywrightTests = [
   { name: "examples/unsplash.js" },
   { name: "examples/vscode.js" },
   { name: "examples/yelp.js" },
-  { name: "qawolf/facebook_create_and_delete_post.js", env },
-  { name: "qawolf/facebook_like_and_comment_on_post.js", env },
-  { name: "qawolf/facebook_view_friend_profile.js", env },
+  ...qawolf,
 ];
 
 module.exports = { PlaywrightTests };
