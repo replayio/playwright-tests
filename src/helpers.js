@@ -76,10 +76,21 @@ function bindPageActions(page) {
 
 const action = wrapped(async (cbk) => await cbk());
 
-const example = wrapped(async (cbk) => {
-  const browser = await playwright[browserName].launch(launchOptions);
-  const context = await browser.newContext();
-  const page = await context.newPage();
+const example = wrapped(async (...args) => {
+  let cbk, options;
+  if (typeof args[0] === "function") {
+    options = {};
+    cbk = args[0];
+  } else if (typeof args[1] === "function") {
+    options = args[0] || {};
+    cbk = args[1];
+  }
+  const browser = await playwright[browserName].launch({
+    ...launchOptions,
+    ...options.launch,
+  });
+  const context = await browser.newContext(options.context);
+  const page = await context.newPage(options.page);
   const startTime = new Date();
   const pageLog = (...args) => {
     log(...args);
