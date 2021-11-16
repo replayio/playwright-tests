@@ -25,6 +25,13 @@ const { assertElement, assertText } = require("qawolf");
     }, text);
   }
   
+  function getBoundingClientRect(selector, options) {
+    return async (page) => {
+      const el = await page.waitForSelector(selector, options);
+      return await page.evaluate((e) => e.getBoundingClientRect().toJSON(), el);
+    };
+  }
+  
   async function logInToFacebook(email, password) {
     // go to Facebook landing page
     const { context } = await launch({ slowMo: 500 });
@@ -41,6 +48,25 @@ const { assertElement, assertText } = require("qawolf");
   
     return { page };
   }
+  
+  function waitForFrameNavigated(url) {
+    return (page) =>
+      new Promise((resolve) => {
+        const fn = async (frame) => {
+          const frameUrl = await frame.url();
+          if (
+            !url ||
+            (url instanceof RegExp ? url.test(frameUrl) : frameUrl.includes(url))
+          ) {
+            page.off("framenavigated", fn);
+            resolve(frame);
+          }
+        };
+  
+        page.on("framenavigated", fn);
+      });
+  }
+  
   
   module.exports = {
     assertElement,

@@ -8,7 +8,7 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await page.click('[href="/me/"]');
   
   // create post
-  const postContent = faker.commerce.productDescription();
+  const postContent = `${faker.commerce.productDescription()} ${Date.now()}`;
   await page.click("text=What's on your mind?");
   await assertText(page, "Create Post");
   await page.fill(`[aria-label="What's on your mind?"]`, postContent);
