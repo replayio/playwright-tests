@@ -25,12 +25,20 @@ const { assertElement, assertText } = require("qawolf");
     }, text);
   }
   
+  function buildUrl(route = "/") {
+    const baseUrl = (process.env.URL || process.env.DEFAULT_URL || "https://app.replay.io/").replace(/\/$/, '');
+  
+    return `${baseUrl}${route}`;
+  }
+  
   function getBoundingClientRect(selector, options) {
     return async (page) => {
       const el = await page.waitForSelector(selector, options);
       return await page.evaluate((e) => e.getBoundingClientRect().toJSON(), el);
     };
   }
+  
+  async function logIn() {}
   
   async function logInToFacebook(email, password) {
     // go to Facebook landing page
