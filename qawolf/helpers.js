@@ -38,7 +38,17 @@ const { assertElement, assertText } = require("qawolf");
     };
   }
   
-  async function logIn() {}
+  async function logIn() {
+    // log in by setting API key as HTTP header
+    const { browser, context } = await launch();
+    await context.setExtraHTTPHeaders({
+      Authorization: `Bearer ${process.env.USER_1_API_KEY}`
+    });
+    const page = await context.newPage();
+    await page.goto(buildUrl("/"));
+  
+    return { browser, context, page };
+  }
   
   async function logInToFacebook(email, password) {
     // go to Facebook landing page
