@@ -26,7 +26,6 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await page.click('[aria-label="Close"]');
   
   // view user photos
-  await assertNotElement(page, '[aria-label="Close"]');
   await assertText(page, "Find Friends");
   await page.click("text=See All Photos");
   await assertText(page, "Mike's Photos");

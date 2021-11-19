@@ -15,7 +15,7 @@ const { assertElement, assertText } = require("qawolf");
   
   async function assertNotElement(page, element) {
     return page.waitForFunction(element => {
-      return !document.body.innerText.includes(element);
+      return !document.querySelector(element);
     }, element);
   }
   
