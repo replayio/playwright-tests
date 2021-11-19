@@ -47,48 +47,65 @@ const selectors = {
   },
 };
 
-example("Replay", async (page, { action, step }) => {
-  await page.goto(
-    "http://app.replay.io/recording/053e7a46-c023-4843-8787-9b0254c077bf"
-  );
-  await step("Switch to Devtools", () => page.click(selectors.toggle.devtools));
-  await step("Select source", selectSource("doc_rr_basic.html"));
+const URL = process.env.RECORD_REPLAY_APP_URL || "https://app.replay.io";
 
-  // We have to hover and check for breakpoint hits first. Clicking on the
-  // breakpoint element first leads to the logpoint being cleared out by the
-  // devtools hover logic that runs afterwards.
-  //
-  // See https://github.com/RecordReplay/devtools/issues/1814
-  //
-  // There is a second problem where playwight sometimes hover/clicks on line 19
-  // instead of line 20. If it hovers on line 19 and then clicks on line 20 then
-  // the test will not finish.
-
-  await action("Test breakpoints", async (page, { step }) => {
-    // TODO: I _think_ the line hover is missed because the listener is attached
-    // in an effect that hasn't fired yet. This brief delay allows time for that
-    // to occur but an app fix or alternate approach may be warranted.
-    await page.waitForTimeout(250);
-    await step("Check breakpoint hits on line 11", checkBreakpointHits(11, 10));
-    await step("Add breakpoint on line 20", async () => {
-      page.hover(selectors.devtools.code.lineByNumber(20));
-      page.click(selectors.devtools.code.lineByNumber(20));
-    });
-    await waitForMessageCount(page, "updateNumber", 10);
-    await step(
-      "Update breakpoint",
-      updateBreakpoint("updateNumber", '"hello", number')
+example(
+  "Replay",
+  process.env.RECORD_REPLAY_API_KEY
+    ? {
+        context: {
+          extraHTTPHeaders: {
+            Authorization: `Bearer ${process.env.RECORD_REPLAY_API_KEY}`,
+          },
+        },
+      }
+    : undefined,
+  async (page, { action, step }) => {
+    await page.goto(`${URL}/recording/053e7a46-c023-4843-8787-9b0254c077bf`);
+    await step("Switch to Devtools", () =>
+      page.click(selectors.toggle.devtools)
     );
-  });
+    await step("Select source", selectSource("doc_rr_basic.html"));
 
-  await step("Jump to Hello 7", jumpToMessage("hello 7"));
-  await step("Switch to pause view", () =>
-    page.click(selectors.toolbar.pauseInfo)
-  );
+    // We have to hover and check for breakpoint hits first. Clicking on the
+    // breakpoint element first leads to the logpoint being cleared out by the
+    // devtools hover logic that runs afterwards.
+    //
+    // See https://github.com/RecordReplay/devtools/issues/1814
+    //
+    // There is a second problem where playwight sometimes hover/clicks on line 19
+    // instead of line 20. If it hovers on line 19 and then clicks on line 20 then
+    // the test will not finish.
 
-  // await waitForScopeNode(page, "<this>: Window");
-  // await waitForMessageCount(page, "42", 1);
-});
+    await action("Test breakpoints", async (page, { step }) => {
+      // TODO: I _think_ the line hover is missed because the listener is attached
+      // in an effect that hasn't fired yet. This brief delay allows time for that
+      // to occur but an app fix or alternate approach may be warranted.
+      await page.waitForTimeout(250);
+      await step(
+        "Check breakpoint hits on line 11",
+        checkBreakpointHits(11, 10)
+      );
+      await step("Add breakpoint on line 20", async () => {
+        page.hover(selectors.devtools.code.lineByNumber(20));
+        page.click(selectors.devtools.code.lineByNumber(20));
+      });
+      await waitForMessageCount(page, "updateNumber", 10);
+      await step(
+        "Update breakpoint",
+        updateBreakpoint("updateNumber", '"hello", number')
+      );
+    });
+
+    await step("Jump to Hello 7", jumpToMessage("hello 7"));
+    await step("Switch to pause view", () =>
+      page.click(selectors.toolbar.pauseInfo)
+    );
+
+    // await waitForScopeNode(page, "<this>: Window");
+    // await waitForMessageCount(page, "42", 1);
+  }
+);
 
 function selectSource(url) {
   return async (page) => {
