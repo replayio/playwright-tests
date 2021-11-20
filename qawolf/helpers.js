@@ -47,6 +47,9 @@ const { assertElement, assertText } = require("qawolf");
     const page = await context.newPage();
     await page.goto(buildUrl("/"));
   
+    // go to your library
+    await page.click("text=Your Library");
+  
     return { browser, context, page };
   }
   

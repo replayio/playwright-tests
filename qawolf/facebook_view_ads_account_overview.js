@@ -18,11 +18,11 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   
   // expand sidebar
   await page.click("text=Expand​");
-  await assertText(page, "Ad Account Settings");
+  await page.waitForSelector("text=Ad Account Settings")
   
   // collapse sidebar
   await page.click("text=Collapse​");
-  await assertNotText(page, "Ad Account Settings");
+  await assertNotText(page, "Ad account settings");
 
   process.exit();
 });
