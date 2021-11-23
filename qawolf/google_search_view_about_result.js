@@ -4,7 +4,7 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   // go to google
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://google.com');
+  await page.goto('https://www.google.com');
   
   // search
   await page.fill('input[aria-label="Search"]', "site:wikipedia.org time travel debugging");
