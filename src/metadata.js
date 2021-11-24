@@ -76,18 +76,18 @@ async function uploadMetadata(gRecordingFile, gMetadataFile) {
   );
 
   const recordingId = lastLine(gRecordingFile);
-  const metadata = JSON.parse(lastLine(gMetadataFile));
-
-  const variables = {
-    recording_id: recordingId,
-    id: recordingId,
-    workspace_id: process.env.WORKSPACE_ID,
-    user_id: process.env.USER_ID,
-    last_screen_mime_type: "image/jpeg",
-    ...metadata,
-  };
-
   try {
+    const metadata = JSON.parse(lastLine(gMetadataFile));
+
+    const variables = {
+      recording_id: recordingId,
+      id: recordingId,
+      workspace_id: process.env.WORKSPACE_ID,
+      user_id: process.env.USER_ID,
+      last_screen_mime_type: "image/jpeg",
+      ...metadata,
+    };
+
     await upload(`UpdateTest`, UPDATE_TEST, variables);
   } catch (e) {
     console.error("Failed to upload metadata", e);
