@@ -11,7 +11,7 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await page.fill('[data-testid="structured-search-input-field-query"]', "tahoe");
   await page.click('[data-testid="structured-search-input-field-query-panel"] >> text=Tahoe');
   await page.click(':text("Search"):right-of([data-testid="structured-search-input-field-guests-button"])');
-  await assertText(page, "Stays in");
+  await page.waitForSelector("text=stays in");
   await assertText(page, "Lake Tahoe");
   
   // filter by price

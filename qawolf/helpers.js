@@ -31,6 +31,18 @@ const { assertElement, assertText } = require("qawolf");
     return `${baseUrl}${route}`;
   }
   
+  async function deleteTeam({ page }) {
+    // delete team from settings
+    await page.click("text=Delete Team");
+    await page.click("button:has-text('Delete this team')");
+  
+    // assert confirm modal appears
+    await assertText(page, "Unexpected bad things will happen if you don't read this!");
+  
+    // delete anyway
+    await page.click("button:has-text('Delete team')");
+  }
+  
   function getBoundingClientRect(selector, options) {
     return async (page) => {
       const el = await page.waitForSelector(selector, options);
@@ -70,6 +82,12 @@ const { assertElement, assertText } = require("qawolf");
     await assertElement(page, '[aria-label="Account"]');
   
     return { page };
+  }
+  
+  function parseInviteUrl({ text }) {
+    const inviteUrl = text.match(/Accept invitation: \S+/)[0].split("Accept invitation: ")[1];
+  
+    return inviteUrl;
   }
   
   function waitForFrameNavigated(url) {
