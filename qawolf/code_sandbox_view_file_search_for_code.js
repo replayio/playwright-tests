@@ -1,4 +1,4 @@
-const { assertElement, assertNotElement, assertNotText, assertText, faker, logInToFacebook } = require("./helpers");
+const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   const { context } = await launch();
@@ -20,4 +20,4 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await assertText(page, 'App.js\nimport { useState } from "react";\nconst [isOn, setIsOn] = useState(false);');
 
   process.exit();
-});
+})();
