@@ -5,6 +5,25 @@ import _ from "lodash";
 const authorization = process.env.QAWOLF_API_KEY;
 const teamId = process.env.QAWOLF_TEAM_ID;
 
+const HELPERS = [
+  // library
+  "assertElement",
+  "assertText",
+  "faker",
+  "launch",
+
+  // helpers
+  "assertNotElement",
+  "assertNotText",
+  "buildUrl",
+  "deleteTeam",
+  "getBoundingClientRect",
+  "logIn",
+  "logInToFacebook",
+  "parseInviteUrl",
+  "waitForFrameNavigated",
+];
+
 function formatHelpers(code) {
   return `const { assertElement, assertText } = require("qawolf");
   const faker = require("faker");
@@ -23,25 +42,18 @@ function formatHelpers(code) {
   
 ${code.replace(/^/gm, "  ")}
   
-  module.exports = {
-    assertElement,
-    assertNotElement,
-    assertNotText,
-    assertText,
-    faker,
-    logInToFacebook,
-  };
+  module.exports = { ${HELPERS.join(",")} };
   `;
 }
 
 function formatTest(code) {
-  return `const { assertElement, assertNotElement, assertNotText, assertText, faker, logInToFacebook } = require("./helpers");
+  return `const { ${HELPERS.join(",")} } = require("./helpers");
 
 (async () => {
 ${code.replace(/^/gm, "  ")}
 
   process.exit();
-});`;
+})();`;
 }
 
 function hasTag(test, name) {
