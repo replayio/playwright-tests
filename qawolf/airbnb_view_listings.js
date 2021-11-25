@@ -8,6 +8,7 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await assertText(page, "Become a Host");
   
   // search for tahoe
+  await page.waitForTimeout(3000);
   await page.fill('[data-testid="structured-search-input-field-query"]', "tahoe");
   await page.click('[data-testid="structured-search-input-field-query-panel"] >> text=Tahoe');
   await page.click(':text("Search"):right-of([data-testid="structured-search-input-field-guests-button"])');
