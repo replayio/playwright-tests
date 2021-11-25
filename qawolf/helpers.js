@@ -109,12 +109,5 @@ const { assertElement, assertText } = require("qawolf");
   }
   
   
-  module.exports = {
-    assertElement,
-    assertNotElement,
-    assertNotText,
-    assertText,
-    faker,
-    logInToFacebook,
-  };
+  module.exports = { assertElement,assertText,faker,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated };
   

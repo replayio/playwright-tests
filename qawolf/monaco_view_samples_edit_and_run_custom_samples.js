@@ -1,4 +1,4 @@
-const { assertElement, assertNotElement, assertNotText, assertText, faker, logInToFacebook } = require("./helpers");
+const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // helpers
@@ -93,4 +93,4 @@ const { assertElement, assertNotElement, assertNotText, assertText, faker, logIn
   await assertText(frame, "Hello", {selector: ".view-line >> span"})
 
   process.exit();
-});
+})();
