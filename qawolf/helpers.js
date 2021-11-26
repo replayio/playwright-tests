@@ -54,7 +54,7 @@ const { assertElement, assertText } = require("qawolf");
     const userNumber = options.userId || 1;
   
     // log in by setting API key as HTTP header
-    const { browser, context } = await launch();
+    const { browser, context } = await launch({ permissions: ["clipboard-read", "clipboard-write"] });
     await context.setExtraHTTPHeaders({
       Authorization: `Bearer ${process.env[`USER_${userNumber}_API_KEY`]}`
     });
@@ -79,7 +79,7 @@ const { assertElement, assertText } = require("qawolf");
     await page.click('[data-testid="royal_login_button"]');
   
     // wait for log in to succeed
-    await assertElement(page, '[aria-label="Account"]');
+    await assertElement(page, '[aria-label="Facebook"]');
   
     return { page };
   }

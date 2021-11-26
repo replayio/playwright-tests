@@ -10,7 +10,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // search for a user
   await page.fill('[aria-label="Search Facebook"]', "Mike");
   await assertText(page, "Mike Algdbbidiajhg Martinazzison");
-  await page.keyboard.press("Enter");
+  await page.click("text=Search for mike");
   await page.waitForSelector("text=Search Results");
   
   // view posts

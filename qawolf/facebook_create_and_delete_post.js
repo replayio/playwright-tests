@@ -10,12 +10,12 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // create post
   const postContent = `${faker.commerce.productDescription()} ${Date.now()}`;
   await page.click("text=What's on your mind?");
-  await assertText(page, "Create Post");
+  await page.waitForSelector("text=Create post");
   await page.fill(`[aria-label="What's on your mind?"]`, postContent);
   await page.click('[aria-label="Post"]');
   
   // assert post created
-  await assertText(page, "Just now");
+  await assertElement(page, '[aria-label="Just now"]');
   await assertText(page, postContent);
   
   // delete post
