@@ -17,13 +17,13 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   if (turnOnToggle) turnOnToggle.click();
   
   // toggle campaign off
-  await page.click('[aria-checked="true"]');
-  await page.hover('#statusChangeNuxRoot [role="switch"]');
+  await page.uncheck('[data-visualcompletion="ignore"] [type="checkbox"]');
+  await page.hover('[data-visualcompletion="ignore"] [type="checkbox"]');
   await assertText(page, "Turn on campaign");
   
   // toggle campaign on
-  await page.click('#statusChangeNuxRoot [role="switch"]');
-  await page.hover('#statusChangeNuxRoot [role="switch"]');
+  await page.check('[data-visualcompletion="ignore"] [type="checkbox"]');
+  await page.hover('[data-visualcompletion="ignore"] [type="checkbox"]');
   await assertText(page, "Turn off campaign");
 
   process.exit();
