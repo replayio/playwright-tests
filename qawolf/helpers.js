@@ -86,6 +86,7 @@ const { assertElement, assertText } = require("qawolf");
   
   function parseInviteUrl({ text }) {
     const inviteUrl = text.match(/Accept invitation: \S+/)[0].split("Accept invitation: ")[1];
+    console.log("INVITE URL", inviteUrl);
   
     return inviteUrl;
   }
