@@ -54,7 +54,7 @@ const { assertElement, assertText } = require("qawolf");
     const userNumber = options.userId || 1;
   
     // log in by setting API key as HTTP header
-    const { browser, context } = await launch({ permissions: ["clipboard-read", "clipboard-write"] });
+    const { browser, context } = await launch({ permissions: ["clipboard-read", "clipboard-write"], acceptDownloads: true });
     await context.setExtraHTTPHeaders({
       Authorization: `Bearer ${process.env[`USER_${userNumber}_API_KEY`]}`
     });
