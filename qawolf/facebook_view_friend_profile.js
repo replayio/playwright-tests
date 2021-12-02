@@ -17,7 +17,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click("text=Mike Algdbbidiajhg Martinazzison");
   await assertText(page, "Intro");
   await page.evaluate(() => window.scrollTo(0, 500)); // scroll down
-  await assertText(page, "See All Friends");
+  await page.waitForSelector("text=See all friends");
   
   // view post image
   await page.click('[alt="May be an image of animal and nature"]');

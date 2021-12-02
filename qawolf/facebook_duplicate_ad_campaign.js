@@ -24,8 +24,12 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await assertText(page, "Do you want to delete the campaign?");
   await page.click("text=CancelDelete >> text=Delete");
   
-  // assert redirected to campaigns
-  await assertText(page, "Ad Sets for");
+  // navigate to campaigns
+  await page.click("text=Close​");
+  await page.click("text=ClosePublish draft items >> text=Close");
+  
+  // assert navigated to campaigns
+  await assertText(page, "Campaigns");
 
   process.exit();
 })();

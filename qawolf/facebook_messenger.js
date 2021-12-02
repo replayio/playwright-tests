@@ -19,8 +19,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // send message
   const message = faker.hacker.phrase();
   await page.fill('[aria-label="Message"]', message);
-  await page.click('[aria-label="Press Enter to send"]');
-  
+  await page.click('[aria-label="Press enter to send"]');
   // react to message with emoji
   await page.hover(`[data-testid="message-container"] >> text=${message}`);
   await page.click('[data-testid="message-container"] [aria-label="React"]');
