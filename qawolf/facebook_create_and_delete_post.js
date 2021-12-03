@@ -25,7 +25,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
       const deleteHandle = await post.$('[aria-label="Actions for this post"]');
       await deleteHandle.click();
       await page.click("text=Move to trash");
-      await assertText(page, "Move to Your Trash?");
+      await page.waitForSelector("text=Move to Your Trash?");
       await page.click('[aria-label="Move"]');
     }
   }
@@ -44,7 +44,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // delete post
   await page.click('[aria-label="Actions for this post"]');
   await page.click("text=Move to trash");
-  await assertText(page, "Move to Your Trash?");
+  await page.waitForSelector("text=Move to Your Trash?");
   await page.click('[aria-label="Move"]');
   
   // assert post deleted

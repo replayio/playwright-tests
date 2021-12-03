@@ -29,7 +29,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click("text=Next");
   
   // preview campaign
-  await assertText(page, "Ad Setup");
+  await assertText(page, "Ad");
   
   // close campaign
   await page.mouse.move(30, 30);

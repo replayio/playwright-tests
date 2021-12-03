@@ -15,7 +15,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // duplicate campaign
   await page.check('[role="presentation"] [type="checkbox"]');
   await page.click("#pe_toolbar >> text=Duplicate");
-  await assertText(page, "Duplicate Your Campaign");
+  await page.waitForSelector("text=Duplicate Your Campaign");
   await page.click("#pe_duplicate_create_button");
   
   // delete duplicate campaign
