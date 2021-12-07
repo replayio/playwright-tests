@@ -10,7 +10,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await assertText(page, "Sign In");
   
   // navigate to products
-  await page.click("text=Accessories");
+  await page.hover("text=Accessories");
   await page.click("text=Shop Socks");
   
   // close modal pop up
@@ -22,8 +22,6 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   
   // get product title
   var productTitle = await getValue(page, ".summary-component h1");
-  // TODO: zombie console logs
-  console.log(productTitle)
   
   // add to cart
   await page.click('[aria-label="Add product to your shopping cart"]');

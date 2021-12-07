@@ -13,14 +13,14 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click('.notion-topbar >> text="Search"');
   await page.fill('[type="text"]', "help");
   
-  // assert serach option
-  await assertText(page, "Troubleshooting", { selector: ".search-query-result-item" });
+  // assert search option
+  await assertText(page, "Console", { selector: ".search-query-result-item" });
   
   // navigate to search results
-  await page.click(".search-query-result-item:has-text('Troubleshooting')");
+  await page.click(".search-query-result-item:has-text('Console')");
   
   // assert search results
-  await assertText(page, "Troubleshooting ", { selector: '[placeholder="Untitled"]' });
+  await assertText(page, "Displaying Events");
 
   process.exit();
 })();
