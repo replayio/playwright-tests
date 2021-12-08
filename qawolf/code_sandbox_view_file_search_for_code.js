@@ -3,7 +3,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://codesandbox.io/s/0d68e?file=/src/App.js');
+  await page.goto('https://codesandbox.io/s/0d68e?file=/src/App.js', {timeout: 45 * 1000});
   
   // navigate to index.js
   await page.click("text=index.js");
