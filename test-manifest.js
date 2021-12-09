@@ -2,9 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const env = require("dotenv").config();
 
+const ignoreList = ["helpers.js"];
+
 const qawolf = fs
   .readdirSync(path.join(__dirname, "qawolf"))
-  .filter((name) => name.endsWith(".js"))
+  .filter((name) => name.endsWith(".js") && !ignoreList.includes(name))
   .map((name) => ({
     name: `qawolf/${name}`,
     env,
