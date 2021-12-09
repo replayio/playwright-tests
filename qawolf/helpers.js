@@ -8,6 +8,7 @@ const { assertElement, assertText } = require("qawolf");
   
     const browser = await playwright[browserName].launch({
       headless,
+      timeout: 60000,
     });
     const context = await browser.newContext();
     return { browser, context };

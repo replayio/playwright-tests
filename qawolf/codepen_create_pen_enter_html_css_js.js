@@ -67,8 +67,8 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // assert JS
   await page.waitForTimeout(4000);
   var frame = page.frame({ name: "CodePen" });
-  const output = await frame.$('h1');
-  assert(await output.innerText() === "Updated by JS");
+  const h1output = await frame.$('h1');
+  assert(await h1output.innerText() === "Updated by JS");
 
   process.exit();
 })();
