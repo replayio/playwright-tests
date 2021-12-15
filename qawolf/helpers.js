@@ -68,6 +68,7 @@ const { assertElement, assertText } = require("qawolf");
     return { browser, context, page };
   }
   
+  
   async function logInToFacebook(email, password) {
     // go to Facebook landing page
     const { context } = await launch({ slowMo: 500 });
