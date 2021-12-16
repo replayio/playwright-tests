@@ -17,6 +17,7 @@ Set $PLAYWRIGHT_HEADLESS to run tests with a headless browser.
 let gRecordingFile: string | undefined;
 let gMetadataFile = "../metadata.log";
 let gUseContainer = false;
+let gRecordTest = !!process.env.RECORD_TEST;
 
 const gChromium = !!process.env.PLAYWRIGHT_CHROMIUM;
 
@@ -115,28 +116,36 @@ ts-node playwright-tests/${test}
     return;
   }
 
+  const startTime = +new Date();
   try {
     spawnChecked("ts-node", [`${__dirname}/${test}`], {
       stdio: "inherit",
       env: {
         ...process.env,
         ...gEnvironment,
+        RECORD_TEST: gRecordTest ? "1" : "0",
         RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
         RECORD_REPLAY_RECORDING_METADATA_FILE: gMetadataFile,
         RECORD_REPLAY_SERVER: server,
         RECORD_ALL_CONTENT: "1",
       },
     });
-
-    const recordingId = await uploadMetadata(gRecordingFile, gMetadataFile);
-    const replayHost = server.match(/.*dispatch\.(.*)/)![1];
-
+    const duration = +new Date() - +startTime;
     console.log(
-      new Date(),
-      `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
+      "test-result",
+      JSON.stringify({
+        test,
+        success: true,
+        isRecording: gRecordTest,
+        duration: Math.round(duration / 1000),
+      })
     );
   } catch (e: any) {
-    const t = new Date();
+    const t = +new Date();
+    console.log(
+      "test-result",
+      JSON.stringify({ test, success: false, duration: t - startTime, isRecording: gRecordTest })
+    );
     console.error(t, "Test failed:", e.message);
     if ("stack" in e && typeof e.stack === "string") {
       e.stack.split("\n").forEach((s: string) => console.error(t, s));

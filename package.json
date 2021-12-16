@@ -21,6 +21,7 @@
     "dotenv": "^8.2.0",
     "faker": "^5.5.3",
     "node-fetch": "^2.6.1",
+    "playwright": "^1.17.1",
     "qawolf": "^2.6.1"
   }
 }
