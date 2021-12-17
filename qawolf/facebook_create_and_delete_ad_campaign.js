@@ -18,7 +18,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   
   // rename campaign
   const campaignName = faker.commerce.productName();
-  await assertText(page, "Campaign Name");
+  await page.waitForSelector("text=Campaign Name");
   await page.fill('[placeholder="Enter your campaign name here..."]', campaignName);
   await page.click("text=Next");
   
