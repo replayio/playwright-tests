@@ -122,7 +122,7 @@ async function sync() {
   const tests = await queryTests();
 
   const promises = tests.map(async (test) => {
-    if (!hasTag(test, "Example")) return;
+    if (!hasTag(test, "CI") || !hasTag(test, "Example")) return;
 
     const testCode = await queryFileContent(`test.${test.id}`);
     await writeFile(`${_.snakeCase(test.name)}.js`, formatTest(testCode));
