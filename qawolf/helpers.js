@@ -1,9 +1,13 @@
 const { assertElement, assertText } = require("qawolf");
   const faker = require("faker");
   require("dotenv").config();
+  const isRecording = process.env.RECORD_TEST === "1";
   
   async function launch({ headless } = { headless: false }) {
-    const playwright = require("@recordreplay/playwright");
+    const playwright = isRecording
+      ? require("@recordreplay/playwright")
+      : require("playwright");
+
     let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
   
     const browser = await playwright[browserName].launch({
@@ -71,7 +75,8 @@ const { assertElement, assertText } = require("qawolf");
   
   async function logInToFacebook(email, password) {
     // go to Facebook landing page
-    const { context } = await launch({ slowMo: 500 });
+    const options = isRecording ? { headless: false } : { slowMo: 500, headless: false }
+    const { context } = await launch(options);
     const page = await context.newPage();
     await page.goto('https://www.facebook.com');
   
