@@ -8,10 +8,15 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   
   // search listings
   await page.click("text=Buy");
-  await page.click('[type="button"]:has-text("Search")');
+  await page.waitForTimeout(1000);
+  await page.fill('[placeholder="Enter location"]', "Zurich");
+  await page.waitForTimeout(1000);
+  await page.click("text=Zürich");
+  await page.waitForTimeout(1000);
+  await page.click('button.filter');
   
   // assert search listings
-  await assertText(page, "Houses & Apartments For Sale Switzerland");
+  await assertText(page, "Houses & Apartments For Sale in Zürich");
   
   // filter by most recent
   await page.click("text=Our recommendations");

@@ -15,7 +15,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click("text=Test Results");
   
   // assert navigate to test results
-  await assertText(page, "All specs are complete!");
+  await assertText(page, "Execution order");
   
   // open spec
   await page.click(".test-results__test-result");
