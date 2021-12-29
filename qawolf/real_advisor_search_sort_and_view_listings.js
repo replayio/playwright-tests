@@ -26,6 +26,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await assertText(page, "Most recent");
   
   // click first listing
+  await page.waitForTimeout(3000);
   await page.click('[class$=AggregatesListings] [class$=AggregatesListingCard] a');
   
   // assert listing
