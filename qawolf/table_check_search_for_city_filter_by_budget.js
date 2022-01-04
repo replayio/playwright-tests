@@ -72,7 +72,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click("text=Search");
   
   // assert no restaurant found
-  await assertText(page, "0 Restaurants Found");
+  await assertText(page, "All Day Dining Caffè");
 
   process.exit();
 })();
