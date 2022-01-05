@@ -31,7 +31,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click('.ReactModalPortal a[href^="/s"]');
   
   // assert results are different after selecing tag
-  await assertNotText(page, "Trees", { selector: '[data-test="page-header-title"]' });
+  await assertText(page, "Whistler, canada", { selector: '[data-test="page-header-title"]' });
 
   process.exit();
 })();
