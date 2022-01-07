@@ -14,16 +14,16 @@ const { assertElement, assertText } = require("qawolf");
     return { browser, context };
   }
   
-  async function assertNotElement(page, element) {
+  async function assertNotElement(page, element, options) {
     return page.waitForFunction(element => {
       return !document.querySelector(element);
-    }, element);
+    }, element, options);
   }
   
-  async function assertNotText(page, text) {
+  async function assertNotText(page, text, options) {
     return page.waitForFunction(text => {
       return !document.body.innerText.includes(text);
-    }, text);
+    }, text, options);
   }
   
   function buildUrl(route = "/") {
