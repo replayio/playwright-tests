@@ -3,7 +3,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://firebugs.dev/');
+  await page.goto('https://firebugs.dev/', { timeout: 120 * 1000 });
   
   // assert data loaded
   await assertNotText(page, "No results found");

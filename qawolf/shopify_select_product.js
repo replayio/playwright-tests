@@ -10,7 +10,8 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await assertText(page, 'CREDENZA');
   await assertNotText(page, 'VINTAGE MUSHROOM PRINT');
   
-  // go to page 2
+  // go to page 3
+  await page.click("text=>");
   await page.click("text=>");
   
   // assert next page loaded

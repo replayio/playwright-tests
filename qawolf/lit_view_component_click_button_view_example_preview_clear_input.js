@@ -20,7 +20,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click(selectors.drawer.sampleByPath("examples/full-component"));
   
   // grab preview frame and button
-  var frame = await (await page.waitForSelector('[title="Project preview"]')).contentFrame();
+  var frame = await (await page.waitForSelector('[title="Project preview"]', { timeout: 120 * 1000 })).contentFrame();
   const buttonText = await frame.$('my-element >> span.planet');
   
   // assert button text
