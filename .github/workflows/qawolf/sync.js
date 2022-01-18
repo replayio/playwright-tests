@@ -123,13 +123,18 @@ async function writeFile(name, content) {
 }
 
 async function sync() {
-  const helpersCode = await queryFileContent(`helpers.${teamId}`);
-  await writeFile("helpers.js", formatHelpers(helpersCode));
+  // clear directory to remove old test files
+  await fs.rmdir("qawolf", { recursive: true });
+  await fs.mkdir("qawolf");
 
+  // copy getInbox helper
   await fs.copyFile(
     ".github/workflows/qawolf/getInbox.js",
     "qawolf/getInbox.js"
   );
+
+  const helpersCode = await queryFileContent(`helpers.${teamId}`);
+  await writeFile("helpers.js", formatHelpers(helpersCode));
 
   const tests = await queryTests();
 
