@@ -10,6 +10,7 @@ const HELPERS = [
   "assertElement",
   "assertText",
   "faker",
+  "getValue",
   "launch",
 
   // helpers
@@ -25,7 +26,7 @@ const HELPERS = [
 ];
 
 function formatHelpers(code) {
-  return `const { assertElement, assertText } = require("qawolf");
+  return `const { assertElement, assertText, getValue } = require("qawolf");
   const faker = require("faker");
   require("dotenv").config();
   
