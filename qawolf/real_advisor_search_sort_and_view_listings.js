@@ -28,9 +28,18 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   // click first listing
   await page.waitForTimeout(3000);
   await page.click('[class$=AggregatesListings] [class$=AggregatesListingCard] a');
+  await page.waitForTimeout(3000);
+  
+  // click no longer avaialable popup and quit
+  const notAvaialablePopup = page.locator('[role="none presentation"]');
+  if (await notAvaialablePopup.count() > 0) {
+    await page.click("text=Search available listings");
+    return
+  };
   
   // assert listing
   await assertText(page, "Description");
+  await page.click("text=Search available listings");
 
   process.exit();
 })();
