@@ -7,9 +7,13 @@ const teamId = process.env.QAWOLF_TEAM_ID;
 
 const HELPERS = [
   // library
+  "assert",
   "assertElement",
   "assertText",
+  "expect",
   "faker",
+  "getInbox",
+  "getValue",
   "launch",
 
   // helpers
@@ -25,8 +29,11 @@ const HELPERS = [
 ];
 
 function formatHelpers(code) {
-  return `const { assertElement, assertText } = require("qawolf");
+  return `const assert = require("assert");
+  const { expect } = require("@playwright/test");
+  const { assertElement, assertText, getValue } = require("qawolf");
   const faker = require("faker");
+  const { getInbox } = require("./getInbox");
   require("dotenv").config();
   
   async function launch({ headless } = { headless: false }) {
@@ -40,9 +47,9 @@ function formatHelpers(code) {
     const context = await browser.newContext();
     return { browser, context };
   }
-  
+
 ${code.replace(/^/gm, "  ")}
-  
+
   module.exports = { ${HELPERS.join(",")} };
   `;
 }
@@ -116,6 +123,16 @@ async function writeFile(name, content) {
 }
 
 async function sync() {
+  // clear directory to remove old test files
+  await fs.rmdir("qawolf", { recursive: true });
+  await fs.mkdir("qawolf");
+
+  // copy getInbox helper
+  await fs.copyFile(
+    ".github/workflows/qawolf/getInbox.js",
+    "qawolf/getInbox.js"
+  );
+
   const helpersCode = await queryFileContent(`helpers.${teamId}`);
   await writeFile("helpers.js", formatHelpers(helpersCode));
 
