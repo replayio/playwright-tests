@@ -11,7 +11,7 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   
   // navigate to products
   await page.hover("text=Accessories");
-  await page.click("text=Shop Socks");
+  await page.click("text=Socks And Underwear");
   
   // close modal pop up
   await page.waitForSelector('[aria-label="Close the Dialog Window"]');

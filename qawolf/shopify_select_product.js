@@ -15,14 +15,14 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.click("text=>");
   
   // assert next page loaded
-  await assertText(page, "ESOTERIC UNIVERSE");
+  await assertText(page, "MODERN MANDALA 02");
   
   // go to product
-  await page.click('text=ESOTERIC UNIVERSE');
+  await page.click('text=MODERN MANDALA 02');
   
   // assert product page loaded
   await page.waitForSelector('text=WHOLESALE LOGIN');
-  await assertText(page, 'ESOTERIC UNIVERSE');
+  await assertText(page, 'MODERN MANDALA 02');
   await assertNotText(page, 'ZODIAC SUN STAR PRINT NAVY');
 
   process.exit();
