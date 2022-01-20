@@ -1,5 +1,8 @@
-const { assertElement, assertText } = require("qawolf");
+const assert = require("assert");
+  const { expect } = require("@playwright/test");
+  const { assertElement, assertText, getValue } = require("qawolf");
   const faker = require("faker");
+  const { getInbox } = require("./getInbox");
   require("dotenv").config();
   
   async function launch({ headless } = { headless: false }) {
@@ -13,7 +16,7 @@ const { assertElement, assertText } = require("qawolf");
     const context = await browser.newContext();
     return { browser, context };
   }
-  
+
   async function assertNotElement(page, element, options) {
     return page.waitForFunction(element => {
       return !document.querySelector(element);
@@ -111,6 +114,6 @@ const { assertElement, assertText } = require("qawolf");
       });
   }
   
-  
-  module.exports = { assertElement,assertText,faker,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated };
+
+  module.exports = { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated };
   

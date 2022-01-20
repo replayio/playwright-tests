@@ -1,4 +1,4 @@
-const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -29,13 +29,6 @@ const { assertElement,assertText,faker,launch,assertNotElement,assertNotText,bui
   await page.waitForTimeout(3000);
   await page.click('[class$=AggregatesListings] [class$=AggregatesListingCard] a');
   await page.waitForTimeout(3000);
-  
-  // click no longer avaialable popup and quit
-  const notAvaialablePopup = page.locator('[role="none presentation"]');
-  if (await notAvaialablePopup.count() > 0) {
-    await page.click("text=Search available listings");
-    return
-  };
   
   // assert listing
   await assertText(page, "Description");
