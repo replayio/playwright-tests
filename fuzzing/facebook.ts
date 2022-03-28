@@ -3,7 +3,7 @@ import { waitForTime, MsPerSecond, randomElement, randomString } from "../utils"
 const { example } = require("../src/helpers");
 
 // Credentials for a facebook test account need to be specified via the environment.
-if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASSWORD) {
+if (!process.env.FACEBOOK_FUZZ_USER || !process.env.FACEBOOK_FUZZ_PASSWORD) {
   throw new Error("Facebook credentials not specified");
 }
 
