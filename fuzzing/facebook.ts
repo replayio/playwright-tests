@@ -21,8 +21,8 @@ example("Facebook", async (page: Page) => {
 });
 
 async function login(page: Page) {
-  await page.fill("#email", process.env.FACEBOOK_USER || "");
-  await page.fill("#pass", process.env.FACEBOOK_PASSWORD || "");
+  await page.fill("#email", process.env.FACEBOOK_FUZZ_USER || "");
+  await page.fill("#pass", process.env.FACEBOOK_FUZZ_PASSWORD || "");
   await page.click('[type="submit"]');
 }
 
