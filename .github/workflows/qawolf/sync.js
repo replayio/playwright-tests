@@ -65,9 +65,7 @@ ${code.replace(/^/gm, "  ")}
 }
 
 function hasTag(test, name) {
-  return test.tags.find(({ tags }) =>
-    tags.find((tag) => tag.name.includes(name))
-  );
+  return test.tags.find((tag) => tag.name.includes(name));
 }
 
 function queryApi(query) {
@@ -101,9 +99,7 @@ async function queryTests() {
         id
         name
         tags {
-          tags {
-            name
-          }
+          name
         }
       }
     }`);
