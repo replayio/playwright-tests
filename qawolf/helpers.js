@@ -6,12 +6,14 @@ const assert = require("assert");
   require("dotenv").config();
   
   async function launch({ headless } = { headless: false }) {
-    const playwright = require("@recordreplay/playwright");
+    const playwright = require("playwright");
+    const { devices } = require("@replayio/playwright");
     let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
   
     const browser = await playwright[browserName].launch({
       headless,
       timeout: 60000,
+      ...devices[browserName === "firefox" ? "Replay Firefox" : "Replay Chromium"].launchOptions
     });
     const context = await browser.newContext();
     return { browser, context };
