@@ -1,10 +1,12 @@
-const playwright = require("@recordreplay/playwright");
+const playwright = require("playwright");
+const { devices } = require("@replayio/playwright");
 const fs = require("fs");
 require("dotenv").config();
 
 let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
 const launchOptions = {
   headless: !!process.env.PLAYWRIGHT_HEADLESS,
+  ...devices[browserName === "firefox" ? "Replay Firefox" : "Replay Chromium"].launchOptions
 };
 
 let depth = 0;
