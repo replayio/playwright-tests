@@ -22,9 +22,11 @@ const HELPERS = [
   "buildUrl",
   "deleteTeam",
   "getBoundingClientRect",
+  "getPlaybarTooltipValue",
   "logIn",
   "logInToFacebook",
   "parseInviteUrl",
+  "setFocus",
   "waitForFrameNavigated",
 ];
 
