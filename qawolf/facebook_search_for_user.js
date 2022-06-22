@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // log in to Facebook
@@ -14,12 +14,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForSelector("text=Search Results");
   
   // view posts
-  await page.click('text=Posts');
+  await page.click("text=Posts");
   await assertText(page, "Posts You've Seen");
   
   // view people
-  await page.click('text=People');
+  await page.click("text=People");
   await assertText(page, "Friends of Friends");
+  
 
   process.exit();
 })();

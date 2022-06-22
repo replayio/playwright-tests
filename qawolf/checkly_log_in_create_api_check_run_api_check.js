@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   const { context } = await launch();
@@ -13,18 +13,38 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert log in
   await assertElement(page, "text=Your dashboard has been created!");
-  await assertNotText(page, "Log in")
+  await assertNotText(page, "Log in");
   
-  // create new api check
+  // create group
   await page.click("text=Create new");
-  await page.click("text=API check");
-  await page.fill('[placeholder="https://api.example.com/products/"]', "https://google.com");
-  await page.click("text=Run request");
+  
+  // close the survey button
+  try {
+    await page.click('[aria-label="Survey"] button'); 
+  } catch {}
+  
+  // click group under create group
+  await page.click(".add-group-button");
+  
+  // assert group created
+  await assertText(page, "No checks in this group yet!");
+  
+  // add check
+  await page.click("text=Add checks to group");
+  await page.click("text=Add existing check(s)");
+  await page.click("th label");
+  await page.click(".button--primary");
+  
+  // run api check
+  await page.click("text=Run all checks");
   
   // assert new api check runs
-  await assertElement(page, ".status-code");
-  await assertText(page, "200", { selector: ".status-code" });
-  await page.click('[aria-describedby="run-check-modal__BV_body_"] .btn-block');
+  await assertElement(page, ".status-circle--success");
+  
+  // delete api check from group
+  await page.click(".checks-list-item button");
+  await page.click("text=Remove check from Group");
+  await page.click(':text("Remove from group")');
 
   process.exit();
 })();

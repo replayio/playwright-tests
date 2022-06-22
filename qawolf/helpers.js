@@ -32,7 +32,7 @@ const assert = require("assert");
   }
   
   function buildUrl(route = "/") {
-    const baseUrl = (process.env.URL || process.env.DEFAULT_URL || "https://app.replay.io/").replace(/\/$/, '');
+    const baseUrl = (process.env.URL || process.env.DEFAULT_URL || "https://staging.app.replay.io/").replace(/\/$/, '');
   
     return `${baseUrl}${route}`;
   }
@@ -56,11 +56,26 @@ const assert = require("assert");
     };
   }
   
+  async function getPlaybarTooltipValue(page) {
+    await page.waitForTimeout(2000);
+    const playheadLocation = page.locator(
+      ".progress-line-paused-edit-mode-inactive"
+    );
+    await playheadLocation.hover();
+  
+    return await page.locator(".timeline-tooltip").innerText();
+  }
+  
   async function logIn(options = {}) {
     const userNumber = options.userId || 1;
+    const launchOptions = options.options || {};
   
     // log in by setting API key as HTTP header
-    const { browser, context } = await launch({ permissions: ["clipboard-read", "clipboard-write"], acceptDownloads: true });
+    const { browser, context } = await launch({ 
+      permissions: ["clipboard-read", "clipboard-write"], 
+      acceptDownloads: true, 
+      ...launchOptions 
+    });
     await context.setExtraHTTPHeaders({
       Authorization: `Bearer ${process.env[`USER_${userNumber}_API_KEY`]}`
     });
@@ -98,6 +113,20 @@ const assert = require("assert");
     return inviteUrl;
   }
   
+  async function setFocus({ handleLocation, moveToX, page }) {
+    let handle;
+    if (handleLocation == 'left'){
+      handle = await page.locator(`.group .${handleLocation}-0`).first();
+    } else{
+      handle = await page.locator(`.group .${handleLocation}-0 >> nth=1`).first();
+    }
+  
+    await handle.hover();
+    await page.mouse.down();
+    await page.mouse.move(moveToX, 672, { steps: 50 });
+    await page.mouse.up();
+  }
+  
   function waitForFrameNavigated(url) {
     return (page) =>
       new Promise((resolve) => {
@@ -117,5 +146,5 @@ const assert = require("assert");
   }
   
 
-  module.exports = { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated };
+  module.exports = { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated };
   

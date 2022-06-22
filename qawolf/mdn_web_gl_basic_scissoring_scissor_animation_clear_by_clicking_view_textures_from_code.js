@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -7,7 +7,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Basic_scissoring');
   
   // grab frame
-  var frame = await(await page.waitForSelector("#frame_Clearing_the_drawing_buffer_when_scissoring_applies")).contentFrame();
+  var frame = await(await page.waitForSelector("#frame_clearing_the_drawing_buffer_when_scissoring_applies")).contentFrame();
   
   // assert viewing correct frame
   await assertText(frame, "Result of scissoring.", { selector: "body > p" });
@@ -16,7 +16,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Clearing_by_clicking');
   
   // grab frame
-  var frame = await(await page.waitForSelector("#frame_Clearing_the_rendering_context_with_random_colors")).contentFrame();
+  var frame = await(await page.waitForSelector("#frame_clearing_the_rendering_context_with_random_colors")).contentFrame();
   
   // change color
   await frame.click("#color-switcher");
@@ -25,7 +25,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Scissor_animation');
   
   // grab frame
-  var frame = await(await page.waitForSelector("#frame_Animation_with_scissoring")).contentFrame();
+  var frame = await(await page.waitForSelector("#frame_animation_with_scissoring")).contentFrame();
   
   // assert animation stop
   await assertText(frame, "start", { selector: "#animation-onoff" });

@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // go to page
@@ -10,19 +10,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'CREDENZA');
   await assertNotText(page, 'VINTAGE MUSHROOM PRINT');
   
-  // go to page 3
-  await page.click("text=>");
-  await page.click("text=>");
-  
-  // assert next page loaded
-  await assertText(page, "MODERN MANDALA 02");
+  // go to page with Grand Teton National Park
+  while (0 == await page.locator('text=GRAND TETON NATIONAL PARK').count()) {
+    await page.click("text=>");
+    await page.waitForTimeout(3000);
+  }
   
   // go to product
-  await page.click('text=MODERN MANDALA 02');
+  await page.click('text=GRAND TETON NATIONAL PARK');
   
   // assert product page loaded
   await page.waitForSelector('text=WHOLESALE LOGIN');
-  await assertText(page, 'MODERN MANDALA 02');
+  await assertText(page, 'GRAND TETON NATIONAL PARK');
   await assertNotText(page, 'ZODIAC SUN STAR PRINT NAVY');
 
   process.exit();

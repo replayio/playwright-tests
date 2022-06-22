@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // selectors
@@ -71,8 +71,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // search for restaurants
   await page.click("text=Search");
   
-  // assert no restaurant found
-  await assertText(page, "All Day Dining Caffè");
+  //locators 
+  const restaurantResults = await page.innerText(".css-9kuv9u >> span");
+  const restaurantCount = restaurantResults.split(" ")[0];
+  const restaurantNum = Number(restaurantCount);
+  const restaurantCards = page.locator("[role='rowgroup'] >> div.animated");
+  
+  // assert "# Restaurant(s) Found" matches the number of restaurant cards
+  await expect(restaurantCards).toHaveCount(restaurantNum);
 
   process.exit();
 })();

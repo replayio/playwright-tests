@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // go to Airtable
@@ -10,7 +10,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=Sign in");
   await page.fill('[name="email"]', "replay+airtable@qawolf.email");
   await page.fill('[name="password"]', process.env.DEFAULT_PASSWORD);
-  await page.click('[type="submit"]');
+  await page.locator('button:text("Sign in")').first().click();
+  
+  // verification step showing up here - can't even pass manually
   
   // assert logged in
   await page.waitForSelector('[aria-label="Account"]')

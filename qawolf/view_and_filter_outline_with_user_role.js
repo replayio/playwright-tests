@@ -1,0 +1,43 @@
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+
+(async () => {
+  // log in
+  const { page } = await logIn({ userId: 7 });
+  await assertText(page, 'Library');
+  
+  // go to recording
+  await page.click('[title="Test Permissions"]');
+  await page.click('text=Great Scott');
+  await page.click('text=DevTools');
+  await page.waitForTimeout(5000); // give DevTools time to fully load
+  
+  // assert demo-script.js outline not visible
+  const logEntry = page.locator('text=λlog(callback)');
+  const preloadImage = page.locator('text=λpreloadImage(url)');
+  await expect(logEntry).not.toBeVisible();
+  await expect(preloadImage).not.toBeVisible();
+  
+  // view demo-script.js outline
+  await page.click("text=demo");
+  await page.click("text=demo-script.js");
+  
+  // assert outline opened
+  await expect(logEntry).toBeVisible();
+  await expect(preloadImage).toBeVisible();
+  
+  // filter outline functions
+  await page.fill('[placeholder="Filter functions"]', "preloadImage");
+  
+  // assert filtering
+  await expect(logEntry).not.toBeVisible();
+  await expect(preloadImage).toBeVisible();
+  
+  // reset filter
+  await page.fill('[placeholder="Filter functions"]', "");
+  
+  // assert filter removed
+  await expect(logEntry).toBeVisible();
+  await expect(preloadImage).toBeVisible();
+
+  process.exit();
+})();

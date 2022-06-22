@@ -1,8 +1,11 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // log in to Facebook
-  const { page } = await logInToFacebook(process.env.FACEBOOK_EMAIL_2, process.env.FACEBOOK_PASSWORD_2);
+  const { page } = await logInToFacebook(
+    process.env.FACEBOOK_EMAIL_2,
+    process.env.FACEBOOK_PASSWORD_2
+  );
   
   // view user profile
   await page.goto("https://www.facebook.com/profile.php?id=100073845716617");
@@ -10,6 +13,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.evaluate(() => {
     window.scrollTo(0, 3000);
   });
+  
+  //assert post is there
   await assertText(page, "first post");
   
   // ensure comment not liked
@@ -22,6 +27,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // unlike comment
   await page.click('[aria-label="Remove Like"]');
+  await page.waitForTimeout(1000);
   await assertNotElement(page, '[aria-label="1 reaction; see who reacted to this"]');
 
   process.exit();

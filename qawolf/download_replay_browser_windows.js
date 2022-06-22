@@ -1,0 +1,31 @@
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+
+(async () => {
+  const { context } = await launch();
+  const page = await context.newPage();
+  await page.goto('https://www.replay.io/');
+  
+  // assert home page loaded
+  await assertText(page, 'Download Replay');
+  
+  // start download for Linux to switch to windows download
+  page.click('.os-linux [href="https://static.replay.io/downloads/linux-replay.tar.bz2"]');
+  await page.waitForTimeout(5000);
+  
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('.linux [href="https://replay.io/downloads/windows-replay.zip"]')
+  ]);
+  
+  // assert downlaod started
+  await assertText(page, 'Now downloading for Linux...');
+  await page.waitForTimeout(5000);
+  
+  // get suggested file name
+  var windowsDownloadName = download.suggestedFilename();
+  
+  // assert windows download
+  expect(windowsDownloadName).toEqual('windows-replay.zip');
+
+  process.exit();
+})();

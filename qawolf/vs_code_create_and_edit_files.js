@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -18,6 +18,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // create css file
   await page.click("text=New File...");
+  await page.waitForTimeout(1000);
   await page.click("text=Select a language");
   await page.click("text=CSS(css)");
   
@@ -30,6 +31,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // create JavaScript file
   await page.click("text=New File...");
+  await page.click("text=Text File");
   await page.click("text=Select a language");
   await page.fill('[aria-label="Select Language Mode"]', "javascript");
   await page.click("text=JavaScript(javascript)");

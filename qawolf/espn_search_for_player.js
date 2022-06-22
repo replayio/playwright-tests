@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   const { context } = await launch();
@@ -10,13 +10,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('.team >> text=Denver Nuggets');
   
   // search player
-  await page.click("#global-search-trigger");
-  await page.fill("#global-search-input", "Nikola Jokic");
-  await page.press("#global-search-input", "Enter");
+  await page.click(".Nav__Search__Toggle");
+  await page.fill("#searchBox", "Nikola Jokic");
+  await page.press("#searchBox", "Enter");
   await page.waitForNavigation();
   
   // assert search player
-   await assertElement(page, 'span:has-text("Nikola Jokic")');
+  await assertElement(page, 'span:has-text("Nikola Jokic")');
 
   process.exit();
 })();

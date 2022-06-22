@@ -1,9 +1,9 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://dashboard.cypress.io/projects/7s5okt/runs');
+  await page.goto('https://dashboard.cypress.io/projects/7s5okt/runs', {timeout: 5 * 60 * 1000});
   
   // navigate to test
   await page.click('[data-cy="commit-info"]');
