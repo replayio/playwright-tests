@@ -69,7 +69,7 @@ function hasTag(test, name) {
 }
 
 function queryApi(query) {
-  return axios("https://www.qawolf.com/api/graphql", {
+  return axios("https://app.qawolf.com/api/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -94,15 +94,16 @@ async function queryFileContent(fileName) {
 
 async function queryTests() {
   const response = await queryApi(`
-    query tests {
-      tests {
-        id
+  query {
+    tests(where:{team_id: {equals: "${teamId}"} }) {
+      id
+      name
+      status
+      tags {
         name
-        tags {
-          name
-        }
       }
-    }`);
+    }
+  }`);
 
   return response.data.data.tests;
 }
@@ -135,8 +136,8 @@ async function sync() {
   const tests = await queryTests();
 
   const promises = tests.map(async (test) => {
-    if (!hasTag(test, "Example")) return;
-
+    if (test.status === "draft") return;
+    
     const testCode = await queryFileContent(`test.${test.id}`);
     await writeFile(`${_.snakeCase(test.name)}.js`, formatTest(testCode));
   });

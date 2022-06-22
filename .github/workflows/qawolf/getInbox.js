@@ -1,6 +1,7 @@
 const axios = require("axios");
 const retry = require("async-retry");
 const getUrls = require("get-urls");
+const { slug } = require("cuid");
 
 const emailQuery = `
 query email($created_after: String!, $to: String!) {
@@ -31,7 +32,7 @@ const pollForEmail = async ({
         console.log(`wait for email to ${to}, attempt ${attempt}`);
 
         const result = await axios.post(
-          "https://www.qawolf.com/api/graphql",
+          "https://app.qawolf.com/api/graphql",
           {
             query: emailQuery,
             variables: {
