@@ -124,7 +124,6 @@ ts-node playwright-tests/${test}
         RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
         RECORD_REPLAY_RECORDING_METADATA_FILE: gMetadataFile,
         RECORD_REPLAY_SERVER: server,
-        RECORD_ALL_CONTENT: "1",
       },
     });
 
