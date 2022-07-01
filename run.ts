@@ -116,24 +116,30 @@ ts-node playwright-tests/${test}
   }
 
   try {
+    const env: NodeJS.ProcessEnv = {
+      ...process.env,
+      ...gEnvironment,
+      RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
+      RECORD_REPLAY_RECORDING_METADATA_FILE: gMetadataFile,
+      RECORD_REPLAY_SERVER: server,
+    };
+
     spawnChecked("ts-node", [`${__dirname}/${test}`], {
       stdio: "inherit",
-      env: {
-        ...process.env,
-        ...gEnvironment,
-        RECORD_REPLAY_RECORDING_ID_FILE: gRecordingFile,
-        RECORD_REPLAY_RECORDING_METADATA_FILE: gMetadataFile,
-        RECORD_REPLAY_SERVER: server,
-      },
+      env,
     });
 
-    const recordingId = await uploadMetadata(gRecordingFile, gMetadataFile);
-    const replayHost = server.match(/.*dispatch\.(.*)/)![1];
+    console.log("!!!!!!!");
 
-    console.log(
-      new Date(),
-      `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
-    );
+    if (!env.RECORD_REPLAY_NO_RECORD) {
+      const recordingId = await uploadMetadata(gRecordingFile, gMetadataFile);
+      const replayHost = server.match(/.*dispatch\.(.*)/)![1];
+
+      console.log(
+        new Date(),
+        `New Replay for ${test} available at https://${replayHost}/view?id=${recordingId}`
+      );
+    }
   } catch (e: any) {
     const t = new Date();
     console.error(t, "Test failed:", e.message);
