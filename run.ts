@@ -129,8 +129,6 @@ ts-node playwright-tests/${test}
       env,
     });
 
-    console.log("!!!!!!!");
-
     if (!env.RECORD_REPLAY_NO_RECORD) {
       const recordingId = await uploadMetadata(gRecordingFile, gMetadataFile);
       const replayHost = server.match(/.*dispatch\.(.*)/)![1];
