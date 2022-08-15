@@ -1,0 +1,19 @@
+name: QA Wolf Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # every day at midnight
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: run tests
+        run: |
+          node ./qawolf-tests.js
+          PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
