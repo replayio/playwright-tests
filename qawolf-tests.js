@@ -11,11 +11,12 @@ function getTests() {
 }
 
 async function recordTest(test) {
-  return new Promise((r) => {
-    var child = require("child_process").exec(`node qawolf/${test}`);
-    child.stdout.pipe(process.stdout);
-    child.on("exit", (status) => r([test, status]));
+  const proc = require("child_process").spawnSync("node", [`qawolf/${test}`], {
+    cwd: __dirname,
+    stdio: "inherit",
   });
+
+  return [test, proc.status];
 }
 
 (async () => {
@@ -40,6 +41,7 @@ async function recordTest(test) {
             const lastRecording = recordings[recordings.length - 1];
 
             const id = await replay.uploadRecording(lastRecording.id, {
+              verbose: true,
               apiKey,
             });
 
