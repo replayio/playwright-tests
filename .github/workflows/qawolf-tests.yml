@@ -6,8 +6,10 @@ on:
     - cron: "0 0 * * *" # every day at midnight
 
 jobs:
-  sync:
+  run-tests:
     runs-on: ubuntu-latest
+    env:
+      RECORD_REPLAY_API_KEY: rwk_dkcLU5trLw9tvbbNukNj0xRVl65iVBj2E0qlnz8TL6v
 
     steps:
       - uses: actions/checkout@v2
@@ -36,3 +38,9 @@ jobs:
           PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
         env:
           RECORD_REPLAY_HEADLESS: 1
+          DISPLAY: ":99"
+
+      - name: Upload Replays
+        uses: replayio/action-upload@v0.4.3
+        with:
+          api-key: ${{ env.RECORD_REPLAY_API_KEY }}

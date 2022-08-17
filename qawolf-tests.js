@@ -1,7 +1,4 @@
 const { readdirSync } = require("fs");
-const replay = require("@replayio/replay");
-
-const apiKey = "rwk_dkcLU5trLw9tvbbNukNj0xRVl65iVBj2E0qlnz8TL6v";
 
 function getTests() {
   const exclude = ["getInbox.js", "helpers.js", "framer_click_layer.js"];
@@ -36,23 +33,11 @@ async function recordTest(test) {
       recordTest(test)
         .then(async ([test, status]) => {
           console.log(`Test ${test} ${status ? "failed" : "passed"}`);
-          try {
-            const recordings = replay.listAllRecordings();
-            const lastRecording = recordings[recordings.length - 1];
-
-            const id = await replay.uploadRecording(lastRecording.id, {
-              verbose: true,
-              apiKey,
-            });
-
-            console.log(`Uploaded ${test} -- ${id}`);
-          } catch (e) {
-            console.error(`Upload failed`, e);
-          }
-          running--;
         })
-        .catch((e) => console.error(`Recording crashed`, e));
-    } else {
+        .catch((e) => console.error(`Recording crashed`, e))
+        .finally(() => {
+          running--;
+        });
     }
   }, 100);
 })();
