@@ -7,7 +7,9 @@ const faker = require("faker");
 const { getInbox } = require("./getInbox");
 require("dotenv").config();
 
-async function launch({ headless } = { headless: false }) {
+async function launch({
+  headless = ["1", "true"].includes(process.env.RECORD_REPLAY_HEADLESS),
+} = {}) {
   const playwright = require("playwright");
   const { devices: replayDevices } = require("@replayio/playwright");
   let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
