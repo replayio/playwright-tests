@@ -42,5 +42,6 @@ jobs:
 
       - name: Upload Replays
         uses: replayio/action-upload@v0.4.3
+        if: always()
         with:
           api-key: ${{ env.RECORD_REPLAY_API_KEY }}
