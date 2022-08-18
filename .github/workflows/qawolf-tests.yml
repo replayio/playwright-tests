@@ -38,7 +38,6 @@ jobs:
           PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
         env:
           RECORD_REPLAY_HEADLESS: 1
-          DISPLAY: ":99"
 
       - name: Upload Replays
         uses: replayio/action-upload@v0.4.3
