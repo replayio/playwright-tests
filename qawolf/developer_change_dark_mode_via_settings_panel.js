@@ -9,7 +9,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('[href="/recording/time-travel-qa8--a7576f44-e4d3-46f3-a349-058b65a17046"]');
   
   // assert replay loaded
-  await expect(page.locator('text="Comments"')).toBeVisible({ timeout: 60000 });
+  try {
+    await expect(page.locator('text="Comments"')).toBeVisible({ timeout: 5000 });
+  }
+  catch {
+    await expect(page.locator('text="Info"')).toBeVisible({ timeout: 5000 });
+  }
+  
   
   // nav to settings
   await page.click(':text("more_horiz")');

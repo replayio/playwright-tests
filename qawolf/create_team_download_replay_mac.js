@@ -1,6 +1,8 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // BUG: Create team/organisation invite window closes immediately - https://qa-wolf.monday.com/boards/2150171022/pulses/2883586418
+  
   // log in and navigate to pricing
   const { browser, page } = await logIn({ userId: 6 });
   await assertText(page, "Your Library");

@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // open replay
   await page.click('text=Time Travel');
@@ -27,7 +28,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert searched term results
   await expect(page.locator('#result-list >> li:has-text("demo-script.js")')).toBeVisible();
-  await expect(page.locator('text=demo-script.js')).toHaveCount(32);
+  await expect(page.locator('text=demo-script.js')).toHaveCount(8);
   await expect(page.locator('.highlight')).toHaveText("demo-script");
   await page.waitForTimeout(2000); // give search time to populate
   await page.keyboard.press('Enter');

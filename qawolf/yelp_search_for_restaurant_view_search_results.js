@@ -17,7 +17,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('[data-testid="TRUSTED_PROPERTY"]');
   
   // assert on business page
-  await expect(page.locator(':text("Location")')).toBeVisible();
+  await expect(page.locator(':text("Location")').first()).toBeVisible({ timeout: 30 * 1000 });
   
   
 

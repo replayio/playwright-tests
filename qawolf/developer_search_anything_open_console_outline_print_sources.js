@@ -7,10 +7,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(':text("Test Permissions")');
   
   // go to recording
-  await page.click('text=Great Scott');
+  await page.click('text=Time Travel');
   
   // assert recording loaded
-  await expect(page.locator('text="Great Scott"')).toBeVisible( {timeout: 30000 });
+  await expect(page.locator('text="Time Travel"')).toBeVisible( {timeout: 30000 });
   await expect(page.locator('text="DevTools"')).toBeVisible();
   
   // go to DevTools
@@ -51,7 +51,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(page.locator('text="demo"')).toBeHidden();
   await page.click("text=Open Sources");
   await expect(page.locator('text="Sources"')).toBeVisible();
-  await expect(page.locator('text="demo"')).toBeVisible();
+  await expect(page.locator(".folder").first()).toBeVisible();
 
   process.exit();
 })();

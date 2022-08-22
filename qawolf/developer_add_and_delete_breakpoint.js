@@ -21,6 +21,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // open script.js file and breakpoint panel
   await page.click("text=Search for fileCtrl+P");
+  await page.keyboard.type('s');
   await page.click('#result-list [role="option"]');
   await page.click("text=motion_photos_paused");
   
@@ -32,7 +33,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert breakpoint added
   await expect(page.locator('text=Click on a line number in the editor to add a breakpoint')).not.toBeVisible();
-  await expect(page.locator('text=new Image();7:12')).toBeVisible();
+  await expect(page.locator('text=7:12')).toBeVisible();
   
   // delete breakpoint click 7 again
   await page.waitForTimeout(3000);
@@ -40,7 +41,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert breakpoint deleted
   await expect(page.locator('text=Click on a line number in the editor to add a breakpoint')).toBeVisible();
-  await expect(page.locator('text=new Image();7:12')).not.toBeVisible();
+  await expect(page.locator('text=7:12')).not.toBeVisible();
 
   process.exit();
 })();

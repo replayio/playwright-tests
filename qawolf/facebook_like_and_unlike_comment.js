@@ -14,21 +14,36 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     window.scrollTo(0, 3000);
   });
   
-  //assert post is there
-  await assertText(page, "first post");
+  //ensure first post is there
+  try {
+    await assertText(page, "first post", { timeout: 7000 });
+  } catch {
+    await page.click(':text("Write something to Elizabeth...")');
+    await page.keyboard.type("first post");
+    await page.click('[aria-label="Post"]');
+    await page.waitForTimeout(7000);
+    await page.click('[aria-label="Write a comment"]');
+    await page.keyboard.type("This is my first comment");
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(7000);
+  }
   
   // ensure comment not liked
   const unlikeButton = await page.$('[aria-label="Remove Like"]');
   if (unlikeButton) unlikeButton.click();
   
   // like comment
-  await page.click(':text("Like"):below(:text("This is my first comment"))');
+  await page.locator(':text("Like"):below(:text("This is my first comment"))').click();
   await assertElement(page, '[aria-label="1 reaction; see who reacted to this"]');
   
   // unlike comment
   await page.click('[aria-label="Remove Like"]');
   await page.waitForTimeout(1000);
-  await assertNotElement(page, '[aria-label="1 reaction; see who reacted to this"]');
+  await assertNotElement(
+    page,
+    '[aria-label="1 reaction; see who reacted to this"]'
+  );
+  
 
   process.exit();
 })();

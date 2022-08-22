@@ -13,7 +13,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Commenters"]');
+  // await page.click('[title="Test Commenters"]');
+  await page.click(':text("Test Commenters")');
   await page.click("text=User role non-event comment test");
   await page.waitForTimeout(8000); // wait for page to load
   

@@ -12,10 +12,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Replay Example");
   await page.waitForTimeout(2000);
   
+  // click to move to starting position
+  await page.click(':text("Manuel Martín Fernández")');
+  
   // get player time
   const progressLine = page.locator(".progress-line").last();
   let beforePlayTimestamp = await progressLine.getAttribute("style");
-  expect(beforePlayTimestamp.split(" ")[1]).toMatch(/96./);
+  await expect(beforePlayTimestamp.split(" ")[1]).toMatch(/96./);
   
   // play replay
   await page.click('button [src="/images/playback-play.svg"]');
@@ -28,6 +31,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // get player time after pausing
   let afterPlayTimestamp = await progressLine.getAttribute("style");
+  await page.waitForTimeout(2000);
   expect(afterPlayTimestamp.split(" ")[1]).toMatch(/98./);
   
   // assert video played

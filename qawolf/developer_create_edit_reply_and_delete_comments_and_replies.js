@@ -2,24 +2,29 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in and go to replay
-  const { page } = await logIn({ userId: 10 });
-  await expect(
-    page.locator("#app-container span >> text=Your Library")
-  ).toBeVisible();
-  await page.goto(
-    buildUrl(
-      "/recording/framer-replay-example--0ff790cd-81fc-441d-8a33-b570fc7850c4"
-    )
-  );
+  // const { page } = await logIn({ userId: 6, options: { slowMo: 1000 } }); // Chris Burton account 
+  const { page } = await logIn({ userId: 10, options: { slowMo: 1000 } });
+  await expect(page.locator("text=View settings")).toBeVisible({
+    timeout: 10 * 1000,
+  });
+  
+  await page.click(':text("Test Permissions")');
+  await page.click(':text("React DevTools Recording")');
   
   // assert replay and comments loaded
-  await expect(page.locator('text="DevTools"')).toBeVisible({ timeout: 60000 });
-  await expect(page.locator('text="Comments"')).toBeVisible();
-  await page.waitForTimeout(5000);
+  await expect(page.locator('text="Viewer"')).toBeVisible({
+    timeout: 60 * 1000,
+  });
+  
+  try {
+    await expect(page.locator('text="Comments"')).toBeVisible();
+  } catch {
+    await page.click(':text("forum")');
+  }
   
   // delete leftover comments
   const leftover = page.locator('text="QA Wolf"');
-  while ((await leftover.count()) >= 1) {
+  while (await leftover.count()) {
     await leftover.first().hover();
     await page.click(".portal-dropdown-wrapper button");
     await page.click("text=Delete comment and replies");
@@ -27,31 +32,38 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   }
   
   // add comment
-  await page.click('button img[src="/images/playback-play.svg"]');
-  await page.waitForTimeout(3000);
+  try {
+    await page.click('button img[src="/images/playback-play.svg"]', {
+      timeout: 5000,
+    });
+  } catch {
+    await page.click('[src="/images/playback-refresh.svg"]');
+    await page.click('button img[src="/images/playback-play.svg"]');
+  }
+  
+  await page.waitForTimeout(2000);
   await page.click('[src="/images/playback-pause.svg"]');
-  await page.click("#video");
-  await page.waitForTimeout(3000);
-  await page.click("#video");
-  await page.waitForTimeout(3000);
-  await page.fill('[contenteditable="true"]', "Here is my mispelling");
-  await page.waitForTimeout(3000);
+  
+  try {
+    await page.click("#video");
+    await expect(page.locator("text=QA Wolf")).toBeVisible();
+  } catch {
+    await page.click("#video");
+    await expect(page.locator("text=QA Wolf")).toBeVisible();
+  }
+  await page.waitForTimeout(2000);
+  await page.fill('.ProseMirror', "Here is my mispelling");
+  await page.waitForTimeout(2000);
   await page.keyboard.press("Enter");
   
   // assert new comment added
-  await page.waitForTimeout(2000);
   await expect(page.locator('text="Here is my mispelling"')).toBeVisible();
   
   // edit comment
-  await page.waitForTimeout(2000);
-  await page.hover('div:nth-of-type(4) [type="button"]');
+  await page.hover(':text("more_vert")');
   await page.click(".portal-dropdown-wrapper button");
   await page.click("text=Edit comment");
-  await page.click('div[contenteditable="true"]', "Here is my mispelling");
-  await page.waitForSelector('div[contenteditable="true"]');
-  await page.click('div[contenteditable="true"]', "Here is my mispelling");
   await page.fill(".ProseMirror-focused", "Here is my updated comment!");
-  await page.waitForTimeout(1000);
   await page.keyboard.press("Enter");
   
   // assert updated comment
@@ -59,14 +71,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // reply to own comment
   await page.click('button:below(:text("Here is my updated comment!"))');
-  await page.waitForSelector('[contenteditable="true"]');
+  await page.waitForSelector('.ProseMirror-focused');
   await page.fill(".ProseMirror-focused", "Here is my reply");
   await page.keyboard.press("Enter");
   
   // assert reply added
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
   await expect(page.locator('text="Here is my reply"')).toBeVisible();
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
   
   // delete reply
   const reply = page.locator('text="Here is my reply"');
@@ -76,7 +88,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   );
   await page.click("text=Delete comment");
   await page.click("button >> text=Delete comment");
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
+  
   // assert reply deleted
   await expect(page.locator('text="Here is my reply"')).not.toBeVisible();
   
@@ -86,18 +99,19 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.keyboard.press("Enter");
   
   // delete comment and reply
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
   await page.hover('text="QA Wolf"');
   await page.click(".portal-dropdown-wrapper button");
   await page.click("text=Delete comment and replies");
   await page.click("button >> text=Delete comment");
   
   // assert comment and reply deleted
-  await page.waitForTimeout(3000);
   await expect(
     page.locator('text="Here is my updated comment!"')
-  ).not.toBeVisible();
+  ).not.toBeVisible({ timeout: 10 * 1000 });
   await expect(page.locator('text="Here is my delete reply!"')).not.toBeVisible();
+  
+  await logOut(page);
   
 
   process.exit();

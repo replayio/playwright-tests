@@ -1,18 +1,23 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // bug - https://qa-wolf.monday.com/boards/2150171022/pulses/2685472778
+  //Context: https://qawolfhq.slack.com/archives/C02K01LSEAE/p1660862225915889
   
   // launch page
   const { context, page } = await logIn({ userId: 6, options: { slowMo: 1000 } });
+  // const { context, page } = await logIn({ userId: 1, options: { slowMo: 1000 } });
+  // await page.goto(buildUrl("/recording/99215af1-7f6f-4db2-84e4-7a2ea6142240"));
   await page.goto(
-    buildUrl(
-      "/recording/99215af1-7f6f-4db2-84e4-7a2ea6142240?point=32127336818069823763437554336007621&time=16000&hasFrames=false"
-    )
+    buildUrl("/recording/qa-wolf--f4bdbfba-6072-48ec-8978-f06e94551d4d")
   );
   
   // assert page loaded
-  await assertText(page, "Comments");
+  try {
+    await assertText(page, "Comments");
+  } catch {
+    await page.click(':text("forum")');
+    await assertText(page, "Comments");
+  }
   
   // reload the page if no share button (not signed in)
   try {
@@ -32,63 +37,84 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await expect(
       page.locator("text=Test comment @ 16 seconds")
     ).not.toBeVisible();
-  } catch (e) {
+  } catch {
     await page.hover(':text("Chris Burton")');
     await page.click(':text("more_vert")');
     await page.click("text=Delete comment and replies");
     await page.click('[role="dialog"] button:nth-of-type(2)');
   }
   
+  // advance video to uncommented area
+  await page.waitForSelector("#video");
+  try {
+    await page.click('[src="/images/playback-play.svg"]', { timeout: 5000 });
+  } catch {
+    await page.click('[src="/images/playback-refresh.svg"]');
+    await page.click('[src="/images/playback-play.svg"]');
+  }
+  await page.waitForTimeout(8000);
+  await page.click('[src="/images/playback-pause.svg"]');
+  
   /* 
-  Note: the comment flow does't react well to automation. All of the following non-standard
+  Note: the comment flow doesn't react well to automation. All of the following non-standard
   comment/reply code is put in place to aleviate the undesireable automation reactions. The 
   main things we are testing is that comments and replies show up and are editable/deletable.
   */
   // add comment
-  await page.waitForSelector("#video");
   await page.click("#video");
-  await page.fill('[contenteditable="true"]', "Test comment @ 15 seconds");
+  await page.waitForTimeout(1000);
+  await page.keyboard.type("Test comment @ 15 seconds");
   await page.keyboard.press("Enter");
   await page.waitForTimeout(2000);
   
   // assert comment created
-  const comment = page.locator(".CommentCard_CommentCard__7U_9l >> nth=3");
-  await page.waitForSelector(':text("Chris Burton")');
-  await expect(comment).toHaveText("Chris BurtonNowmore_vertTest comment @ 15 secondsReply");
+  await page.waitForSelector(':text("Test comment @ 15 seconds")');
+  let comment = page.locator(
+    "[class*='CommentCard_CommentCard']:has-text('Test comment @ 15 seconds')"
+  );
+  await expect(comment).toHaveText(
+    "Chris BurtonNowmore_vertTest comment @ 15 secondsReply"
+  );
   
   // edit comment
-  const editCommentButton = page.locator('[role="menuitem"] >> text=Edit comment');
-  await page.click('.portal-dropdown-wrapper [type="button"].expand-dropdown');
+  const editCommentButton = page.locator(
+    '[role="menuitem"] >> text=Edit comment'
+  );
+  let vertMenu = comment.locator(':text("more_vert")');
+  await vertMenu.click();
   await page.waitForTimeout(2000);
   try {
     // make sure that the delete menu didn't close
     await expect(editCommentButton).toBeVisible();
   } catch {
-    await page.click('.border-secondaryAccent [type="button"].expand-dropdown');
+    await vertMenu.click();
   }
   await page.click('[role="menuitem"] >> text=Edit comment');
-  await page.fill(
-    '[contenteditable="true"]',
-    "Test comment @ 16 seconds"
-  );
+  await page.keyboard.press("Control+a");
+  await page.keyboard.type("Test comment @ 16 seconds");
   await page.waitForTimeout(2000);
   await page.keyboard.press("Enter");
   
   // assert comment changed
-  await expect(comment).toHaveText(
-    "Chris BurtonNowmore_vertTest comment @ 16 secondsReply",
-    { timeout: 60 * 1000 }
-  );
+  await expect(page.locator('p:text("Test comment @ 16 seconds")')).toBeVisible();
   
   // reply to comment
+  let comment = page.locator(
+    "[class*='CommentCard_CommentCard']:has-text('Test comment @ 16 seconds')"
+  );
+  const replyButton = comment.locator(':text("Reply")');
   await page.waitForTimeout(5000);
   try {
     // open reply input with retry as it often auto-closes due to automation issues
-    await page.click('div:nth-of-type(4) :text("Reply")');
-    await expect(page.locator('[contenteditable="true"]')).toBeVisible();
+    await replyButton.click();
+    await expect(
+      page.locator('[contenteditable="true"].ProseMirror-focused')
+    ).toBeVisible();
   } catch {
-    await page.click('div:nth-of-type(4) :text("Reply")');
-    await expect(page.locator('[contenteditable="true"]')).toBeVisible();
+    await replyButton.click();
+    await expect(
+      page.locator('[contenteditable="true"].ProseMirror-focused')
+    ).toBeVisible();
   }
   await page.waitForTimeout(1000);
   await page.keyboard.press("Backspace");
@@ -102,14 +128,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(reply).toBeVisible();
   
   // delete comment
-  await page.click(':text("more_vert")');
-  await page.click(':text("Delete comment")');
+  let vertMenu = comment.locator(':text("more_vert")');
+  await vertMenu.first().click();
+  await page.click(':text("Delete comment and replies")');
   await page.click('[role="dialog"] button:nth-of-type(2)');
   
   // assert comment deleted
   await page.waitForTimeout(2000);
-  await expect(page.locator(':text("Chris BurtonNowmore_vertTest comment @ 16 secondsReply")')).not.toBeVisible();
+  await expect(comment).not.toBeVisible();
   await expect(reply).not.toBeVisible();
+  
+  await logOut(page);
+  
 
   process.exit();
 })();

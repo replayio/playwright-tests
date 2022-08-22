@@ -3,9 +3,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { browser, context, page } = await logIn({ userId: 2 });
-  await context.grantPermissions(['clipboard-read']);
+  await context.grantPermissions(["clipboard-read"]);
   await assertText(page, "Your Library");
-  page.on("dialog", async dialog => {
+  page.on("dialog", async (dialog) => {
     await dialog.accept();
   });
   
@@ -15,24 +15,24 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // go to team members
   await page.click("text=Team Members");
-  await page.waitForSelector('text=Invite link');
-  const buttonToCheck = page.locator('#domain-limited');
+  await page.waitForSelector("text=Invite link");
+  const buttonToCheck = page.locator("#domain-limited");
   
   // ensure member deleted
-  const lauraInvite = page.locator('text=Laura Cressman');
-  if(await lauraInvite.isVisible()) {
+  const lauraInvite = page.locator("text=Laura Cressman");
+  if (await lauraInvite.isVisible()) {
     await page.click('button:right-of(:text("Laura Cressman"))');
-    await page.click('text=Remove');
+    await page.click("text=Remove");
     await page.waitForTimeout(3000);
-  };
+  }
   
   // ensure checkbox not checked
   try {
     expect(await buttonToCheck.isChecked()).toBeFalsy();
   } catch (e) {
-    await page.click('#domain-limited');
+    await page.click("#domain-limited");
     await page.waitForTimeout(3000);
-  };
+  }
   
   // give access to anyone with qawolf.com email address
   await page.waitForTimeout(2000);
@@ -53,7 +53,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // go to invite link
   const context2 = await browser.newContext();
   await context2.setExtraHTTPHeaders({
-    Authorization: `Bearer ${process.env.USER_1_API_KEY}`
+    Authorization: `Bearer ${process.env.USER_1_API_KEY}`,
   });
   const page2 = await context2.newPage();
   await page2.bringToFront();
@@ -64,12 +64,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page2, "New");
   
   // accept invitation
-  await page2.click('text=Test Invite Team');
+  await page2.click("text=Test Invite Team");
   await page2.click("text=Accept");
   await page.waitForTimeout(2000);
   
   // assert team added
-  await page2.click('text=Test Invite Team');
+  await page2.click("text=Test Invite Team");
   await page2.click("text=settings");
   await page2.click("text=Team Members");
   await assertText(page2, "QA Wolf");
@@ -80,24 +80,25 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // leave team
   await page2.bringToFront();
-  page2.on("dialog", async dialog => {
+  page2.on("dialog", async (dialog) => {
     await dialog.accept();
   });
   await page.waitForTimeout(2000);
   await page2.click('button:right-of(:text("Laura Cressman"))');
-  await page2.click('text=Leave');
+  await page2.click("text=Leave");
   
   // assert team removed from account
-  await assertNotText(page2, 'Test Invite Team');
+  await assertNotText(page2, "Test Invite Team");
   await page.bringToFront();
   await expect(lauraInvite).not.toBeVisible();
   
   // uncheck checkbox
-  await page.click('#domain-limited');
+  await page.click("#domain-limited");
   await page.waitForTimeout(2000);
   
   // assert checkbox not checked
   expect(await buttonToCheck.isChecked()).toBeFalsy();
+  
 
   process.exit();
 })();

@@ -6,10 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to team
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`);
   
   // assert replays available
-  await assertText(page, 'Great Scott');
   await assertText(page, 'Time Travel');
   
   // go to replay
@@ -71,14 +71,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert link copied to clipboard
   await assertText(page, 'Copied');
-  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--242d3265-4544-4c6e-ba2d-1517085c2188'));
+  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
   
   // go to link
   const page2 = await browser.newPage();
   await page2.goto(copiedLink);
   
   // assert page opened with correct url
-  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--242d3265-4544-4c6e-ba2d-1517085c2188'));
+  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
 
   process.exit();
 })();

@@ -79,9 +79,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // navigate to team page
   await page.click("text=Take me to my team");
-  await page.waitForSelector(`span:has-text("Test")`);
+  await page.waitForSelector(`span:has-text("Test Team Best:")`);
   const newTeamLibrary = page.locator(`span >> text=${teamName}`);
-  await expect(newTeamLibrary).toHaveCount(1);
+  await expect(newTeamLibrary).toHaveCount(2);
   
   // delete team
   await page.click("text=settings");

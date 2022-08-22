@@ -20,7 +20,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click("text=forum");
   }
   
-  const startConvo = page.locator("text=Start a conversation");
+  // const startConvo = page.locator("text=Start a conversation");
+  const startConvo = page.locator(
+    ":text('Add a comment to the video, a line of code, or a console message.')"
+  );
   while ((await startConvo.count()) < 1) {
     await page.click("text=more_vert");
     await page.click("text=Delete comment and replies");
@@ -38,13 +41,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // enter comment from console
   await page.hover('[data-link-actor-id="clocktower"]');
   await page.hover('.log:has-text("clocktower") >> nth=0 >> .button');
-  await page.click(".log:has-text('clocktower') >> nth=0 >> .img");
+  try {
+    await page.click(".log:has-text('clocktower') >> nth=0 >> .img", {
+      timeout: 5000,
+    });
+  } catch {}
   await page.click("text=add_comment");
   await page.keyboard.type("Here is my comment");
   await page.keyboard.press("Enter");
   
   // assert comment created
-  await assertText(page, "console.log(image);\nkeyboard_arrow_right");
+  await assertText(page, "log(image);\nkeyboard_arrow_right");
   await assertText(page, "QA Wolf");
   await assertText(page, "Here is my comment");
   
@@ -55,6 +62,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert comment deleted
   await expect(startConvo).toBeVisible({ timeout: 60 * 1000 });
+  
+  await logOut(page);
   
 
   process.exit();

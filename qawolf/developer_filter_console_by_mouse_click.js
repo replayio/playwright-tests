@@ -2,14 +2,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { page } = await logIn({ userId: 10 });
+  const { page } = await logIn({ userId: 10, options: { slowMo: 1000 } });
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // open replay
-  await page.click('text=Great Scott');
+  await page.locator(`:text-is("React DevTools Recording")`).click();
   await page.click("text=ViewerDevTools");
   
   // filter console by mouse click
@@ -22,23 +22,28 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click("#toolbox-content-console button");
   }
   
-  await page.click('text=Mouse');
-  const mouseClickCheckbox = page.locator('[title="View click events"] [type="checkbox"]');
+  await page.click("text=Mouse");
+  const mouseClickCheckbox = page.locator(
+    '[title="View click events"] [type="checkbox"]'
+  );
   expect(await mouseClickCheckbox.isChecked()).not.toBeTruthy();
-  await assertNotText(page, 'clientX');
+  await assertNotText(page, "clientX");
   await mouseClickCheckbox.check();
   await page.waitForTimeout(2000); //give filter time to apply
   
   // assert filter
   expect(await mouseClickCheckbox.isChecked()).toBeTruthy();
-  await assertText(page, 'clientX');
+  await assertText(page, "clientX");
   
   // remove filter
   await mouseClickCheckbox.uncheck();
   
   // assert filter removed
   expect(await mouseClickCheckbox.isChecked()).not.toBeTruthy();
-  await assertNotText(page, 'clientX');
+  await assertNotText(page, "clientX");
+  
+  await logOut(page);
+  
 
   process.exit();
 })();

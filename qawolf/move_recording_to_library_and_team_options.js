@@ -33,7 +33,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // await assertText(page, "👋 This is where your replays will go!");
   await page.click("text=Your Library");
   await assertText(page, "Your Library");
-  await assertText(page, "(1)");
+  // await assertText(page, "(1)");
   await assertText(page, "Taylor Swift");
   // move recording to test team
   await moveRecordingTo(page, "Test team");
@@ -41,8 +41,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert recording moved to test team
   // await assertText(page, "👋 This is where your replays will go!");
   await page.click("text=Test team");
-  const teamSpan = page.locator('span >> text=Test team');
-  await expect(teamSpan).toHaveCount(1)
+  await expect(page.locator(`a:has-text("Test team") :left-of(:text("settings"))`).first()).toContainText("Test team ") // settings only appears when selected so this is a quick assertion fix
+  // const teamSpan = page.locator('span >> text=Test team');
+  // await expect(teamSpan).toHaveCount(1)
   await assertText(page, "(1)");
   await assertText(page, "Taylor Swift");
 

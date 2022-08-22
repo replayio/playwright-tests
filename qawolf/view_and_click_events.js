@@ -1,37 +1,43 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // launch page
-  const { context } = await launch();
-  const page = await context.newPage();
-  await page.goto(
-    buildUrl(
-      "/recording/sample-folder-visual-studio-code-insiders--99215af1-7f6f-4db2-84e4-7a2ea6142240?point=10384593718233283943681123422306591&time=4183&hasFrames=true"
-    )
-  );
+  // log in
+  const { context, page } = await logIn({ userId: 6 });
   
   // assert page loaded
-  await assertText(page, "sample-folder", { timeout: 3 * 60 * 1000 });
+  await assertText(page, 'Your Library');
+  await assertText(page, 'View settings');
+  
+  // goto test team
+  await page.click(':text("Test Permissions")');
+  
+  // go to replay "Great Scott"
+  await page.click(':text("Permissions: Great Scott")');
   
   // assert viewing events
-  await page.click("text=info");
-  await assertText(page, "Replay Info");
-  await assertText(page, "Events");
+  try {
+    await assertText(page, "static.replay.io/demo/", { timeout: 10 * 1000 });
+  } catch (e) {
+    await page.click("text=info");
+    await assertText(page, "Replay Info");
+    await assertText(page, "Events");
+    await assertText(page, "static.replay.io/demo/", { timeout: 10 * 1000 });
+  }
   
-  // click event @ :12s
-  await page.click("text=ads_clickClick0:12", {force: true});
+  // click event @ :02s
+  await page.click(':text("ads_clickClick0:02")');
   
-  // assert playhead moved to :12s
+  // assert playhead moved to :02s
   const progressLine = page.locator(".progress-line").last();
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("36.6793%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("24.5334%;");
   
-  // click event @ :28s
-  await page.click("text=ads_clickClick0:28");
+  // click event @ :03s
+  await page.click("text=ads_clickClick0:03");
   
-  // assert playhead moved to :28s
+  // assert playhead moved to :03s
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("84.0444%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("32.1468%;");
 
   process.exit();
 })();

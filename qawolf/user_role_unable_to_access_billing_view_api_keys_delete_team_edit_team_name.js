@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to team settings
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`);
   await page.click("text=settings");
   
   // assert team seetings loaded
@@ -22,17 +23,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert unable to delete team
   await assertNotText(page, 'Delete Team');
   
-  // change team name
+  // assert unable to change team name
   await page.click("text=Profile");
   await expect(page.locator('.space-y-4 input[type="text"]')).not.toBeVisible();
-  // await page.fill('.space-y-4 input[type="text"]', "New Name");9
-  // await page.keyboard.press('Enter'); 
-  // await page.click(".modal-close");
-  // await page.click("text=Your Library");
-  
-  // // assert team name didn't change
-  // await assertText(page, 'Test Permissions');
-  // await assertNotText(page, 'New Name');
 
   process.exit();
 })();

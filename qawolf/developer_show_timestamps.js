@@ -6,11 +6,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
+  await page.click('text=Time Travel');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
+  await assertText(page, 'Time Travel');
   await assertText(page, 'DevTools');
   
   // go to DevTools
@@ -32,7 +33,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert timestamps appeared
   expect(await showTimestampsCheckbox.isChecked()).toBeTruthy();
   await page.waitForTimeout(5000);
-  expect(await timestamp.count()).toEqual(21);
+  expect(await timestamp.count()).toEqual(6);
   
   // hide timestamps
   await showTimestampsCheckbox.uncheck();

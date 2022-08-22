@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`)
   
   // open replay
   await page.click('text=Time Travel');

@@ -12,11 +12,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('[aria-label="Log In"]');
   
   // assert log in
-  await assertElement(page, "text=Your dashboard has been created!");
+  await assertElement(page, "text=Test Wolf");
   await assertNotText(page, "Log in");
   
   // create group
-  await page.click("text=Create new");
+  await page.click("#create-check-button");
   
   // close the survey button
   try {

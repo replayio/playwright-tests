@@ -41,23 +41,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // invite team member with valid email address
   const { email, waitForMessage } = getInbox({ new: true });
+  await page.click('button:text("settings")');
   await page.fill('[placeholder="Email address"]', email);
   await page.click("button:has-text('Invite')");
-  await page.click("text=Next");
-  
-  // assert on download page
-  await assertText(page, "Download Replay");
-  
-  // skip downlod
-  await page.click("text=Skip for now");
-  
-  // navigate to dashboard
-  await page.goto(buildUrl('/')); // manually navigate to get around sign in
+  await page.click(".modal-close");
   
   // assert organization created
   await assertText(page, organizationName);
   
-  console.log(email)
   // get invite information from email
   const { html, subject, text } = await waitForMessage({ timeout: 5 * 60 * 1000 });
   const inviteUrl = parseInviteUrl({ text });
@@ -80,7 +71,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.bringToFront();
   
   // delete test Create organization
-  await page.click(`text=Test Create Organization: ${teamNumber}`);
+  // await page.click(`text=Test Create Organization: ${teamNumber}`);
   await page.click("text=settings");
   await deleteTeam({ page });
   

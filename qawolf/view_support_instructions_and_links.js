@@ -30,6 +30,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.bringToFront();
   const emailLink = page.locator('text=support@replay.io');
   await expect(emailLink).toHaveAttribute('href', 'mailto:support@replay.io');
+  await page.click(".img");
+  
+  await logOut(page);
+  
 
   process.exit();
 })();

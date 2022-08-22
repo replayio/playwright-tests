@@ -13,7 +13,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert initial console messages
   await page.waitForTimeout(5000);
   const messages = page.locator('.message');
-  await expect(messages).toHaveCount(7);
+  await expect(messages).toHaveCount(6);
   
   // set focus
   await page.click('[title="Start focus edit mode"]');

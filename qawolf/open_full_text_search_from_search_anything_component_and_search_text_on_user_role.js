@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`)
   
   // open replay
   await page.click('text=Time Travel');
@@ -25,6 +26,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const demoFile = page.locator('text=demo-script.jsdemo (2 matches)');
   await expect(demoFile).not.toBeVisible();
   await searchBar.fill('demo');
+  await page.waitForTimeout(2000);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(2000); // give search time to populate
   

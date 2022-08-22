@@ -6,8 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  await page.click(':text("Test Permissions")');
+  await page.click('text=Time Travel');
   await page.click('text=DevTools');
   await page.waitForTimeout(5000); // give DevTools time to fully load
   

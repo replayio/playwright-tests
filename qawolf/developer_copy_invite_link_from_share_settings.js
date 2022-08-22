@@ -6,17 +6,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(page.locator('text="Your Library"')).toHaveCount(2);
   
   // go to team
-  await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // assert replays available
-  await expect(page.locator('text="Great Scott"')).toBeVisible();
+  // await expect(page.locator('text="Great Scott"')).toBeVisible();
   await expect(page.locator('text="Time Travel"')).toBeVisible();
   
   // go to replay
   await page.click('text=Time Travel');
   
   // assert replay loaded
-  await expect(page.locator('text="Time Travel"')).toBeVisible( { timeout: 30 * 1000 });
+  await expect(page.locator(':text("Time Travel")')).toBeVisible( { timeout: 30 * 1000 });
   await expect(page.locator('text="DevTools"')).toBeVisible();
   
   // go to share settings
@@ -70,14 +70,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert link copied to clipboard
   await expect(page.locator('text="Copied"')).toBeVisible();
-  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--242d3265-4544-4c6e-ba2d-1517085c2188'));
+  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
   
   // go to link
   const page2 = await browser.newPage();
   await page2.goto(copiedLink);
   
   // assert page opened with correct url
-  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--242d3265-4544-4c6e-ba2d-1517085c2188'));
+  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
 
   process.exit();
 })();

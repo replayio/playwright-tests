@@ -1,8 +1,6 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // BUG - https://qa-wolf.monday.com/boards/2150171022/pulses/2803186401
-  
   // log in
   const { page } = await logIn({ userId: 7 });
   await assertText(page, "Library");
@@ -25,27 +23,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(':text("Save")');
   
   // assert all comments are visible
+  await page.click(':text("Viewer")');
   await expect(page.locator('text="This is a comment"')).toBeVisible();
   await expect(page.locator('text="good evening"')).toBeVisible();
   await expect(page.locator('text="hello"')).toBeVisible();
   
-  // assert comment outside of focus zone can't be interacted with
-  const commentCard = page.locator(".comment-card");
-  await expect(commentCard.first()).toHaveAttribute(
-    "title",
-    "This comment is currently outside of the focused region"
-  );
+  // assert comment outside of focus zone can be interacted with
+  const commentCard = page.locator(".CommentCard_CommentCard__7U_9l"); // selecter needs updating
   await commentCard.first().click();
-  expect(await commentCard.first().getAttribute("class")).not.toContain(
-    "border-secondaryAccent"
+  expect(await commentCard.first().locator("div >> nth=0").getAttribute("class")).toContain(
+    "CommentCard_PausedOverlay__g3ZE1"
   );
-  
-  // assert clicking on disabled comment doesn't jump to comment time in video
-  const progressLine = page.locator(".progress-line").last();
-  let playheadPosition1 = await progressLine.getAttribute("style");
-  await page.click(".comment-marker");
-  let playheadPosition2 = await progressLine.getAttribute("style");
-  expect(playheadPosition1).toEqual(playheadPosition2);
   
   // assert that comments inside focus can be interacted with
   await page.click(":text('good evening')");
@@ -53,13 +41,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(canvasComment).toBeVisible();
   
   // assert clicking on enabled comment jumps to comment time in video
+  const progressLine = page.locator(".progress-line").last();
   let playheadPosition3 = await progressLine.getAttribute("style");
   expect(playheadPosition3.split(" ")[1]).toEqual("82.3617%;");
-  
-  // assert clicking on any part of unfocused timeline does nothing
-  await page.mouse.click(100, 685.5);
-  let playheadPosition4 = await progressLine.getAttribute("style");
-  expect(playheadPosition3).toEqual(playheadPosition4);
 
   process.exit();
 })();

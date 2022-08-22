@@ -19,8 +19,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert docs
   await assertText(page2, "Docs");
-  await assertText(page2, "Getting Started");
-  await assertText(page2, "Resources");
+  await assertText(page2, "Get Started");
+  await assertText(page2, "Learn More");
   
   // close docs
   await page2.close();

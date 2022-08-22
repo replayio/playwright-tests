@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // open replay
   await page.click('text=Time Travel');
@@ -18,7 +19,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // search files
   await page.fill('[placeholder="Find in files…"]', 'background-image: url("/demo/demo_car.png");');
   await page.keyboard.press('Enter');
-  await page.waitForTimeout(2000); // give search time to populate
+  await page.waitForTimeout(4000); // give search time to populate
   
   // assert searched term results
   await expect(page.locator('text="1 result"')).toBeVisible();

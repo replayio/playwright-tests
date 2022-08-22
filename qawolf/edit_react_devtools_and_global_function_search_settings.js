@@ -1,6 +1,8 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // waiting on response - https://qawolfhq.slack.com/archives/C02GEJCC9JP/p1656519350951659
+  
   // log in
   const { page } = await logIn({ userId: 6});
   
@@ -19,7 +21,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=Experimental");
   
   // assert settings loaded
-  await assertText(page, "React DevTools");
+  await assertText(page, "Column Breakpoints");
   // await assertText(page, "Global function search");
   
   // ensure current checkbox state is reset

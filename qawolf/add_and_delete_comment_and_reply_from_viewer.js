@@ -6,7 +6,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Commenters"]');
+  await page.click(':text("Test Commenters")');
   await page.click('text=Test commenter 2');
   
   // assert replay loaded
@@ -19,17 +19,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click("text=forum");
   };
   
-  const startConvo = page.locator('text=Start a conversation');
-  while (await startConvo.count() < 1) {
+  const copyWhenThereAreNoComments = page.locator('text=Add a comment');
+  while (await copyWhenThereAreNoComments.count() < 1) {
     await page.click("text=more_vert");
     await page.click("text=Delete comment and replies");
     await page.click('[role="dialog"] button:nth-of-type(2)');
     await page.waitForTimeout(2000);
   };
-  await expect(startConvo).toBeVisible();
+  await expect(copyWhenThereAreNoComments).toBeVisible();
   
   // add comment by clicking on video
   await page.mouse.click(800, 400);
+  await page.waitForTimeout(5000);
   await page.keyboard.type('Here is my comment');
   await page.keyboard.press('Enter');
   
@@ -72,7 +73,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert comments/replies 
   await page.waitForTimeout(4000);
   await expect(userQaWolf).toHaveCount(0);
-  await expect(startConvo).toHaveCount(1);
+  await expect(copyWhenThereAreNoComments).toHaveCount(1);
 
   process.exit();
 })();

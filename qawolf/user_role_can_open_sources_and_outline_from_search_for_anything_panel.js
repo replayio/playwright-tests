@@ -1,21 +1,19 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // Accordian being added to panes: https://github.com/RecordReplay/devtools/commit/1ec81567e36edfe5be1a980ade1ae030d4ab7163
-  // update when feature is added
-  
   // log in
   const { page } = await logIn({ userId: 7 });
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`);
+  await page.click('text=Time Travel');
   await page.click('text=DevTools');
   await page.waitForTimeout(5000); // give DevTools time to fully load
   
   // assert DevTools loaded
-  await assertText(page, 'Great Scott');
+  await assertText(page, 'Time Travel');
   await assertText(page, 'Network');
   
   // ensure sources list panel is closed

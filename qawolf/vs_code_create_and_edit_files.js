@@ -18,7 +18,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // create css file
   await page.click("text=New File...");
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
   await page.click("text=Select a language");
   await page.click("text=CSS(css)");
   

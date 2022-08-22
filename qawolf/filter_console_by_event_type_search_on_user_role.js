@@ -1,8 +1,6 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // Bug reported - 19 May after filtering for pointerup nothing is displayed in console - https://qawolfhq.slack.com/archives/C02GEJCC9JP/p1652680166715709
-  
   // log in
   const { page } = await logIn({ userId: 7 });
   await assertText(page, "Library");

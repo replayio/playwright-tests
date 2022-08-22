@@ -6,10 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  await page.click(`:text("Test Permissions")`);
+  await page.click('text=Permissions: Great Scott');
   await page.click('text=DevTools');
-  await page.waitForTimeout(5000); // give DevTools time to fully load
+  await page.waitForTimeout(5000); 
   
   // assert demo-script.js outline not visible
   const logEntry = page.locator('text=λlog(callback)');

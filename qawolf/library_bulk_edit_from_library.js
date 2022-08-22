@@ -1,31 +1,28 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // bug: https://qa-wolf.monday.com/boards/2150171022/pulses/2738128459
-  // Move to is no longer visible
-  
   const assertAllVideosVisible = async (page, not = false) => {
     if (not) {
       // assert all videos are not visible
       await expect(page.locator(':text("Library test 1")')).not.toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
       await expect(page.locator(':text("Library test 2")')).not.toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
       await expect(page.locator(':text("Library test 3")')).not.toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
     } else {
       // assert all videos are visible
       await expect(page.locator(':text("Library test 1")')).toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
       await expect(page.locator(':text("Library test 2")')).toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
       await expect(page.locator(':text("Library test 3")')).toBeVisible({
-        timeout: 10000,
+        timeout: 10 * 1000,
       });
     }
   };
@@ -38,11 +35,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.check('[type="checkbox"]:left-of(:text("Library test 3"))');
     await page.click(':text("expand_more3 items selected")');
   };
-  
   // helpers above
   
   // log in
-  const { page } = await logIn({ userId: 10 });
+  const { page } = await logIn({ userId: 6 });
   await assertText(page, "Library");
   
   // check if all videos are present
@@ -51,7 +47,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await assertAllVideosVisible(page);
   } catch {
     // go to team
-    await page.click('[title="Library: Bulk edit from library1"]');
+    await page.click(':text("Library: Bulk edit from library1")');
   
     // assert all videos are present
     await assertAllVideosVisible(page);
@@ -63,7 +59,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click(`a:has-text("Your library"):below(:text("MOVE TO:"))`);
   
     // go back to your library
-    await page.click('[title="Your Library"]');
+    await page.click(':text("Your Library")');
   }
   
   // wait for data to load
@@ -84,9 +80,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForTimeout(5000);
   
   // go to team with all videos
-  await page.click(`[title="Library: Bulk edit from library1"]`);
+  await page.click(`:text("Library: Bulk edit from library1")`);
   
   // assert all videos are present
+  await page.waitForTimeout(5000);
   await assertAllVideosVisible(page);
   
   // select all videos
@@ -99,9 +96,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertAllVideosVisible(page, true);
   
   // go back to your Library
-  await page.click(`[title="Your Library"]`);
+  await page.click(`:text("Your Library")`);
   
   // assert all videos are present
+  await page.waitForTimeout(5000);
   await assertAllVideosVisible(page);
   
 

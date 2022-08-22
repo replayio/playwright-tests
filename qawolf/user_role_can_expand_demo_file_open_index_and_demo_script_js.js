@@ -6,11 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  await page.click(`:text("Test Permissions")`);
+  await page.click('text=Permissions: Great Scott');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
   await assertText(page, 'DevTools');
   
   // go to DevTools
@@ -22,7 +21,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // expand demo file
   const indexFile = page.locator('text=(index)');
-  const scriptFile = page.locator('div:nth-of-type(4) .node >> text=demo-script.js');
+  const scriptFile = page.locator('div:nth-of-type(1) .node >> text=demo-script.js');
   await expect(indexFile).not.toBeVisible();
   await expect(scriptFile).not.toBeVisible();
   await page.click("text=demo");
@@ -31,19 +30,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(indexFile).toBeVisible();
   await expect(scriptFile).toBeVisible();
   
+  // assert demo-script.js opened
+  await expect(page.locator(':text("const log = (callback) => setTimeout(callback, 100);")')).toBeVisible();
+  // await expect(page.locator('text=export async function setupDemo() {')).toBeVisible();
+  
   // open index file
   await assertNotText(page, "    <title>Your first replay</title>");
   await indexFile.click();
   
   // assert index file opened
-  await assertText(page, "    <title>Your first replay</title>");
-  
-  // open demo-script.js
-  await assertNotText(page, "const log = (callback) => setTimeout(callback, 100);");
-  await scriptFile.click();
-  
-  // assert demo-script.js opened
-  await assertText(page, "const log = (callback) => setTimeout(callback, 100);");
+  await expect(page.locator(':text("<title>Your first replay</title>")')).toBeVisible();
 
   process.exit();
 })();

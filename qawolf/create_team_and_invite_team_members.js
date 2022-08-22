@@ -9,13 +9,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // ensure test team deleted  
   var testTeamLink = await page.$("text=Test Team Blue:");  
   try {  
-    await assertNotText(page, 'Test Team Blue:', { timeout: 7 * 1000 });  
+    await assertNotText(page, "Test Team Blue:", { timeout: 7 * 1000 });  
   } catch (e) {  
     await testTeamLink.click();  
     await page.click("text=settings");  
     await deleteTeam({ page });  
-    await assertNotText(page, 'Test Team Blue:', { timeout: 7 * 1000 });  
-  };  
+    await assertNotText(page, "Test Team Blue:", { timeout: 7 * 1000 });  
+  }  
   await page.goto("https://www.replay.io/pricing");  
     
   // assert pricing page  
@@ -38,24 +38,20 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.fill('[type="text"]', teamName);  
   await page.click("text=Next");  
     
-  // invite team member with valid email address  
-  const { email, waitForMessage } = getInbox({ new: true });  
-  await page.fill('[placeholder="Email address"]', email);  
-  await page.click("button:has-text('Invite')");  
-  await page.click("text=Next");  
-    
-  // assert on download page  
-  await assertText(page, "Download Replay");  
-    
-  // skip downlod  
-  await page.click("text=Skip for now");  
-    
   // assert team created  
   await assertText(page, teamName);  
     
+  // invite team member with valid email address  
+  const { email, waitForMessage } = getInbox({ new: true });  
+  await page.click('button:text("Settings")');  
+  await page.fill('[placeholder="Email address"]', email);  
+  await page.click("button:has-text('Invite')");  
+  await page.click(".modal-close");  
+    
   // get invite information from email  
-  console.log(email)  
-  const { html, subject, text } = await waitForMessage({ timeout: 5 * 60 * 1000 });  
+  const { html, subject, text } = await waitForMessage({  
+    timeout: 5 * 60 * 1000,  
+  });  
   const inviteUrl = parseInviteUrl({ text });  
   assert(html.includes(teamName));  
   assert(subject.includes(teamName));  
@@ -69,7 +65,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     
   // assert taken to accept invite flow  
   await assertText(page2, "Almost there!");  
-  await assertText(page2, "In order to join your team, we first need you to sign in.");  
+  await assertText(  
+    page2,  
+    "In order to join your team, we first need you to sign in."  
+  );  
   await assertText(page2, "Sign in with Google");  
     
   // open team settings  
@@ -81,7 +80,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await deleteTeam({ page });  
     
   // assert team deleted  
-  await assertNotText(page, teamName);
+  await assertNotText(page, teamName);  
+  
 
   process.exit();
 })();

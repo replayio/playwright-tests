@@ -29,9 +29,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   try {
     await expect(page.locator("text=👋 This is where your replays will go!")).toBeVisible(); // empty placeholder
-  } catch { // new behavior
-    await expect(page.locator('text=No recordings found')).toBeVisible();
-    await expect(page.locator(':text("Clear filters")')).toBeVisible();
+  } catch { 
+    await expect(page.locator('text=No results found.Show all replays?')).toBeVisible();
   }
 
   process.exit();

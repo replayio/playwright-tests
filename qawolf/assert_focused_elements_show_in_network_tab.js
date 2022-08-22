@@ -21,7 +21,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await setFocus({ handleLocation: "left", moveToX: 70, page });
   
   // assert new console message count
-  await expect(messages).toHaveCount(0); //30
+  await expect(messages).toHaveCount(30); //30
 
   process.exit();
 })();

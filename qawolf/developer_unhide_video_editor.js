@@ -1,15 +1,13 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // BUG REPORTED 4/4/2022 
-  // https://qawolfhq.slack.com/archives/C02GEJCC9JP/p1649031414020109
-  
   // log in
   const { page } = await logIn({ userId: 10 });
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // open replay
   await page.click('text=Time Travel');

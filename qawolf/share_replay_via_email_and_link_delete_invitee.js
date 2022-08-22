@@ -1,7 +1,7 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // bug - https://qa-wolf.monday.com/boards/2150171022/pulses/2820879566
+  //Context: https://qawolfhq.slack.com/archives/C02K01LSEAE/p1660862225915889
   
   // launch page
   const { browser, context, page } = await logIn({ userId: 1 });
@@ -19,10 +19,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // reload the page if no share button (not signed in)
   try {
-    await page.waitForSelector(':text("ios_shareShare")');
+    await expect(page.locator(':text("ios_shareShare")')).toBeVisible();
   } catch {
     await page.reload();
-    await page.waitForSelector(':text("ios_shareShare")');
+    await page.waitForSelector(':text("ios_shareShare")', { timeout: 15 * 1000 }); //share button
   }
   
   // share replay
@@ -91,6 +91,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert opened replay
   await page3.waitForSelector("text=sample-folder");
+  
 
   process.exit();
 })();

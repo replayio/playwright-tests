@@ -41,9 +41,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // invite team member with valid email address
   const { email, waitForMessage } = getInbox({ new: true });
+  await page.click('button:text("Settings")');
   await page.fill('[placeholder="Email address"]', email);
   await page.click("button:has-text('Invite')");
-  await page.click("text=Next");
+  await page.click(".modal-close");
   
   // assert on download page
   await assertText(page, "Download Replay");

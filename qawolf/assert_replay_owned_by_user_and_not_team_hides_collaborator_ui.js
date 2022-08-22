@@ -6,6 +6,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to replay
+  await page.click(':text("Test Permissions")');
   await page.click('text=www.qawolf.com/');
   
   // open share modal

@@ -16,7 +16,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   ]);
   
   // assert viewing docs
-  await assertText(docsPage, "Search the docs");
+  await assertText(docsPage, "Quick Search");
   
   // close docs page
   await docsPage.close();

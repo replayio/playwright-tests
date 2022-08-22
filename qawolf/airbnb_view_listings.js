@@ -23,7 +23,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // filter by price
   await page.waitForTimeout(3000);
-  await page.click('[aria-label="Filters"]');
+  // await page.click('[aria-label="Filters"]');
+  await page.click(':text("Filters")');
   //await page.click('[data-testid="menuItemButton-price_range"] >> text=Price');
   await page.fill('[data-testid="modal-container"] #price_filter_max', "500");
   //await page.click('[data-testid="filter-panel-save-button"]');

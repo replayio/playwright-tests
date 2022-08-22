@@ -20,7 +20,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForSelector("text=See all friends");
   
   // view post image
-  await page.click('[alt="May be an image of animal and nature"]');
+  await page.click('[alt="No photo description available."]');
   await assertElement(page, '[aria-label="Photo Viewer"]');
   await assertElement(page, '[aria-label="Zoom In"]');
   await page.click('[aria-label="Close"]');
@@ -32,7 +32,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.evaluate(() => window.scrollTo(0, 200)); // scroll down
   
   // view individual photo
-  await page.click('[alt="May be an image of animal and nature"]');
+  await page.click('[alt="No photo description available."]');
   await assertElement(page, '[aria-label="Photo Viewer"]');
 
   process.exit();

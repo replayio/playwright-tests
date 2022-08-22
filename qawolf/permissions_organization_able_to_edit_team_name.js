@@ -41,23 +41,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // invite team member with valid email address
   const { email, waitForMessage } = getInbox({ new: true });
+  await page.click(':text("settings"):right-of(:text("Test Create Organization"))');
   await page.fill('[placeholder="Email address"]', email);
   await page.click("button:has-text('Invite')");
-  await page.click("text=Next");
-  
-  // assert on download page
-  await assertText(page, "Download Replay");
-  
-  // skip download
-  await page.click("text=Skip for now");
+  await page.click("#app-container .modal-close");
   
   // assert organization created
   await assertText(page, organizationName);
   
   // change organization name
-  await page.click(':text("settings")');
+  await page.click(':text("settings"):right-of(:text("Test Create Organization"))');
   await page.click("li >> text='Profile'");
-  await page.fill('.overflow-hidden [type="text"]', "Test Edit Organization");
+  await page.fill('main [type="text"]', "Test Edit Organization");
   await page.click(".modal-close");
   
   // assert name change
@@ -65,11 +60,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertNotText(page, organizationName);
   
   // delete team
-  await page.click(':text("settings")');
+  await page.click(':text("settings"):right-of(:text("Test Edit Organization"))');
   await page.click(':text("Delete Team")');
-  await page.click(".rounded-lg button");
+  await page.click('main button:text("Delete this team")');
   await page.click('[role="dialog"] button:nth-of-type(2)');
-  await assertNotText(page, "Test Edit Organization");
+  await assertNotText(page, "Test Edit Organization"); 
 
   process.exit();
 })();

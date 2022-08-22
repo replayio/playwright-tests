@@ -52,7 +52,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=Take me to my team");
   const newTeamLibrary = page.locator(`span >> text=${teamName}`);
   await expect(newTeamLibrary).toHaveCount(1);
-  await assertText(page, `${teamName} (Trial)`);
+  await assertText(page, `${teamName}`);
   
   // get invite information from email
   const { html, subject, text } = await waitForMessage({ timeout: 5 * 60000 });
@@ -74,7 +74,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // open team settings
   await page.bringToFront();
-  await page.click(`[title="${teamName}"]`);
+  await page.click(`:text("${teamName}")`);
   await page.click("text=settings");
   await assertText(page, "Team Members");
   

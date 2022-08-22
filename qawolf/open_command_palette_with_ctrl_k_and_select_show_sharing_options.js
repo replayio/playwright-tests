@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Commenters"]');
+  // await page.click('[title="Test Commenters"]');
+  await page.click(`:text("Test Commenters")`)
   await page.click('text=Test commenter 3');
   
   // assert replay loaded

@@ -4,6 +4,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // BUG - Video plays past focus region https://qa-wolf.monday.com/boards/2150171022/pulses/2783325259
   // Asked to revise test just waiting for clarificaiton- https://qawolfhq.slack.com/archives/C02GEJCC9JP/p1655232831364969?thread_ts=1654720063.333749&cid=C02GEJCC9JP
   
+  // BUG - Replay icon not appearing at end of the replay
+  // Asked again here - https://qa-wolf.monday.com/boards/2150171022/pulses/2859226183
+  
   // log in
   const { page } = await logIn({ userId: 7 });
   await assertText(page, "Library");
@@ -46,7 +49,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert that starting playback with spacebar ends at end of focus region
   await page.keyboard.press(" ");
   await page.waitForTimeout(10 * 1000);
-  expect(await getPlaybarTooltipValue(page)).toEqual("0:16");
+  // expect(await getPlaybarTooltipValue(page)).toEqual("0:16");
+  expect(await getPlaybarTooltipValue(page)).toEqual("0:16 (Unloaded)");
   
   // assert pressing spacebar at end of playback restarts and begining of focus area
   await expect(

@@ -15,8 +15,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=Launch Replay");
   
   // assert lanch dialog appears
-  expect(page.locator('text=Launching Replay ...'))
-    .toBeVisible();
+  await expect(page.locator('text=Launching Replay ...')).toBeVisible();
   await expect(page.locator('text=Click Open Replay in the dialog shown by your browser'))
     .toBeVisible();
   await expect(page.locator("text=Don't have Replay yet? Download it on Mac, Linux, and Windows"))

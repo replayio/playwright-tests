@@ -71,8 +71,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   let tabs = openTabs.context().pages();
   
   // asserting viewing docs
-  await assertText(tabs[1], "Getting Started");
-  await assertText(tabs[1], "Guides");
+  await assertText(tabs[1], "Get Started");
+  await assertText(tabs[1], "Learn More");
 
   process.exit();
 })();

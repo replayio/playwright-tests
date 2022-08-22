@@ -1,61 +1,79 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // Marked as maintenance for the following issue again - https://qa-wolf.monday.com/boards/2150171022/pulses/3093588105
+  
   // log in
-  const { page } = await logIn({ userId: 7, options: { slowMo: 1000 } });
+  const { page } = await logIn({ userId: 6, options: { slowMo: 1000 } });
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Commenters"]');
-  await page.click('text=Test commenter 3');
+  // await page.click('[title="Test Commenters"]');
+  await page.click(':text("Test Commenters")');
+  await page.click('text="Test commenter 3"');
   
   // assert replay loaded
-  await assertText(page, 'Test commenter 3');
-  await assertText(page, 'DevTools');
+  await assertText(page, "DevTools");
+  await assertText(page, "Test commenter 3", { timeout: 60 * 1000 });
+  
+  // navigate to comment section
+  try {
+    await expect(page.locator("'Comments'")).toBeVisible();
+  } catch {
+    await page.click(".comments button");
+  }
   
   // ensure comments deleted
-  const comments = page.locator('text=comments');
-  if (await comments.count() < 1) {
-    await page.click("text=forum");
-  };
-  
-  const startConvo = page.locator('text=Start a conversation');
-  while (await startConvo.count() < 1) {
-    await page.click("text=more_vert");
-    await page.click("text=Delete comment and replies");
-    await page.click('[role="dialog"] button >> text=Delete comment');
+  const noComments = page.locator("text=Add a comment to the video");
+  const comments = page.locator(':text("more_vert")');
+  while (await comments.count()) {
+    await comments.last().click();
+    await page.click(':text("Delete comment and replies")');
+    await page.click('[role="dialog"] button:nth-of-type(2)');
     await page.waitForTimeout(2000);
-  };
-  await expect(startConvo).toBeVisible();
+  }
+  await expect(noComments).toBeVisible();
   
   // open DevTools and demo-script.js
   await page.click("text=ViewerDevTools");
   await page.click("text=demo");
   await page.click("text=demo-script.js");
   
-  // add comment to file
-  await page.hover('text=const buttons', { force: true });
+  // add comment
+  await page.hover("text=const buttons", { force: true });
   await page.waitForTimeout(1000);
-  const addCommentButton = page.locator('button.toggle-widget');
+  const addCommentButton = page.locator("button.toggle-widget");
   await addCommentButton.click();
+  await page.waitForTimeout(2000);
   await page.click('[aria-label="Add comment"]');
-  await page.keyboard.type('Here is my comment');
-  await page.keyboard.press('Enter');
+  
+  // try {
+  //   // retry click comment button if comment doesn't open on first try
+  //   await expect(page.locator("text=QA WolfNow")).toBeVisible();
+  // } catch {
+  //   await page.click('[aria-label="Add comment"]');
+  //   await expect(page.locator("text=QA Wolf")).toBeVisible();
+  // }
+  
+  await page.waitForTimeout(3000);
+  await page.keyboard.type("Here is my comment");
+  await page.keyboard.press("Enter");
   
   // assert comment entered
-  await assertText(page, 'const buttons = document.querySelectorAll("button");\nkeyboard_arrow_right');
-  await assertText(page, 'QA Wolf');
-  await assertText(page, 'Here is my comment');
+  await expect(page.locator('[title="Show in the Editor"]')).toBeVisible();
+  await expect(page.locator(':text("Chris BurtonNowmore_vert")')).toBeVisible();
+  await assertText(page, "Here is my comment");
   
   // delete comment
-  await page.click("text=more_vert");
+  await comments.first().click();
   await page.click("text=Delete comment and replies");
   await page.click('[role="dialog"] button >> text=Delete comment');
   await page.click('[title="Close tab"]');
   
   // assert comment deleted
-  await page.waitForTimeout(2000);
-  await expect(startConvo).toBeVisible();
+  await expect(noComments).toBeVisible({ timeout: 5000 });
+  
+  await logOut(page);
 
   process.exit();
 })();

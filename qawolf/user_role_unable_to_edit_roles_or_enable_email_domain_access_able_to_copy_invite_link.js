@@ -3,10 +3,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { browser, page } = await logIn({ userId:  7 });
-  await expect(page.locator('[title="Your Library"]')).toBeVisible();
+  await expect(page.locator(':text("Your Library")').first()).toBeVisible();
   
   // go to team settings
-  await page.click('[title="Test Permissions"]');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(`:text("Test Permissions")`);
   await page.click("text=settings");
   await page.waitForTimeout(2000); // give settings time to load
   
@@ -30,7 +31,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.reload();
   
   // assert user unable to give access to anyone via email domain
-  await page.click("text=settings");
+  await page.waitForTimeout(3000);
+  await page.click("text=settings >> nth=0");
   await expect(page.locator('text=Give access to anyone with a qawolf.com email address')).not.toBeVisible();
   
   // copy invite link

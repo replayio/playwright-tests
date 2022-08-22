@@ -6,7 +6,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to team settings
-  await page.click('[title="Test Invite Team"]');
+  // await page.click('[title="Test Invite Team"]');
+  await page.click(`:text("Test Invite Team")`)
   await page.click("text=settings");
   
   // assert settings loaded

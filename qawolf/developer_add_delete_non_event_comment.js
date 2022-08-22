@@ -13,7 +13,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // confirm first comment exists
   try {
     await expect(page.locator('text="First comment"')).toBeVisible({
-      timeout: 5000,
+      timeout: 10 * 1000,
     });
   } catch {
     await page.click("#video");
@@ -36,7 +36,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(".commands button");
   await page.waitForTimeout(1200);
   await page.click(".commands button");
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(5000);
   
   // add comment
   await page.click("#video");

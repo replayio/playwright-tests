@@ -2,27 +2,29 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { page } = await logIn({ userId: 10 });
-  await assertText(page, 'Library');
+  const { page } = await logIn({ userId: 10, options: { slowMo: 1000 } });
+  await assertText(page, "Library");
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  await page.click(':text("Test Permissions")');
+  await page.click(':text("React DevTools Recording")');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
-  await assertText(page, 'DevTools');
+  await assertText(page, "React DevTools Recording");
+  await assertText(page, "Viewer");
   
   // go to DevTools
   await page.click("text=ViewerDevTools");
   
   // assert DevTools loaded
-  await assertText(page, 'Console');
-  await assertNotText(page, '(index)');
+  await assertText(page, "Console");
+  await assertNotText(page, "(index)");
   
   // expand demo file
-  const indexFile = page.locator('text=(index)');
-  const scriptFile = page.locator('div:nth-of-type(4) .node >> text=demo-script.js');
+  const indexFile = page.locator("text=(index)");
+  const scriptFile = page.locator(
+    '[role="tree"] :text("demo-script.js")'
+  );
   await expect(indexFile).not.toBeVisible();
   await expect(scriptFile).not.toBeVisible();
   await page.click("text=demo");
@@ -39,11 +41,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "    <title>Your first replay</title>");
   
   // open demo-script.js
-  await assertNotText(page, "const log = (callback) => setTimeout(callback, 100);");
+  await assertNotText(
+    page,
+    "const log = (callback) => setTimeout(callback, 100);"
+  );
   await scriptFile.click();
   
   // assert demo-script.js opened
   await assertText(page, "const log = (callback) => setTimeout(callback, 100);");
+  
+  await logOut(page);
+  
 
   process.exit();
 })();

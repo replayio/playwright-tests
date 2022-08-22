@@ -6,14 +6,15 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
   
   // open replay
-  await page.click('text=Great Scott');
+  await page.click('text="Time Travel"');
   await page.click("text=ViewerDevTools");
   
   // open script.js
   await page.click("text=Search for fileCtrl+P");
+  await page.keyboard.type('s');
   await page.click('#result-list [role="option"]');
   
   // assert file opened

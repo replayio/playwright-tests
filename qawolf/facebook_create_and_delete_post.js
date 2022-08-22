@@ -10,20 +10,32 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // wait for profile to load
   await assertText(page, "Posts");
-  await page.waitForTimeout(20 * 1000);
+  await page.waitForTimeout(5 * 1000);
   
   // Clear existing posts
   const post = page.locator('[role="article"]');
-  const savePost = page.locator(':text("first post")');
+  const savePost = page.locator(':has-text("first post")');
   const moreOptions = page.locator('[aria-label="Actions for this post"]');
   
-  while ((await post.count()) > 2) {
+  //comment on save post is considered 1 
+  //occasionally Facebook decides that it should be this selector, 
+  //  [[await page.click("text=Delete post");]], instead of anything 
+  //  trash-related.
+  while ((await post.count()) > 3) {
     if (post.first() !== savePost) {
       await moreOptions.first().click();
-      await page.click("text=Move to trash");
-      await page.waitForSelector("text=Move to Your Trash?");
-      await page.click('[aria-label="Move"][tabindex="0"]');
+  
+      try {
+        await page.click("text=Move to trash");
+        await page.waitForSelector("text=Move to Your Trash?");
+        await page.click('[aria-label="Move"]');
+      } catch {
+        await page.click(':text("Delete post")');
+        await page.click('[aria-label="Delete"]');
+      }
+      
       await page.waitForTimeout(1000);
+      await page.mouse.click(0,0);
     }
   }
   
@@ -39,9 +51,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // delete post
   await page.click('[aria-label="Actions for this post"]');
-  await page.click("text=Move to trash");
-  await page.waitForSelector("text=Move to Your Trash?");
-  await page.click('[aria-label="Move"][tabindex="0"]');
+  await page.click(':text("Move to trash")');
+  await page.waitForSelector("text=Move to your trash?");
+  await page.click('[aria-label="Move"]');
   
   // assert post deleted
   await assertNotText(page, postContent);

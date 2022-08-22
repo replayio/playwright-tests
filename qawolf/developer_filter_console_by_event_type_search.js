@@ -6,11 +6,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click('text=Great Scott');
+  // await page.click('[title="Test Permissions"]');
+  await page.click(':text("Test Permissions")');
+  await page.click('text=Time Travel');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
+  await assertText(page, 'Time Travel');
   await assertText(page, 'DevTools');
   
   // go to DevTools
@@ -43,8 +44,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('[title="View click events"] [type="checkbox"]');
   
   // assert pointerup events loaded
-  await expect(logEntries).toHaveCount(5);
-  await expect(clickEvents).toHaveCount(4);
+  await expect(logEntries).toHaveCount(10);
+  await expect(clickEvents).toHaveCount(9);
 
   process.exit();
 })();

@@ -18,7 +18,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert terms of use
   await assertText(page2, "Terms of Use");
-  await assertText(page2, "Welcome to Replay. Please read on to learn the rules and restrictions that govern");
+  await assertText(
+    page2,
+    "Welcome to Replay. Please read on to learn the rules and restrictions that govern"
+  );
   assert(page2.url().includes("/terms-of-use"));
   
   // view privacy policy
@@ -34,6 +37,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page3, "Privacy Policy");
   await assertText(page3, "At Replay, we take your privacy seriously");
   assert(page3.url().includes("/privacy-policy"));
+  
+  await page.bringToFront();
+  await page.click(".modal-close");
+  await logOut(page);
+  
 
   process.exit();
 })();

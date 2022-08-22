@@ -10,10 +10,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('.team >> text=Denver Nuggets');
   
   // search player
+  await page.waitForTimeout(3000);
   await page.click(".Nav__Search__Toggle");
+  await page.waitForTimeout(3000);
   await page.fill("#searchBox", "Nikola Jokic");
+  await page.waitForTimeout(3000);
   await page.press("#searchBox", "Enter");
-  await page.waitForNavigation();
+  await page.waitForTimeout(3000);
+  // await page.waitForNavigation();
   
   // assert search player
   await assertElement(page, 'span:has-text("Nikola Jokic")');

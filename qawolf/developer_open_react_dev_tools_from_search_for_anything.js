@@ -2,16 +2,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { page } = await logIn({ userId: 10 });
+  const { page } = await logIn({ userId: 6, options: { slowMo: 1000 } });
   await assertText(page, "Library");
   
   // go to recording
-  await page.click('[title="Test Permissions"]');
-  await page.click(':text("Private Recording Test")');
+  await page.click(':text("QA Wolf - Replay Issues")');
+  const recording = page.locator('[class*="Library_libraryRow"]');
+  // await recording.first().click();
+  await page.click("text=React Devtools Hanging");
   
   // assert recording loaded
-  await assertText(page, "Private Recording Test");
-  await assertText(page, "DevTools");
+  await assertText(page, "Viewer");
   
   // go to DevTools
   await page.click("text=ViewerDevTools");
@@ -20,17 +21,29 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Console");
   
   // open React DevTools
-  const reactDevTools = page.locator('[placeholder="Search (text or /regex/)"]');
-  await expect(reactDevTools).toHaveCount(0);
-  
-  // open React DevTools
   await page.click("text=Open React DevTools");
   
   // assert React DevTools opened
+  await expect(
+    page.locator("text=Loading React Developer Tools...")
+  ).not.toBeVisible({ timeout: 3 * 60 * 1000 });
+  
+  try {
+  await page.click('button [src="/images/playback-play.svg"]', {timeout: 5000});
+  } catch {
+  await page.click('button [src="/images/playback-refresh.svg"]');
   await page.click('button [src="/images/playback-play.svg"]');
+  }
+  
   await page.waitForTimeout(2000);
-  await page.click('[src="/images/playback-pause.svg"]');
-  await expect(reactDevTools).toHaveCount(1);
+  
+  try {
+    await page.click('[src="/images/playback-pause.svg"]');
+  } catch {}
+  await expect(page.locator(".inspector-panel-button")).toBeVisible();
+  
+  await logOut(page);
+  
 
   process.exit();
 })();
