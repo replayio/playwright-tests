@@ -6,7 +6,8 @@ require("dotenv").config();
 let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
 const launchOptions = {
   headless: !!process.env.PLAYWRIGHT_HEADLESS,
-  ...devices[browserName === "firefox" ? "Replay Firefox" : "Replay Chromium"].launchOptions
+  ...devices[browserName === "firefox" ? "Replay Firefox" : "Replay Chromium"]
+    .launchOptions,
 };
 
 let depth = 0;
@@ -124,7 +125,7 @@ const example = wrapped(async (...args) => {
     pageLog(
       `${success ? "👍" : "💣"} Test ${success ? "succeeded" : "failed"}`
     );
-    await saveMetadata(page, startTime, success);
+    await saveMetadata(page, startTime, success, pageLog);
   });
 
   try {
@@ -144,7 +145,7 @@ const example = wrapped(async (...args) => {
   return success;
 });
 
-async function saveMetadata(page, startTime, success) {
+async function saveMetadata(page, startTime, success, log) {
   try {
     const last_screen = (await page.screenshot()).toString("base64");
     const title = await page.title();
@@ -158,7 +159,7 @@ async function saveMetadata(page, startTime, success) {
 
     let metadataFile =
       process.env.RECORD_REPLAY_RECORDING_METADATA_FILE || "../metadata.log";
-    console.log("Writing metadata to", metadataFile);
+    log("Writing metadata to", metadataFile);
     fs.appendFileSync(metadataFile, JSON.stringify(metadata) + "\n");
   } catch (e) {
     error("Unable to populate metadata from page:", e.message);
