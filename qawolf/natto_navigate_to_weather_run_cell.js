@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -13,10 +13,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.hover("text=natto.dev");
   
   // navigate to weather
-  await page.click("text=weather");
+  // await page.click("text=weather");
+  await page.click(':text("1. tip calculator")');
   
   // assert weather page
-  await assertText(page, "weather.gov");
+  await assertText(page, "1. tip calculator");
   
   // grab iframe
   var frame = await (await page.waitForSelector('#sandbox-iframe')).contentFrame();
@@ -29,7 +30,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await runButton.click();
   
   // assert cell ran
-  await assertText(frame, "@context");
+  await assertText(frame, "60");
 
   process.exit();
 })();

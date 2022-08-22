@@ -1,8 +1,10 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
+  // firebugs website down 5/10/22
+  //https://qawolfhq.slack.com/archives/C02GEJCC9JP/p1652299443476069
   await page.goto('https://firebugs.dev/', { timeout: 120 * 1000 });
   
   // assert data loaded

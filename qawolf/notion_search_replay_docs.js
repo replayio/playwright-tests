@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -11,10 +11,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // search
   await page.click('.notion-topbar >> text="Search"');
-  await page.fill('[type="text"]', "help");
+  await page.fill('[type="text"]', "console");
   
   // assert search option
-  await assertText(page, "Console", { selector: ".search-query-result-item" });
+  await expect(page.locator('.search-query-result-item >> text=Console').first()).toBeVisible();
   
   // navigate to search results
   await page.click(".search-query-result-item:has-text('Console')");

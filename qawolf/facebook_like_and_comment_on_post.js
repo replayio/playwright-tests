@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // log in to Facebook
@@ -26,7 +26,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await oldComment.click();
     await page.click("[role='menu'] >> text=Delete");
     await assertText(page, "Are you sure");
-    await page.click('[aria-label="Delete"]');
+    await page.click('[aria-label="Delete"][tabindex="0"]');
   };
   
   // comment on post
@@ -46,7 +46,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('[aria-label="Edit or delete this"]');
   await page.click("[role='menu'] >> text=Delete");
   await assertText(page, "Are you sure");
-  await page.click('[aria-label="Delete"]');
+  await page.click('[aria-label="Delete"][tabindex="0"]');
   await assertNotText(page, comment);
 
   process.exit();

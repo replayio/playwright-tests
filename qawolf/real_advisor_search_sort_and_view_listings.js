@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -27,12 +27,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // click first listing
   await page.waitForTimeout(3000);
-  await page.click('[class$=AggregatesListings] [class$=AggregatesListingCard] a');
+  await page.click('[class$=AggregatesListings] [class$=AggregatesListingCard] a >> nth=1'); // NOTE: Added nth=1 because the RealAdvisor site was broken on the first listing
   await page.waitForTimeout(3000);
   
   // assert listing
   await assertText(page, "Description");
-  await page.click("text=Search available listings");
 
   process.exit();
 })();

@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // open Excalidraw
@@ -18,7 +18,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.mouse.up();
   
   // draw a circle
-  await page.click('[title="Ellipse — E or 4"]');
+  await page.click('[title="Ellipse — O or 4"]');
   await page.mouse.move(center.x + 250, center.y);;
   await page.mouse.down();
   await page.mouse.move(center.x + 350, center.y + 100, { steps: 10 });

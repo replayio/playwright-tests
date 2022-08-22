@@ -1,4 +1,4 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,logIn,logInToFacebook,parseInviteUrl,waitForFrameNavigated } = require("./helpers");
+const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
   // launch page
@@ -20,9 +20,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     // listings to be viewed
     await page.click(".listing-link >> nth=0"),
     await page.click(".listing-link >> nth=1")
-  ])
+  ]);
   
-  await multipage.waitForLoadState('networkidle');
+  await page.waitForTimeout(10 * 1000);
   let tabs = multipage.context().pages();
   
   // close extra tab
@@ -34,7 +34,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await multipage.click("#inventory-variation-select-0");
     await multipage.press("#inventory-variation-select-0", "ArrowDown");
     await multipage.press("#inventory-variation-select-0", "Enter");
-  }
+  };
   
   // set options for product
   var variationOptions2 = await multipage.$('#inventory-variation-select-1');
@@ -42,13 +42,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await multipage.click("#inventory-variation-select-1");
     await multipage.press("#inventory-variation-select-1", "ArrowDown");
     await multipage.press("#inventory-variation-select-1", "Enter");
-  }
+  };
   
   // set personalization message 
   var personalizationInput = await multipage.$('#personalization-input');
   if (personalizationInput) {
     await multipage.fill("#personalization-input", "Test");
-  }
+  };
   
   // get product title
   var productTitle = await getValue(multipage, "h1");
