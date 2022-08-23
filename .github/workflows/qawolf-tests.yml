@@ -8,6 +8,10 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        record: [true, false]
+        chromium: [true, false]
     env:
       RECORD_REPLAY_API_KEY: rwk_dkcLU5trLw9tvbbNukNj0xRVl65iVBj2E0qlnz8TL6v
 
@@ -37,11 +41,7 @@ jobs:
         run: echo "::set-output name=uuid::$(npx uuid)"
 
       - name: Run Tests
-        run: |
-          RECORD_REPLAY_NO_RECORD=1 node ./qawolf-tests.js
-          RECORD_REPLAY_NO_RECORD=1 PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
-          node ./qawolf-tests.js
-          PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
+        run: RECORD_REPLAY_NO_RECORD=${{ matrix.record == 'false' && '1' || '' }} PLAYWRIGHT_CHROMIUM=${{ matrix.chromium == 'true' && '1' || ''}} node ./qawolf-tests.js
         env:
           TEST_RUN_ID: ${{ steps.test-run-id.outputs.uuid }}
           RECORD_REPLAY_HEADLESS: 1
