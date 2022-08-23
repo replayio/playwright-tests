@@ -9,9 +9,20 @@ function getTests() {
 }
 
 async function recordTest(test) {
+  const env = {
+    ...process.env,
+  };
+
+  try {
+    Object.assign(env, JSON.parse(process.env.TEST_TASK_ENV || "{}"));
+  } catch (e) {
+    console.error("Failed to parse TEST_TASK_ENV");
+  }
+
   const proc = require("child_process").spawnSync("node", [`qawolf/${test}`], {
     cwd: __dirname,
     stdio: "inherit",
+    env,
   });
 
   return proc.status;
