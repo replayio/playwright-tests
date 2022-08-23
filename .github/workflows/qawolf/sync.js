@@ -39,7 +39,8 @@ function formatHelpers(code) {
   require("dotenv").config();
   
   async function launch({ headless } = { headless: false }) {
-    const playwright = require("@recordreplay/playwright");
+    const playwright = require("playwright");
+    const { getExecutablePath } = require("@replayio/playwright");
     let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
   
     const browser = await playwright[browserName].launch({
@@ -139,7 +140,7 @@ async function sync() {
 
   const promises = tests.map(async (test) => {
     if (test.status === "draft") return;
-    
+
     const testCode = await queryFileContent(`test.${test.id}`);
     await writeFile(`${_.snakeCase(test.name)}.js`, formatTest(testCode));
   });
