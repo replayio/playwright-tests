@@ -5,13 +5,21 @@ const assert = require("assert");
   const { getInbox } = require("./getInbox");
   require("dotenv").config();
   
-  async function launch({ headless } = { headless: false }) {
-    const playwright = require("@recordreplay/playwright");
+  async function launch({
+    headless = ["1", "true"].includes(process.env.RECORD_REPLAY_HEADLESS),
+  } = {}) {
+    const playwright = require("playwright");
+    const { devices: replayDevices } = require("@replayio/playwright");
     let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
+
+    const device = replayDevices[
+          browserName === "firefox" ? "Replay Firefox" : "Replay Chromium"
+        ];
   
     const browser = await playwright[browserName].launch({
       headless,
       timeout: 60000,
+      ...device.launchOptions,
     });
     const context = await browser.newContext();
     return { browser, context };
