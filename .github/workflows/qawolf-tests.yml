@@ -32,12 +32,20 @@ jobs:
       - name: Install Replay Browsers
         run: npx @replayio/playwright install
 
-      - name: run tests
+      - name: Generate Test Run ID
+        id: test-run-id
+        run: echo "::set-output name=uuid::$(npx uuid)"
+
+      - name: Run Tests
         run: |
+          RECORD_REPLAY_NO_RECORD=1 node ./qawolf-tests.js
+          RECORD_REPLAY_NO_RECORD=1 PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
           node ./qawolf-tests.js
           PLAYWRIGHT_CHROMIUM=1 node ./qawolf-tests.js
         env:
+          TEST_RUN_ID: ${{ steps.test-run-id.outputs.uuid }}
           RECORD_REPLAY_HEADLESS: 1
+          RECORD_REPLAY_WEBHOOK_URL: ${{ secrets.RECORD_REPLAY_WEBHOOK_URL }}
 
       - name: Upload Replays
         uses: replayio/action-upload@v0.4.3
