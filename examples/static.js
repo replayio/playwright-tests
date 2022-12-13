@@ -11,7 +11,9 @@ if (!url.startsWith("http")) {
 
 const timeout = +process.env.STATIC_WEBSITE_DURATION || 30000;
 
-example(`Load static website ${url}`, async page => {
+example(`Load static website ${url}`, async (page, { action }) => {
   await page.goto(url);
-  await new Promise(resolve => setTimeout(resolve, timeout));
+  await action(`Wait for ${timeout} ms`, async () => {
+    await new Promise(resolve => setTimeout(resolve, timeout));
+  });
 });
