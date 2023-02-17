@@ -1,5 +1,10 @@
-import { Page } from "@recordreplay/playwright";
-import { waitForTime, MsPerSecond, randomElement, randomString } from "../utils";
+import { Page } from "playwright";
+import {
+  waitForTime,
+  MsPerSecond,
+  randomElement,
+  randomString,
+} from "../utils";
 const { example } = require("../src/helpers");
 
 // Credentials for a facebook test account need to be specified via the environment.
