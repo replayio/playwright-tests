@@ -1,8 +1,14 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // log in to Facebook
-  const { page } = await logInToFacebook(process.env.FACEBOOK_EMAIL_2, process.env.FACEBOOK_PASSWORD_2);
+  const { page } = await logInToFacebook(
+    process.env.FACEBOOK_EMAIL_5,
+    process.env.FACEBOOK_PASSWORD_5
+  );
   
   // open messenger
   await page.click('[aria-label="Messenger"]');
@@ -11,20 +17,35 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // view all in messenger
   await page.click("text=See all in Messenger");
-  await assertText(page, "Customize chat");
   
   // view chat conversations
-  await assertText(page, "Elizabeth");
+  await assertText(page, "Mark");
   
   // send message
   const message = faker.hacker.phrase();
   await page.fill('[aria-label="Message"]', message);
-  await page.click('[aria-label="Press enter to send"]');
-  // react to message with emoji
-  await page.hover(`[data-testid="message-container"] >> text=${message}`);
-  await page.click('[data-testid="message-container"] [aria-label="React"]');
-  await page.click('[aria-label="Messages reactions"] img');
-  await assertElement(page, '[data-testid="message-container"] [aria-label="1 reaction, see who reacted to this"][tabindex="0"]');
+  await page.click('[aria-label="Press Enter to send"]');
+  await page.hover(
+    '[tabindex="0"][data-scope="messages_table"][data-release-focus-from="CLICK"] >> nth=-1'
+  );
+  console.log(message);
+  // await page.click('[aria-label="Choose an emoji"]');
+  try {
+    await page.click('[aria-label="React"] >> nth=-1');
+  } catch {
+    await page.hover(
+      '[tabindex="0"][data-scope="messages_table"][data-release-focus-from="CLICK"] >> nth=-1'
+    );
+    await page.click('[aria-label="React"] >> nth=-1');
+  }
+  
+  // await page.click('[aria-label="Smileys & People"] [role="button"]');
+  await page.click('[role="menuitem"]');
+  await expect(page.locator('[aria-label="1 reaction; see who reacted to this"][tabindex="0"]')).toBeVisible();
+  
+  // list and upload the replay
+  await uploadReplay();
+  
 
   process.exit();
 })();

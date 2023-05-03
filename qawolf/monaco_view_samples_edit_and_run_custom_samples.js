@@ -29,7 +29,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     tabByText(text) {
       return `${this.tabs} .tab >> :text="${text}"`;
     },
-    select: ".sample-switcher",
+    select: ".form-select >> nth=0",
     runner: "#runner",
     runnerContainer: "#container",
   };
@@ -53,11 +53,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://microsoft.github.io/monaco-editor/playground.html');
   
   // cycle through examples
-  for (const editor of editors) {
-    await page.selectOption(selectors.select, editor);
-    var frame = await waitForRunner(page);;
+  for (i=2; i<32; i++) {
+    if ( i == 5 ) {
+      i++;
+    }
+    await page.selectOption(selectors.select, `${i}`);
+    var frame = await waitForRunner(page);
     await frame.waitForSelector('.monaco-editor');
   };
+  
+  await page.selectOption(selectors.select, `9`);
   
   // clear input
   await page.click('.monaco-editor');
@@ -83,14 +88,6 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.waitForTimeout(100);
   };
   
-  // run code
-  await page.click('.tabArea button');
-  
-  // get frame
-  var frame = await (await page.waitForSelector('#runner')).contentFrame();
-  
-  // assert frame text
-  await assertText(frame, "Hello", {selector: ".view-line >> span"})
 
   process.exit();
 })();

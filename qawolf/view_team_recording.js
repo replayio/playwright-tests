@@ -1,16 +1,13 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // recording belongs to userId 6
-  // https://app.replay.io/recording/private-recording-test--149e2344-f94b-4095-a760-d9c67d5b4277
-  
   // helper
-  const url = buildUrl("/recording/private-recording-test--149e2344-f94b-4095-a760-d9c67d5b4277");
+  const url = buildUrl("/recording/private-recording-test--d27fd0e2-42a4-4f76-a957-34c940b6b162");
   
   // open a team replay
   // let { browser, context, page } = await logIn({ userId: 1 });
   let { browser, context, page } = await logIn({ userId: 7 });
-  await page.goto(url); // bug is here - Unexpected session error
+  await page.goto(url);
   
   // check the team member can access it
   await expect(page.locator(`:text('Private Recording Test')`).first()).toBeVisible({timeout: 60 * 1000});

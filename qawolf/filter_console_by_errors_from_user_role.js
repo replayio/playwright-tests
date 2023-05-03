@@ -3,35 +3,39 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { page } = await logIn({ userId: 7 });
-  await assertText(page, 'Library');
+  await assertText(page, "Library");
   
-  // go to recording
-  await page.goto(buildUrl('/recording/airtable-playwright-test--6847ab82-8b0a-4dc2-af73-eb6bf14918e7?point=12331705040172899620536796682649667&time=5072.277283660569&hasFrames=true'));
+  // go airtable recording
+  await page.click('[href="/recording/playwright-test-teams-airtable--69bdd408-b9bf-49a4-b914-608e92c026ce"]');
   
   // assert recording loaded
-  await assertText(page, 'Airtable: Playwright Test');
-  await assertText(page, 'DevTools');
+  await assertText(page, "Playwright Test: Teams - Airtable");
+  await assertText(page, "DevTools");
   
   // go to DevTools
   await page.click("text=ViewerDevTools");
   
   // assert DevTools loaded
-  await assertText(page, 'Console');
+  await assertText(page, "Console");
   
   // filter console by errors
-  const typeError = page.locator("text=TypeError: can't access dead object");
+  const consoleErrors = page.locator('[data-test-message-type="console-error"]');
   await page.waitForTimeout(10 * 1000);
-  await expect(typeError).toHaveCount(6, { timeout: 3 * 60 * 1000 }); //6
-  await page.click("#show-errors");
+  await expect(consoleErrors).toHaveCount(1, { timeout: 3 * 60 * 1000 }); //6
+  
+  // toggle errors off
+  await page.click('[data-test-id="ConsoleMenuToggleButton"]');
+  await page.click("#FilterToggle-errors");
   
   // assert errors hid
-  await expect(typeError).toHaveCount(0);
+  await expect(consoleErrors).toHaveCount(0);
   
   // show errors
-  await page.click("#show-errors");
+  await page.click("#FilterToggle-errors");
   
   // assert errors appeared
-  await expect(typeError).toHaveCount(6); //6
+  await expect(consoleErrors).toHaveCount(1);
+  
 
   process.exit();
 })();

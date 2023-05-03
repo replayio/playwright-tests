@@ -18,6 +18,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(fileSearchInput).not.toBeVisible();
   const indexFile = page.locator('text=(index)');
   await expect(indexFile).not.toBeVisible();
+  await page.keyboard.press("Control+K");
   await page.click("text=Search for fileCtrl+P");
   
   // assert file search opened

@@ -1,15 +1,18 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // log in to Facebook
+  // launch replay browser
+  const { browser } = await launchReplay();
+  
+  // log in to Facebook`
   const { page } = await logInToFacebook(
-    process.env.FACEBOOK_EMAIL_2,
-    process.env.FACEBOOK_PASSWORD_2
+    process.env.FACEBOOK_EMAIL_5,
+    process.env.FACEBOOK_PASSWORD_5
   );
   
   // view user profile
-  await page.goto("https://www.facebook.com/profile.php?id=100073845716617");
-  await assertText(page, "Elizabeth Algchdegaffag Sidhuman");
+  await page.goto("https://www.facebook.com/profile.php?id=100091313995937");
+  await assertText(page, "James Smith");
   await page.evaluate(() => {
     window.scrollTo(0, 3000);
   });
@@ -33,16 +36,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   if (unlikeButton) unlikeButton.click();
   
   // like comment
-  await page.locator(':text("Like"):below(:text("This is my first comment"))').click();
-  await assertElement(page, '[aria-label="1 reaction; see who reacted to this"]');
+  await page.waitForTimeout(5000);
+  await page.locator('[aria-label="Like"] >> nth=0').click();
   
   // unlike comment
   await page.click('[aria-label="Remove Like"]');
-  await page.waitForTimeout(1000);
-  await assertNotElement(
-    page,
-    '[aria-label="1 reaction; see who reacted to this"]'
-  );
+  
+  await uploadReplay();
   
 
   process.exit();

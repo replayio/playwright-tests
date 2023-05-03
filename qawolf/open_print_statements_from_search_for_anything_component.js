@@ -6,10 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('text=Great Scott');
+  await page.click('text=Greater Scott');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
+  await assertText(page, 'Greater Scott');
   await assertText(page, 'DevTools');
   
   // go to DevTools
@@ -21,6 +21,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // open print statements
   const printStatementsPanel = page.locator("text=Click on the add in the editor to add a print statement");
   await expect(printStatementsPanel).toHaveCount(0);
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Print Statements");
   
   // assert print statements console opened

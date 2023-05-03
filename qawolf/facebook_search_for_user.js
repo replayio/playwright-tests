@@ -2,7 +2,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in to Facebook
-  const { page } = await logInToFacebook();
+  const { page } = await logInToFacebook(
+    'qawreplayuser@gmail.com',
+    'Replayfb-qaw1'
+  );
   
   // wait for page to load
   await page.waitForTimeout(3 * 1000);
@@ -33,13 +36,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   }
   
   // view posts
-  await page.click("text=Posts");
+  await page.waitForTimeout(5000);
+  await page.click(':text("Posts")');
   await assertText(page, "Posts You've Seen");
   
   // view people
-  await page.click("text=People");
+  await page.click(":text('People')");
+  // friends of friends now hidden below a dropdown
+  await page.click('[aria-label="Friends"] i');
   await assertText(page, "Friends of Friends");
   
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

@@ -1,8 +1,11 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://playground.solidjs.com/');
   
@@ -33,6 +36,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   	</div>
   ), document.getElementById('app'))`;
   
+  await page.waitForTimeout(2000); // helps pass
+  
   // add code
   for (let line of code.trim().split("\n")) {
     await page.type('.monaco-editor textarea.inputarea', line);
@@ -56,7 +61,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   }
   
   // assert increment for first button
-  await assertText(frame, "5", {selector: "#first"});
+  await assertText(frame, "10", {selector: "#second"});
   
   // increment second button
   await frame.waitForSelector("#second");
@@ -66,6 +71,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert increment for second button
   await assertText(frame, "15", {selector: "#second"});
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

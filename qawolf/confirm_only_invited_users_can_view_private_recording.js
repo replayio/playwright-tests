@@ -2,7 +2,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // declare url
-  const url = buildUrl("/recording/149e2344-f94b-4095-a760-d9c67d5b4277");
+  const url = buildUrl("/recording/private-recording-test--d27fd0e2-42a4-4f76-a957-34c940b6b162");
   
   // log in with authorized user
   let { browser, context, page } = await logIn({ userId: 7 });

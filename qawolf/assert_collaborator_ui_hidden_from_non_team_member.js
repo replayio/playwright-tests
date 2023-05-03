@@ -3,7 +3,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // test helpers
   const url = buildUrl(
-    "/recording/collaborator-ui-recording--550df1bf-274c-48c5-8e99-052a02719f0a"
+    "/recording/collaborator-ui-recording--0a576b87-1bb9-420c-8a09-80d4235e8ac3?point=76910897217837429657213841486905344&time=24345&hasFrames=false"
   );
   
   // log in

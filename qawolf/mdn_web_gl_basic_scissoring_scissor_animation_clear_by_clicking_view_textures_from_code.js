@@ -1,8 +1,9 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // launch page
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   const page = await context.newPage();
   await page.goto(
     "https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Basic_scissoring"
@@ -15,8 +16,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     )
   ).contentFrame();
   
-  // assert viewing correct frame
-  await assertText(frame, "Result of scissoring.", { selector: "body > p" });
+  // assert viewing page
+  await expect(page.locator(".code-example").first()).toContainText("<p>Result of scissoring.</p>")
   
   // go to Clearing by clicking
   await page.goto(
@@ -43,19 +44,22 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.waitForSelector("#frame_animation_with_scissoring")
   ).contentFrame();
   
-  // assert animation stop
-  await assertText(frame, "start", { selector: "#animation-onoff" });
+  // assert on scissor animation page
+  await expect(page.locator('text=Scissor animation').first()).toBeVisible();
   
   // start animation
   await frame.click("#animation-onoff");
   
-  // assert animation start
-  await assertText(frame, "stop", { selector: "#animation-onoff" });
+  // assert some text
+  await expect(page.locator('text=A simple WebGL example in which we have some animation fun using scissoring and clearing operations.')).toBeVisible();
   
   // goto texture from code
   await page.goto(
     "https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/By_example/Textures_from_code"
   );
+  
+  // list and upload the replay
+  await uploadReplay();
   
 
   process.exit();

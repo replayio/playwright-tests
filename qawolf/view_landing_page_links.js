@@ -7,67 +7,59 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://replay.io');
   
   // assert page loaded
-  await assertText(page, "Your time travel debugger");
+  await expect(page.locator('text=The time-travel debugger from the future.')).toBeVisible();
   
   // view docs
   const [docsPage] = await Promise.all([
     context.waitForEvent("page"),
-    page.click('text=Docs')
+    page.click('[href="https://docs.replay.io"]:visible')
   ]);
   
   // assert viewing docs
-  await assertText(docsPage, "Quick Search");
+  await expect(docsPage.locator(':text("🤔How Replay Works")')).toBeVisible();
   
   // close docs page
   await docsPage.close();
   
   // view pricing
-  await page.click("text=Pricing", { button: "middle" });
+  await page.click('[href="/pricing"]:visible');
   await page.waitForTimeout(2000);
   
-  // bring pricing to front
-  let pages = context.pages();
-  await pages[1].bringToFront();
+  // // bring pricing to front
+  // let pages = context.pages();
+  // await pages[1].bringToFront();
   
   // assert viewing pricing
-  await assertText(pages[1], "Pricing");
-  await assertText(pages[1], "Individuals and open source communities will always be able to use Replay for free.");
+  await assertText(page, "Pricing");
+  await expect(page.locator('text=Individuals and open source communities will always be able to use Replay for free.')).toBeVisible();
   
-  // close tab
-  await pages[1].close();
+  // go back
+  await page.goBack();
   
   // view we're hiring
-  await page.click("text=We’re Hiring", { button: "middle" });
+  await page.click('[href="/about#jobs"]:visible');
   await page.waitForTimeout(2000);
-  
-  // bring we're hiring to front
-  let pages = context.pages();
-  await pages[1].bringToFront();
   
   // assert viewing we're hiring
-  await assertText(pages[1], "Join our journey");
-  await assertText(pages[1], "hiring@replay.io");
+  await assertText(page, "Join our journey");
+  await assertText(page, "hiring@replay.io");
   
-  // close tab
-  await pages[1].close();
+  // go back
+  await page.goBack();
   
   // view about
-  await page.click("text=About", { button: "middle" });
+  await page.click('[href="/about"]:visible');
   await page.waitForTimeout(2000);
   
-  // bring about to front
-  let pages = context.pages();
-  await pages[1].bringToFront();
-  
   // assert about
-  await assertText(pages[1], "About Replay");
-  await assertText(pages[1], "Learn where Replay is right now and where we are going next");
+  await assertText(page, "About Replay");
+  await assertText(page, "Learn where Replay is right now and where we are going next");
   
   // close tab
-  await pages[1].close();
+  await page.goBack();
   
   // view log in
-  await page.click("text=Login", { button: "middle" });
+  await page.click('[href="https://app.replay.io/"]:visible');
   await page.waitForTimeout(2000);
   
   // bring log in to front

@@ -8,42 +8,74 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // navigate to replay
   await page.goto(
     buildUrl(
-      "/recording/airtable-playwright-test--6847ab82-8b0a-4dc2-af73-eb6bf14918e7?point=12331705040172899620536796682649667&time=5072.277283660569&hasFrames=true"
+      "/recording/playwright-test-teams-airtable--69bdd408-b9bf-49a4-b914-608e92c026ce"
     )
   );
   
   // enable focus mode
-  await page.waitForSelector(':text("Airtable: Playwright test")');
+  await page.waitForSelector(':text("Playwright Test: Teams - Airtable")');
   await expect(page.locator('[title="Start focus edit mode"]')).toBeVisible();
   await page.click('[title="Start focus edit mode"]');
+  await page.waitForTimeout(5000);
   
   // drag focus handles
-  await setFocus({ handleLocation: "left", moveToX: 500, page });
   await setFocus({ handleLocation: "right", moveToX: 1050, page });
-  await page.click(':text("Save")');
+  await setFocus({ handleLocation: "left", moveToX: 200, page });
+  try {
+    await page.click(':text("Save")');
+  } catch {
+    await page.reload();
+    await page.click(':text("Save")');
+  }
   
   // assert all comments are visible
   await page.click(':text("Viewer")');
+  await expect(page.locator('text="First comment"')).toBeVisible();
   await expect(page.locator('text="This is a comment"')).toBeVisible();
   await expect(page.locator('text="good evening"')).toBeVisible();
   await expect(page.locator('text="hello"')).toBeVisible();
+  await expect(page.locator('text="Last comment"')).toBeVisible();
   
   // assert comment outside of focus zone can be interacted with
-  const commentCard = page.locator(".CommentCard_CommentCard__7U_9l"); // selecter needs updating
+  await page.click(':text("Viewer")');
+  const commentMarker = page.locator(".comment-marker");
+  const commentCard = page.locator('[class*="CommentCard_CommentCard"]');
+  await page.waitForTimeout(2000);
+  await commentCard.nth(1).click(); // clicking second comment moves to DevTools bug - couldn't replicate it on Replay though
+  await page.waitForTimeout(2000);
+  await page.click(':text("Viewer")');
   await commentCard.first().click();
-  expect(await commentCard.first().locator("div >> nth=0").getAttribute("class")).toContain(
+  await page.waitForTimeout(5000);
+  expect(
+    await commentCard.first().locator("div >> nth=0").getAttribute("class")
+  ).not.toContain(
     "CommentCard_PausedOverlay__g3ZE1"
+    // "EditableRemark_HeaderRow___vN8T"
   );
+  const firstCommentClasses = await page.getAttribute(
+    ".comment-marker >> nth=0",
+    "class"
+  );
+  expect(firstCommentClasses).toContain("paused");
   
   // assert that comments inside focus can be interacted with
-  await page.click(":text('good evening')");
-  const canvasComment = page.locator(".canvas-comment");
-  await expect(canvasComment).toBeVisible();
+  await page.waitForTimeout(2000);
+  await page.click(":text('good evening')", { delay: 500 });
+  await expect(commentCard.nth(2).locator("div >> nth=0")).toHaveClass(
+    /CommentCard_PausedOverlay/
+  );
+  const thirdCommentClasses = await page.getAttribute(
+    ".comment-marker >> nth=2",
+    "class"
+  );
+  expect(thirdCommentClasses).toContain("paused");
   
   // assert clicking on enabled comment jumps to comment time in video
+  await commentMarker.nth(3).click();
   const progressLine = page.locator(".progress-line").last();
   let playheadPosition3 = await progressLine.getAttribute("style");
-  expect(playheadPosition3.split(" ")[1]).toEqual("82.3617%;");
+  expect(playheadPosition3.split(" ")[1]).toEqual("92.0574%;");
+  
 
   process.exit();
 })();

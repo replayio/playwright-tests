@@ -2,13 +2,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in and go to replay
-  const { page } = await logIn({ userId: 7 });
-  await page.goto(
-    buildUrl("/recording/1000-hits--76ff5bc7-fcf7-459b-a711-86b1df46a6f4")
-  );
+  const { page } = await logIn({ userId: 10 });
+  
+  // go to replay with many logs
+  await page.click("text=Replay with many logs");
+  await expect(page.locator("#video")).toBeVisible();
   
   // assert replay loaded
-  await assertText(page, "1000 hits");
+  await assertText(page, "Replay with many logs");
   await assertElement(page, "#app-container .view-toggle");
   
   // open script.js
@@ -17,21 +18,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=script.js");
   
   // assert script.js opened
-  await assertElement(page, "text=let count = 0;");
+  await assertElement(page, "text=console.log(i);");
   
   // assert error message
-  const addButton = page.locator("text=add");
-  await page.hover("text=while");
-  await addButton.click();
-  await assertElement(page, "text=Use Focus Mode to reduce the number of hits.");
+  await page.hover('[data-test-id="SourceLine-24"] :text("console")');
   
   // assert console error
   const consoleError = page.locator(
     "text=There are too many console messages so not all are being displayed"
   );
   await expect(consoleError).toHaveCount(1);
-  
-  await logOut(page);
   
 
   process.exit();

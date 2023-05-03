@@ -20,6 +20,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(functionSearch).not.toBeVisible();
   await expect(printWelcomeMessageFunction).not.toBeVisible();
   await expect(functionText).not.toBeVisible();
+  await page.waitForTimeout(3000);
+  await page.keyboard.press("Control+K");
   await page.click("text=Search for a functionCtrl+O");
   
   // assert function search component opened

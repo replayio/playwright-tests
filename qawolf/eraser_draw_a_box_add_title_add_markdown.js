@@ -15,14 +15,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.mouse.up();
   
   // add title
-  await page.click('[data-testid="header-editable-workspace-title"]');
-  await page.type('[data-testid="header-editable-workspace-title"]', "Replay Example");
+  await page.click('#note-container [data-placeholder="Untitled File"]');
+  await page.fill('#note-container [data-placeholder="Untitled File"]', "Replay Example");
   
   // add markdown
   const markdown = `## Here is some markdown
   > does it work?
   It _definitely_ does!`;
-  await page.type('#note-body-editor [contenteditable="true"]', markdown);
+  await page.type('#note-container [aria-multiline="true"]', markdown);
 
   process.exit();
 })();

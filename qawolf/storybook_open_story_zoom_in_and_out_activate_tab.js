@@ -1,7 +1,7 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // helpers 
+  // helpers
   const selectors = {
     toolbarButtonByTitle: function (title) {
       return `button[title="${title}"]`;
@@ -24,47 +24,41 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     },
   };
   
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://next--storybookjs.netlify.app/official-storybook');
+  await page.goto("https://storybooks-official.netlify.app/?path=/story/ui-panel--default");
   
   // open addons/label
-  await page.click(selectors.storyByPath("/Addons/A11y/BaseButton/Label"));
+  await page.click(':text("A11y")');
+  await page.click(':text("BaseButton")');
+  await page.click(':text("Label")');
   
   // open addons/disabled
-  await page.click(selectors.storyByPath("/Addons/A11y/BaseButton/Disabled"));
-  
-  // open addons/backgrounds
-  await page.click(selectors.storyByPath("/Addons/Backgrounds/"));
-  
-  // open addons/backgrounds overridden
-  await page.click(selectors.storyByPath("/Addons/Backgrounds/Overridden"));
+  await page.click(':text("Disabled")');
   
   // zoom in
   for (let i = 0; i < 5; i++) {
     await page.click(selectors.toolbarButtonByTitle("Zoom in"));
-  };
+  }
   for (let i = 0; i < 5; i++) {
     await page.click(selectors.toolbarButtonByTitle("Zoom out"));
-  };
+  }
   
-  const tabs = [
-    "Controls",
-    "Actions",
-    "Interactions",
-    "Story",
-    "Tests",
-    "Accessibility",
-  ];
+  const tabs = ["Story", "Actions", "Events", "Knobs", "CSS Resources", "Accessibility", "Tests"];
   
   // activate tabs
   for (let tab of tabs) {
-    await page.click(selectors.tabByTitle(tab))
+    await page.click(selectors.tabByTitle(tab));
     await page.waitForTimeout(250);
   }
   
-  await assertText(page, 'No accessibility violations found.')
+  // list and upload the replay
+  await uploadReplay();
+  
 
   process.exit();
 })();

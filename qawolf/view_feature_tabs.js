@@ -9,37 +9,31 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert page loaded
   await assertText(page, "Login");
   
-  // scroll to DevTools
-  await page.click('[role="tab"] >> text=Console');
+  // skip animation
+  await page.mouse.wheel(0, 2000);
+  await page.click(".button_tertiary-inverted-alt__DdhdD");
+  await page.waitForTimeout(4000);
+  await page.mouse.wheel(0, 2000);
+  
+  // THE BELOW NOW AUTOMATICALLY SCROLL THROUGH, NO CLICKING NEEDED
+  
+  // assert viewing Print Statements
+  await expect(page.locator(':text("Add print statements and view the logs immediately in the Console.")')).toBeVisible({timeout: 30000});
   
   // assert viewing console
-  await assertText(page, "Inspect messages and events in the Console Panel");
+  await expect(page.locator(':text("Fast forward to console logs and evaluate expressions in the Terminal.")')).toBeVisible({timeout: 30000});
   
-  // select debugger
-  await page.click('[role="tab"]:has-text("Debugger")');
+  // assert viewing react
+  await expect(page.locator(':text("Inspect React components and view their state, props, and hooks.")')).toBeVisible({timeout: 30000});
   
-  // assert viewing debugger
-  await assertText(page, "Inspect application state with print statements");
-  
-  // select React
-  await page.click('[role="tab"]:has-text("React")');
-  
-  // assert viewing React
-  await assertText(page, "Inspect React Components");
-  
-  // select network
-  await page.click('[role="tab"]:has-text("Network")');
+  // assert viewing Elements
+  await expect(page.locator(':text("Inspect DOM elements and view their applied rules and computed properties.")')).toBeVisible({timeout: 30000});
   
   // assert viewing network
-  await assertText(page, "COMING SOON");
-  await assertText(page, "Inspect Resource Timings");
+  await expect(page.locator('.md span:has-text("Inspect Network requests and view their headers, request and response bodies.") >> nth=1')).toBeVisible({timeout: 30000});
   
-  // select elements
-  await page.click('[role="tab"]:has-text("Elements")');
-  
-  // assert viewing elements
-  await assertText(page, "COMING SOON");
-  await assertText(page, "Inspect visuals with the Elements Panel");
+  // assert viewing debugger
+  await expect(page.locator(':text("Pause at a line of code and view the call stack and scopes.")')).toBeVisible({timeout: 30000});
 
   process.exit();
 })();

@@ -7,19 +7,22 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://replay.io');
   
   // assert page loaded
-  await assertText(page, "Your time travel debugger");
+  await expect(page.locator('text=The time-travel debugger from the future.')).toBeVisible();
+  
+  // wheel down to footer links
+  await page.mouse.wheel(0, 30000);
   
   // view footer docs
   const [page2] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click(".footer_link:has-text('Docs')"),
+    page.click('[href="https://docs.replay.io/"]'),
   ]);
   await page2.waitForLoadState("domcontentloaded");
   await page2.bringToFront();
   
   // assert docs
   await assertText(page2, "Docs");
-  await assertText(page2, "Get Started");
+  await assertText(page2, "Guides");
   await assertText(page2, "Learn More");
   
   // close docs
@@ -28,7 +31,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // view GitHub issues
   const [page3] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click(".footer_link:has-text('GitHub Issues')"),
+    page.click('[href="https://github.com/replayio"]'),
   ]);
   await page3.waitForLoadState("domcontentloaded");
   await page3.bringToFront();
@@ -40,11 +43,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page3.close();
   
   // view contact us
-  var contactUsLocator = page.locator(".footer_link:has-text('Contact Us')");
+  var contactUsLocator = page.locator('.footer_nav__Wxyub [href="mailto:hey@replay.io"]');
   var link = await contactUsLocator.getAttribute('href');
   
   // assert contact us
-  assert(link.includes("mailto:sales@replay.io"));
+  assert(link.includes("mailto:hey@replay.io"));
 
   process.exit();
 })();

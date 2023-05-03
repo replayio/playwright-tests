@@ -6,10 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Library');
   
   // go to recording
-  await page.click('text=Great Scott');
+  await page.click('text=Greater Scott');
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
+  await assertText(page, 'Greater Scott');
   await assertText(page, 'DevTools');
   
   // go to DevTools
@@ -19,6 +19,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Console');
   
   // show sharing options from search for anything component
+  await page.keyboard.press("Control+K");
   await page.click("text=Show Sharing Options");
   
   // assert share modal opened

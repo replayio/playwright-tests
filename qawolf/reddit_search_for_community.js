@@ -1,8 +1,11 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   
   // go to lower-weight starting page to avoid load timeouts
@@ -20,6 +23,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert navigation
   await assertText(page, "Information about the world's climate");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

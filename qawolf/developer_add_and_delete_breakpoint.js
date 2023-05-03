@@ -17,10 +17,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=ViewerDevTools");
   
   // assert DevTools loaded
-  await expect(page.locator(".console-panel-button")).toHaveCount(1);
+  await expect(page.locator('[data-test-id="PanelButton-console"]')).toHaveText("Console");
   
   // open script.js file and breakpoint panel
-  await page.click("text=Search for fileCtrl+P");
+  await page.keyboard.press("Control+P");
   await page.keyboard.type('s');
   await page.click('#result-list [role="option"]');
   await page.click("text=motion_photos_paused");
@@ -29,15 +29,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(page.locator('text=Click on a line number in the editor to add a breakpoint')).toBeVisible();
   
   // add breakpoint
-  await page.click("text=7");
+  await page.waitForTimeout(2000);
+  await page.click('[data-test-id="SourceLine-LineNumber-7"]', {force: true, delay: 500});
   
   // assert breakpoint added
   await expect(page.locator('text=Click on a line number in the editor to add a breakpoint')).not.toBeVisible();
-  await expect(page.locator('text=7:12')).toBeVisible();
+  await expect(page.locator(':text("7:12")').first()).toBeVisible();
   
   // delete breakpoint click 7 again
   await page.waitForTimeout(3000);
-  await page.click("svg");
+  // await page.click("svg");
+  await page.click('[data-test-id="SourceLine-LineNumber-7"]');
   
   // assert breakpoint deleted
   await expect(page.locator('text=Click on a line number in the editor to add a breakpoint')).toBeVisible();

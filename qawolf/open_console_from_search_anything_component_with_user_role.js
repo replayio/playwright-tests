@@ -23,15 +23,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // open network tab to close console
   await page.click('button >> text=Network');
   const consolePanel = page.locator('[placeholder="Filter Output"]');
-  await expect(consolePanel).toHaveCount(1);
+  await expect(page.locator('[placeholder="Filter requests"]')).toBeVisible();
   
   // open console from search anything component
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Console");
   
   // assert console opened
-  await expect(consolePanel).toHaveCount(1);
+  await expect(page.locator('[data-test-id="ConsoleFilterInput"]')).toBeVisible();
   
-  await logOut(page);
+  // await logOut(page);
 
   process.exit();
 })();

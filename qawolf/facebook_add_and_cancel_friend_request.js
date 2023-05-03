@@ -1,24 +1,30 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // log in to Facebook
-  const { page } = await logInToFacebook(process.env.FACEBOOK_EMAIL_2, process.env.FACEBOOK_PASSWORD_2);
+  const { page } = await logInToFacebook(
+    'qawreplayuser@gmail.com',
+    'Replayfb-qaw1'
+  );
   
   // view user profile
-  await page.goto("https://www.facebook.com/profile.php?id=100074229491087");
-  await assertText(page, "Mike Algdbbidiajhg Martinazzison");
+  await page.goto("https://www.facebook.com/jeff.gorell");
+  await assertText(page, "Jeff Gorell");
   
   // ensure friend not added
-  const cancelRequestButton = await page.$('[aria-label="Cancel Request"]');
-  if (cancelRequestButton) cancelRequestButton.click();
+  const cancelRequestButton = await page.$('[aria-label="Cancel request"]');
+  if (cancelRequestButton) await cancelRequestButton.click();
   
   // add friend
   await page.click('[aria-label="Add Friend"]');
-  await assertText(page, "Cancel Request");
+  await assertText(page, "Cancel request");
   
   // cancel friend request
-  await page.click('[aria-label="Cancel Request"]');
+  await page.click('[aria-label="Cancel request"]');
   await assertText(page, "Add Friend");
+  
+  // list and upload the replay
+  await uploadReplay();
+  
 
   process.exit();
 })();

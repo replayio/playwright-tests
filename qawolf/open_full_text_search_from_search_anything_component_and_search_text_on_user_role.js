@@ -6,7 +6,6 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  // await page.click('[title="Test Permissions"]');
   await page.click(`:text("Test Permissions")`)
   
   // open replay
@@ -14,16 +13,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=ViewerDevTools");
   
   // open full search bar from search for anything component
-  const searchBar = page.locator('[placeholder="Find in files…"]');
+  const searchBar = page.locator('[data-test-id="SearchFiles-Input"]');
   await expect(searchBar).not.toBeVisible();
+  await page.keyboard.press("Control+K");
   await page.click("text=Search full textCtrl+Shift+F");
   
   // assert full search bar opened
   await expect(searchBar).toBeVisible();
   
   // search files
-  const demoText = page.locator('text=​ background-image: url("/demo/demo_car.png");');
-  const demoFile = page.locator('text=demo-script.jsdemo (2 matches)');
+  const demoText = page.locator('[data-test-id="leftSidebar"] [data-test-name="SearchFiles-ResultRow"][data-test-type="Match"]:has-text("background-image")');
+  const demoFile = page.locator('[data-test-filename="demo-script.js"] [data-test-name="ExpandablePreview"]:has-text("demo-script.js (demo)")');
+  
   await expect(demoFile).not.toBeVisible();
   await searchBar.fill('demo');
   await page.waitForTimeout(2000);

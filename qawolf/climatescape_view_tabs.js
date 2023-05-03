@@ -1,15 +1,15 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
   const page = await context.newPage();
-  await page.goto('https://climatescape.org/');
+  await page.goto("https://climatescape.org/");
   
   // navigate to organizations
   await page.click("text=Organizations");
   
   // assert on organizations page
-  await assertNotText(page, "Discover the organizations solving climate change");
   await assertText(page, "All Organizations");
   
   // navigate to buildings & cities
@@ -23,21 +23,27 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text='Australia'");
   
   // assert filtered location
-  await assertNotText(page, "Smappee")
-  await assertText(page, "CIM");
+  await expect(page.locator(':text("Smappee")')).not.toBeVisible()
+  await expect(page.locator(':text("CIM")')).toBeVisible()
   
   // navigate to compnay page
-  await page.click('text=/.*It uses the Internet of Things.*/');
+  await page.click("text=/.*It uses the Internet of Things.*/");
   
   // assert navigate to compnay page
-  await assertText(page, "Developer of a machine learning platform designed to improve building performance.");
-  assert(page.url() === "https://climatescape.org/organizations/cim")
+  await assertText(
+    page,
+    "Developer of a machine learning platform designed to improve building performance."
+  );
+  assert(page.url() === "https://climatescape.org/organizations/cim");
   
   // navigate to energy efficiency
   await page.click("text=Energy Efficiency");
   
   // assert on energy efficiency page
   await assertText(page, "Energy Efficiency", { selector: "h2" });
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

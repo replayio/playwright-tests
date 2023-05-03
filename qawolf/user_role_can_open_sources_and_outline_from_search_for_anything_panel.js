@@ -21,11 +21,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   try {
     await expect(sources).not.toBeVisible();
   } catch (e) {
-    await page.click("text=description");  
+    // await page.click("text=description"); 
+    await page.click('[data-test-id="AccordionPane-Sources"] [role="button"]'); 
     await expect(sources).not.toBeVisible();
   };
   
   // open sources from search for anything tool
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Sources");
   
   // assert sources list panel opened
@@ -37,7 +39,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(outline).not.toBeVisible();
   
   // open outline from search for anything tool
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Outline");
+  await page.click(':text("static.replay.io")');
   await page.click("text=demo");
   await page.click("text=demo-script.js");
   

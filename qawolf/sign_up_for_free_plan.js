@@ -7,23 +7,26 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://www.replay.io/');
   
   // assert page looded
-  await assertText(page, "Your time travel debugger");
-  await assertText(page, "Record, Collaborate, Inspect");
+  await expect(page.locator('text=The time-travel debugger from the future.')).toBeVisible();
+  await expect(page.locator('text=More than a video. Replay lets you jump to any point in execution, add Console logs on the fly, and squash bugs as a team.')).toBeVisible();
   
   // go to pricing page
-  await page.click("text=Pricing");
+  await page.click('[href="/pricing"]:visible');
   
   // assert pricing page loaded
   await assertText(page, 'Pricing');
   await assertText(page, 'Sign Up');
   
   // sign up for free plan
-  await page.click("text=Sign Up");
-  await page.click("button:has-text('Sign')");
+  const [page2] = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('.hero_slide__AJNo_ [href="https://app.replay.io/"]')
+  ]);
+  await page2.click("button:has-text('Sign')");
   
   // assert Google sign in page loaded
-  await assertText(page, 'Sign in with Google');
-  await assertText(page, 'to continue to Replay');
+  await assertText(page2, 'Sign in with Google');
+  await assertText(page2, 'to continue to Replay');
 
   process.exit();
 })();

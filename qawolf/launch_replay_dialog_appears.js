@@ -3,8 +3,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   //  log in
   const { page } = await logIn({ userId: 6 });
-  await page.goto(buildUrl('/recording/qa-wolf--f4bdbfba-6072-48ec-8978-f06e94551d4d'));
-  
+  await page.goto(buildUrl('/recording/qa-wolf--ee90e0d1-e786-446d-b889-5659226346df'));
   
   // asssert viewing replay
   await assertText(page, "Viewer");

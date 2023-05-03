@@ -1,8 +1,10 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // launch page
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
+  // navigate to quilljs
   const page = await context.newPage();
   await page.goto('https://quilljs.com/playground/');
   
@@ -31,6 +33,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await resultFrame.click(".ql-bold");
   
   await resultFrame.click("#editor-container");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

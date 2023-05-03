@@ -2,7 +2,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
+  
+  // launch replay browser
+  const { browser, context } = await launchReplay();
   const page = await context.newPage();
   await page.goto('https://markojs.com/try-online/');
   
@@ -15,7 +18,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.press('.monaco-editor textarea.inputarea', "Backspace");
   
   // assert input cleared
-  await assertNotText(page, '"Frank"');
+  // await assertNotText(page, '"Frank"');
+  await expect(page.locator('text="Frank"')).not.toBeVisible()
   
   var text = `
   <div class="container">
@@ -40,6 +44,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert new code
   await assertText(page, "Here is new code", { selector: ".preview-output h1" });
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

@@ -19,8 +19,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     }
   };
   
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://bvaughn.github.io/react-virtualized/#/components/List');
   
@@ -47,6 +50,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await assertText(page, "Scrolling");
     await page.waitForTimeout(200);
   }
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

@@ -9,13 +9,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // ensure test team deleted
   const testTeamLink = await page.$("text=Test Team Best:");
   try {
-    await assertNotText(page, 'Test Team Best:', {timeout: 7 * 1000});
-  } catch (e) {
+    await expect(page.locator(`:text("Test Team Best:")`)).not.toBeVisible({
+      timeout: 7000,
+    });
+  } catch {
     await testTeamLink.click();
     await page.click("text=settings");
     await deleteTeam({ page });
-    await assertNotText(page, 'Test Team Best:', {timeout: 7 * 1000});
-  };
+    await expect(page.locator(`:text("Test Team Best:")`)).not.toBeVisible({
+      timeout: 7000,
+    });
+  }
   
   // create new team
   await page.click("text=Create new team");
@@ -54,7 +58,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("#domain-limited");
   
   // copy invite link
-  var restrictedInviteLink = await getValue(page, '.flex-col.items-center [type="text"]');
+  var restrictedInviteLink = await getValue(
+    page,
+    '.flex-col.items-center [type="text"]'
+  );
   
   // open invite link with domain restriction
   const context3 = await browser.newContext();
@@ -88,7 +95,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await deleteTeam({ page });
   
   // assert team deleted
-  await assertNotText(page, teamName);
+   await expect(page.locator(`:text("${teamName}")`)).not.toBeVisible({
+      timeout: 7000,
+    });
+  
 
   process.exit();
 })();

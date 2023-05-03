@@ -18,6 +18,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(preloadImage).not.toBeVisible();
   
   // view demo-script.js outline
+  await page.click(':text("static.replay.io")');
   await page.click("text=demo");
   await page.click("text=demo-script.js");
   

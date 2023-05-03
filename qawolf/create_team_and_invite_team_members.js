@@ -6,47 +6,51 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");  
   const teamNumber = Date.now();  
     
-  // ensure test team deleted  
-  var testTeamLink = await page.$("text=Test Team Blue:");  
-  try {  
-    await assertNotText(page, "Test Team Blue:", { timeout: 7 * 1000 });  
-  } catch (e) {  
-    await testTeamLink.click();  
+  // update ensure test team deleted  
+  await expect(page.locator(".font-semibold")).toContainText("Your Library")  
+  while (await page.locator('text=Test Team Blue:').count()) {  
+    await page.click(`text=Test Team Blue:`);  
     await page.click("text=settings");  
     await deleteTeam({ page });  
-    await assertNotText(page, "Test Team Blue:", { timeout: 7 * 1000 });  
+    await page.waitForTimeout(3000);  
   }  
-  await page.goto("https://www.replay.io/pricing");  
     
-  // assert pricing page  
+  // goto pricing page  
+  await page.goto("https://www.replay.io/pricing");  
   await assertText(page, "Pricing");  
     
   // create new team  
-  await page.click('.is-mobile-0 [href="https://app.replay.io/team/new"]');  
+  const [page2] = await Promise.all([  
+    page.waitForEvent("popup"),  
+    page.click('.hero_slide__AJNo_ [href="https://app.replay.io/team/new"]'),  
+  ]);  
     
   // assert create team page  
-  await assertText(page, "Welcome to Replay");  
+  await assertText(  
+    page2,  
+    "Welcome to Replay, the new way to record, replay, and debug web applications"  
+  );  
     
   // navigate through create team flow  
-  await page.click("text=Create a team");  
+  await page2.click("text=Create a team");  
     
   // assert team name page  
-  await assertText(page, "What should we call you?");  
+  await assertText(page2, "What should we call you?");  
     
   // set team name  
   const teamName = `Test Team Blue: ${teamNumber}`;  
-  await page.fill('[type="text"]', teamName);  
-  await page.click("text=Next");  
+  await page2.fill('[type="text"]', teamName);  
+  await page2.click("text=Next");  
     
   // assert team created  
-  await assertText(page, teamName);  
+  await assertText(page2, teamName);  
     
   // invite team member with valid email address  
   const { email, waitForMessage } = getInbox({ new: true });  
-  await page.click('button:text("Settings")');  
-  await page.fill('[placeholder="Email address"]', email);  
-  await page.click("button:has-text('Invite')");  
-  await page.click(".modal-close");  
+  await page2.click('button:text("Settings")');  
+  await page2.fill('[placeholder="Email address"]', email);  
+  await page2.click("button:has-text('Invite')");  
+  await page2.click(".modal-close");  
     
   // get invite information from email  
   const { html, subject, text } = await waitForMessage({  
@@ -58,29 +62,29 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   assert(text.includes(`QA 2 Team has invited you to ${teamName}`));  
     
   // accept invite  
-  const context2 = await browser.newContext();  
-  const page2 = await context2.newPage();  
-  await page2.bringToFront();  
-  await page2.goto(inviteUrl);  
+  const context3 = await browser.newContext();  
+  const page3 = await context3.newPage();  
+  await page3.bringToFront();  
+  await page3.goto(inviteUrl);  
     
   // assert taken to accept invite flow  
-  await assertText(page2, "Almost there!");  
+  await assertText(page3, "Almost there!");  
   await assertText(  
-    page2,  
+    page3,  
     "In order to join your team, we first need you to sign in."  
   );  
-  await assertText(page2, "Sign in with Google");  
+  await assertText(page3, "Sign in with Google");  
     
   // open team settings  
-  await page.bringToFront();  
+  await page2.bringToFront();  
     
   // delete test team  
-  await page.click(`text=Test Team Blue: ${teamNumber}`);  
-  await page.click("text=settings");  
-  await deleteTeam({ page });  
+  await page2.click(`text=Test Team Blue: ${teamNumber}`);  
+  await page2.click("text=settings");  
+  await deleteTeam({ page: page2 });  
     
   // assert team deleted  
-  await assertNotText(page, teamName);  
+  await expect(page2.locator('text=Test Team Blue:')).not.toBeVisible()  
   
 
   process.exit();

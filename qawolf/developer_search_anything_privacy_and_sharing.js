@@ -28,6 +28,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(privacyInfoCookies).toHaveCount(0);
   await expect(privacyInfoStorage).toHaveCount(0);
   await expect(privacyInfoStorage).toHaveCount(0);
+  await page.keyboard.press("Control+K");
   await page.click("text=Show Privacy");
   
   // assert privacy info opened

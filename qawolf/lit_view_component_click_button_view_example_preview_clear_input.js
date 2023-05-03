@@ -2,7 +2,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // navigate to page
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://lit.dev/playground/');
   
@@ -62,6 +64,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert input has been cleared
   await assertText(frame, "", {selector: "#name"});
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

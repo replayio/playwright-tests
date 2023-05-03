@@ -24,8 +24,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     },
   };
   
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://5ccbc373887ca40020446347-qbeeoghter.chromatic.com');
   
@@ -47,6 +50,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert story tab
   await assertText(page, "1(args) => <CodeSnippets {...args} />");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

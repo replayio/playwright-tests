@@ -6,46 +6,46 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // log in
   const { browser, page } = await logIn({ userId: 7 });
-  await assertText(page, 'Library');
+  await assertText(page, "Library");
   
   // go to replay
-  await page.click('text=Great Scott');
+  await page.click("text=Greater Scott");
   
   // assert replay loaded
-  await assertText(page, 'Great Scott');
-  await assertText(page, 'DevTools');
+  await assertText(page, "Greater Scott");
+  await assertText(page, "DevTools");
   
   // go to share settings
   await page.click("text=ios_shareShare");
   
   // assert share settings loaded
-  await assertText(page, 'Add People');
-  await assertText(page, 'Copy Link');
+  await assertText(page, "Add People");
+  await assertText(page, "Copy Link");
   
   // delete invitees
-  const collaborator =  page.locator("text=replay+");
+  const collaborator = page.locator("text=replay+");
   await page.waitForTimeout(2000);
-  while (await collaborator.count() > 0) {
+  while ((await collaborator.count()) > 0) {
     await page.waitForTimeout(1000);
     await page.hover(':text("replay+")');
     await page.waitForTimeout(1000);
     await page.click(".delete");
     await page.waitForTimeout(1000);
-  };
+  }
   
   // invite collaborator
   await page.fill('[placeholder="Email address"]', email);
-  await page.click('form button');
-  await assertText(page, 'Invited');
-  const { subject, urls } = await waitForMessage({ timeout: 5 * 60000 });
+  await page.click("form button");
+  await assertText(page, "Invited");
+  const { subject, urls } = await waitForMessage({ timeout: 5 * 60 * 1000 });
   
   // assert email in people list
   const invitedEmail = page.locator(email);
   await assertText(page, email);
-  await assertText(page, 'Collaborator');  
+  await assertText(page, "Collaborator");
   
   // assert email arrived
-  expect(subject).toEqual("You've been invited to view Great Scott");
+  expect(subject).toEqual("You've been invited to view Greater Scott");
   
   /* 
     The encrypted invite link shows up in a random spot in the email urls array.
@@ -62,20 +62,20 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     pageNumber += 1;
   
     try {
-      await assertText(newPageNumber, 'Great Scott', {timeout: 7 * 1000});
-      await assertText(newPageNumber, 'DevTools', {timeout: 7 * 1000});
+      await assertText(newPageNumber, "Greater Scott", { timeout: 7 * 1000 });
+      await assertText(newPageNumber, "DevTools", { timeout: 7 * 1000 });
   
       // found the correct page - time to break the loop
       return;
-  
     } catch (e) {
-      if(newPage === `page${urls.length - 1}`) {
+      if (newPage === `page${urls.length - 1}`) {
         throw new Error();
       } else {
         continue;
-      };
-    };  
-  };
+      }
+    }
+  }
+  
 
   process.exit();
 })();

@@ -1,8 +1,12 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // "This page needs some tailoring..."
+  
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
   const page = await context.newPage();
   await page.goto("https://bonobos.com/");
   
@@ -32,7 +36,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(
     page.locator(`[aria-label="${productTitle} thumbnail"]`)
   ).toBeVisible();
-  await assertText(page, productTitle, { selector: ".line-item-component" });
+  await assertText(page, productTitle, { selector: ".line-item-component" })
+  
+  // list and upload the replay
+  await uploadReplay();;
 
   process.exit();
 })();

@@ -14,9 +14,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert collaborator UI shown
   const emailInput = page.locator('[placeholder="Email address"]');
-  const authorText = page.locator('text=Author');
+  const authorText = page.locator("text=Author");
   await expect(emailInput).toHaveCount(1);
   await expect(authorText).toHaveCount(1);
+  
 
   process.exit();
 })();
