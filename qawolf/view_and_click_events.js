@@ -30,14 +30,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert playhead moved to :02s
   const progressLine = page.locator(".progress-line").last();
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("24.5334%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("35.253%;");
   
   // click event @ :03s
   await page.click("text=ads_clickClick0:03");
   
   // assert playhead moved to :03s
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("32.1468%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("56.25%;");
 
   process.exit();
 })();

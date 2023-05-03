@@ -1,11 +1,13 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  //BUG: https://qa-wolf.monday.com/boards/2150171022/pulses/3013582019?term=potentially%20wrong%20team
-  
   // log in
   const { page } = await logIn({ userId: 7 }); // User
-  //const { page } = await logIn({ userId: 10 }); // Developer
+  
+  // Do not leave enabled - for debugging only! **************************
+  // const { page } = await logIn({ userId: 10 }); // Developer for debugging
+  // *********************************************************************
+  
   await assertText(page, "Your Library");
   
   // go to replay
@@ -15,22 +17,20 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(":text-is('Time Travel')");
   await page.click("text=ViewerDevTools");
   
-  // enter console evaluation
-  await assertNotText(
-    page,
-    "Evaluations are only available for Developers in the Team plan."
+  // check for role message
+  const consoleInput = page.locator(
+    '[data-test-id="ConsoleTerminalInput"]'
   );
-  await page.click("pre");
-  await page.keyboard.type('window.querySelectorAll("timeout")');
-  await page.keyboard.press("Enter");
-  
-  // assert user can't use console evaluation
-  await assertText(
-    page,
-    "Evaluations are only available for Developers in the Team plan."
+  // remove suite ID if test fails here
+  await expect(consoleInput).toHaveText(
+    "Only 'Developer'-role users can evaluate expressions"
   );
   
-  await logOut(page);
+  // try to enter console evaluation
+  await consoleInput.click();
+  await expect(consoleInput).toHaveText(
+    "Only 'Developer'-role users can evaluate expressions"
+  );
   
 
   process.exit();

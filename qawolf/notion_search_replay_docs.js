@@ -1,26 +1,39 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://www.notion.so/replayio/Replay-Docs-56758667f53a4d51b7c6fc7a641adb02');
+  await page.goto(
+    "https://docs.replay.io/"
+  );
   
   // assert page load
-  await assertText(page, "Old Replay Docs");
+  await assertText(page, "Docs");
+  await expect(page.locator(':text("Search")').first()).toBeVisible(); // search bar is seen
   
   // search
-  await page.click('.notion-topbar >> text="Search"');
-  await page.fill('[type="text"]', "console");
+  await page.click('[aria-label="Search"]');
+  await page.waitForTimeout(6500);
+  await page.type('[aria-label="Search input"]', "console", { delay: 100 });
   
   // assert search option
-  await expect(page.locator('.search-query-result-item >> text=Console').first()).toBeVisible();
+  await expect(
+    page.locator('[role="option"] >> text=Console').first()
+  ).toBeVisible();
   
   // navigate to search results
-  await page.click(".search-query-result-item:has-text('Console')");
+  await page.click('[role="option"]:has-text("Console")');
   
   // assert search results
-  await assertText(page, "Displaying Events");
+  await assertText(page, "Console");
+  
+  // list and upload the replay
+  await uploadReplay();
+  
 
   process.exit();
 })();

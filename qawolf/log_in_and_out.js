@@ -21,7 +21,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto(buildUrl("/"));
   
   // assert viewing home page
-  await expect(page.locator('[src="/images/logo-wide.svg"]')).toBeVisible();
+  try {
+    await expect(page.locator('[src="/images/logo.svg"]')).toBeVisible();
+  } catch {
+    await expect(page.locator('[src="/images/logo-wide-dark.svg"]')).toBeVisible();
+  }
   await expect(
     page.locator(
       'text="Replay captures everything you need for the perfect bug report, all in one link"'
@@ -38,6 +42,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // log in
   const context2 = await browser.newContext({
     extraHTTPHeaders: {
+      // Authorization: `Bearer ${process.env.USER_12_API_KEY}`,
       Authorization: `Bearer ${process.env.USER_1_API_KEY}`,
     },
   });
@@ -56,6 +61,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   expect(page.locator(':text("View settings")'));
   
   // assert no broken images
+  console.log(brokenImageUrls)
   assert(!brokenImageUrls.length);
   
 

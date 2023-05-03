@@ -3,8 +3,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // helper
   const deleteCommentsAndReplies = async (page) => {
-    await page.click("text=Delete comment and replies");
-    await page.click("button >> text=Delete comment");
+    await page.click("text=Delete comment and replies", {
+      force: true,
+      delay: 500,
+    });
+    await page.click("button >> text=Delete comment", {
+      force: true,
+      delay: 500,
+    });
     await page.click("text=Start");
   };
   
@@ -41,41 +47,38 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await expect(page.locator('text="Click on courthouse"')).toBeVisible();
   }
   
-  // this next section is deleting one of the starting comments instead of cleaning up leftovers from prev runs
-  
   // delete leftover comments
+  await page.waitForTimeout(5000);
   const thirdCommentBlock = page.locator(`:text("more_vert") >> nth=2`);
   while (await thirdCommentBlock.count()) {
     await page.click(':text("more_vert") >> nth=2');
     await deleteCommentsAndReplies(page);
+    await page.waitForTimeout(2000);
   }
   
   // assert initial player time
+  try {
+    await page.click('[src="/images/playback-play.svg"]');
+  } catch {
+    await page.click('[src="/images/playback-refresh.svg"]');
+    await page.click('[src="/images/playback-play.svg"]');
+  }
+  await page.waitForTimeout(500);
+  await page.click('[src="/images/playback-pause.svg"]');
   const progressLine = page.locator(".progress-line").last();
-  let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("24.155%;");
-  
-  // jump to next event marker
-  await page.click("text=Click on courthouse");
-  
-  // assert new player time
-  let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("38.2653%;");
   
   // add comment
-  await page.mouse.click(500, 500); // click elsewhere on the video
-  await page.waitForTimeout(2000); // The input seems to double up so seeing if a timeout will help
-  await page.fill(".ProseMirror-focused", "Here is my mispelling");
-  await page.waitForTimeout(2000); // The input seems to double up so seeing if a timeout will help
+  await page.click("#video");
+  await page.click('[data-test-name="ContextMenuItem"]:has-text("Add comment")');
+  await page.fill('div[contenteditable="true"]', "Here is my mispelling");
+  await page.waitForTimeout(3000); // The input seems to double up so seeing if a timeout will help
   
   await page.keyboard.press("Enter");
   
   // assert new comment added
-  await page.waitForTimeout(5000);
   await expect(page.locator('text="Here is my mispelling"')).toBeVisible();
   
   // edit comment
-  await page.waitForTimeout(5000);
   await page
     .locator(':text("more_vert"):above(:text("Here is my mispelling"))')
     .first()
@@ -85,7 +88,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForSelector('div[contenteditable="true"]');
   // input re-enable due to random input blur during automation that isn't reproducible in browser
   await page.click('div[contenteditable="true"]', "Here is my mispelling");
-  await page.fill(".ProseMirror-focused", "Here is my updated comment!");
+  await page.fill('div[contenteditable="true"]', "Here is my updated comment!");
   await page.waitForTimeout(1000);
   await page.keyboard.press("Enter");
   
@@ -96,7 +99,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForTimeout(3000);
   await page.click('button:below(:text("Here is my updated comment!"))');
   await page.waitForSelector('[contenteditable="true"]');
-  await page.fill(".ProseMirror-focused", "Here is my reply");
+  await page.fill('div[contenteditable="true"]', "Here is my reply");
   await page.keyboard.press("Enter");
   
   // assert reply added
@@ -108,14 +111,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForTimeout(7000);
   
   // delete reply
-  const reply = page.locator(
-    ':text("QA WolfNowmore_vertHere is my reply") button'
-  );
+  const reply = page.locator(':text("QA WolfNowmore_vertHere is my reply")');
+  console.log(await reply.count());
   if (await reply.count()) {
     let count = 1;
     while (count < 4 && (await reply.count())) {
       await page.waitForTimeout(3000);
       await reply.click();
+      await page.click(':text("more_vert") >> nth=-1');
       await page.waitForTimeout(2000); // have to slow down delete
       await page.click("text=Delete comment");
       await page.waitForTimeout(2000); // have to slow down delete
@@ -131,7 +134,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // add reply to delete both at same time
   await page.click('button:below(:text("Here is my updated comment!"))');
-  await page.fill(".ProseMirror-focused", "Here is my delete reply");
+  await page.fill('div[contenteditable="true"]', "Here is my delete reply");
   await page.keyboard.press("Enter");
   
   // delete comment and reply\

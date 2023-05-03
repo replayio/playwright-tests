@@ -2,75 +2,95 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { browser, page } = await logIn({ userId: 1 });
+  const { browser, page } = await logIn({ userId: 10 });
   await assertText(page, "Your Library");
   
-  // assert replays to move are available
+  // assert replays to move are in 'Move Team 1'
+  await page.click(':text("Move Team 2")');
   try {
-    await assertText(page, 'Facebook: comment counts include deleted comments', { timeout: 5 * 1000 });
-    await assertText(page, 'Clade');
+    await expect(page.locator('button:has-text("Edit")')).not.toBeVisible({
+      timeout: 10 * 1000,
+    });
   } catch (e) {
-    await page.click("text=Test team");
-    // await page.click("text=Edit");
-    // await page.click("//*[@id='app-container']/main/div[2]/div[2]/div[2]/div[2]/div/div[1]/input");
-  
-    try {
-      await page.click('div:nth-of-type(3) [type="checkbox"]', { timeout: 5 * 1000 });
-    } catch (e) {
-      // await assertText(page, 'Edit'); // just to break exception
-    } finally {
-      await page.click(".material-icons-outlined");
-      await page.click('[role="menu"] >> text=Library');
-      await page.click("text=Your Library");
-    };
-  };
+    await page.click('button:has-text("Edit")');
+    await page.waitForTimeout(1000);
+    const numOfCheckboxes = await page.locator('[type="checkbox"]').count();
+    for (let i = 0; i < numOfCheckboxes; i++) {
+      await page.check(`[type="checkbox"] >> nth=${i}`);
+    }
+    await page.click('[data-test-id="consoleDockButton"]:has-text("selected")');
+    await page.click('[role="menuitem"]:has-text("Move Team 1")');
+  }
+  await page.click(':text("Move Team 1")');
   
   // assert no checkboxes
-  const checkbox1 = page.locator('div:nth-of-type(5) [type="checkbox"]');
-  const checkbox2 = page.locator('div:nth-of-type(6) [type="checkbox"]');
-  await expect(checkbox1).not.toBeVisible();
-  await expect(checkbox2).not.toBeVisible();
+  await expect(page.locator('[type="checkbox"]')).not.toBeVisible();
+  
+  // check if replays are in Move Team 1
+  await page.waitForTimeout(5000);
+  const ifThereAreNoReplays = await page
+    .locator(`:text("👋 This is where your replays will go")`)
+    .count();
+  console.log(ifThereAreNoReplays);
+  if (ifThereAreNoReplays) {
+    // move replays back to Move Team 1
+    await page.click(':text("Move Team 2")');
+    await page.click('button:has-text("Edit")');
+    await expect(page.locator('[type="checkbox"]')).toHaveCount(2);
+    await page.check('[type="checkbox"] >> nth=0');
+    await page.check('[type="checkbox"] >> nth=1');
+    await page.click("text=expand_more2 items selected");
+    await page.click('[role="menu"] >> text=Move Team 1');
+  
+    // assert replays in Move Team 1
+    await page.click(':text("Move Team 1")');
+    await expect(page.locator("text=Move Team Amazing")).toBeVisible();
+    await expect(page.locator("text=Move Team Wow")).toBeVisible();
+    await page.click(':text("Move Team 1settings")');
+  }
   
   // click Edit button and assert checkboxes appeared
-  await page.click("text=Edit");
-  await expect(checkbox1).toBeVisible();
-  await expect(checkbox2).toBeVisible();
+  try {
+    await page.click('button:has-text("Edit")', {timeout: 5000}); // If items are missing, run lines 49 - 60
+  } catch {}
+  await expect(page.locator('[type="checkbox"]')).toHaveCount(2);
   
-  // select replays to move to Test team
-  await checkbox1.click();
-  await checkbox2.click();
+  // select replays to move to Move Team 2
+  await page.check('[type="checkbox"] >> nth=0');
+  await page.check('[type="checkbox"] >> nth=1');
   
   // assert checkboxes checked
-  expect(await checkbox1.isChecked()).toBeTruthy();
-  expect(await checkbox2.isChecked()).toBeTruthy();
+  await expect(page.locator('[type="checkbox"] >> nth=0')).toBeChecked();
+  await expect(page.locator('[type="checkbox"] >> nth=1')).toBeChecked();
   
   // move replays to Test team
   await page.click("text=expand_more2 items selected");
-  await page.click('[role="menu"] >> text=Test team');
-  await page.click("text=Done");
+  await page.click('[role="menu"] >> text=Move Team 2');
   
   // assert checkboxes hid
-  await expect(checkbox1).not.toBeVisible();
-  await expect(checkbox2).not.toBeVisible();
+  await page.waitForTimeout(2000);
+  await expect(page.locator('[type="checkbox"]')).not.toBeVisible();
   
   // assert replays moved
-  await assertNotText(page, 'Facebook: comment counts include deleted comments');
-  await assertNotText(page, 'Clade');
-  await page.click("text=Test team");
-  await assertText(page, 'Facebook: comment counts include deleted comments');
-  await assertText(page, 'Clade');
+  await expect(page.locator("text=Move Team Amazing")).not.toBeVisible();
+  await expect(page.locator("text=Move Team Wow")).not.toBeVisible();
   
-  // move replays back to library
-  await page.click("text=Edit");
-  await page.click("[type='checkbox']:left-of(:text('Facebook')) >> nth=0");
-  await page.click("[type='checkbox']:left-of(:text('Clade')) >> nth=0");
+  // move replays back to Move Team 1
+  await page.click(':text("Move Team 2")');
+  await page.check('[type="checkbox"] >> nth=0');
+  await page.check('[type="checkbox"] >> nth=1');
+  await expect(page.locator('[type="checkbox"]')).toHaveCount(2);
+  await page.check('[type="checkbox"] >> nth=0');
+  await page.check('[type="checkbox"] >> nth=1');
   await page.click("text=expand_more2 items selected");
-  await page.click('[role="menu"] >> text=Your library');
+  await page.click('[role="menu"] >> text=Move Team 1');
   
-  // assert replays moved to library
-  await page.click("text=Your Library");
-  await assertText(page, 'Facebook: comment counts include deleted comments');
-  await assertText(page, 'Clade');
+  // assert replays in Move Team 1
+  await page.click(':text("Move Team 1")');
+  await page.waitForTimeout(10000);
+  await expect(page.locator("text=Move Team Amazing")).toBeVisible();
+  await expect(page.locator("text=Move Team Wow")).toBeVisible();
+  
 
   process.exit();
 })();

@@ -16,6 +16,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // open viewer
   const network = page.locator('header button >> text=Network');
   await expect(network).toBeVisible();
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Viewer");
   
   // assert viewer opened

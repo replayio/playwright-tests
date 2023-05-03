@@ -7,23 +7,28 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto('https://replay.io');
   
   // assert page loaded
-  await assertText(page, "Your time travel debugger");
+  await assertText(page, "The time-travel debugger from the future.");
   
   // navigate to learn more links
   const [page2] = await Promise.all([
     context.waitForEvent("page"),
-    page.click("text=Learn more")
+    page.click("text=Blog")
   ]);
   
+  
+  // navigate to how replay works page
+  await page2.click('[href="/replay:-november-issue"]');
+  
   // assert universal recorder URL
-  const url = await page2.url()
-  await expect(url).toBe('https://medium.com/replay-io/how-replay-works-5c9c29580c58');
+  // expect(page2.url()).toBe('https://medium.com/p/5c9c29580c58');
+  await page2.waitForTimeout(2000);
+  expect(page2.url()).toBe('https://blog.replay.io/replay:-november-issue')
   
   // close tab
   await page2.close();
   
   // navigate to security and privacy
-  await page.click('[href="/security-privacy"]');
+  await page.click(':text("Security & Privacy")');
   
   // assert security and privacy
   await assertText(page, "Security & Privacy");

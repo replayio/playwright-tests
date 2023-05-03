@@ -2,7 +2,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // open Excalidraw
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://excalidraw.com');
   
@@ -40,6 +42,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.mouse.down();
   await page.mouse.move(center.x + 100, center.y + 50, { steps: 10 });;
   await page.mouse.up();
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

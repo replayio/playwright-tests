@@ -10,7 +10,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // go to support
   await page.click("text=View settings");
-  await page.click("text=Support");
+  await page.click('li :text("Support")');
   
   // assert support info loaded
   await assertText(page, 'Discord server');
@@ -28,7 +28,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert email link href
   await page.bringToFront();
-  const emailLink = page.locator('text=support@replay.io');
+  const emailLink = page.locator('.modal-content :text("support@replay.io")');
   await expect(emailLink).toHaveAttribute('href', 'mailto:support@replay.io');
   await page.click(".img");
   

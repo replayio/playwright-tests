@@ -18,10 +18,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=ViewerDevTools");
   
   // assert DevTools loaded
-  await expect(page.locator(".console-panel-button")).toHaveCount(1);
+  await expect(page.locator('[data-test-id="PanelButton-console"]')).toHaveText(
+    "Console"
+  );
   
   // open script.js file and breakpoint panel
-  await page.click("text=Search for fileCtrl+P");
+  await page.keyboard.press("Control+P");
   await page.keyboard.type("s");
   await page.click('#result-list [role="option"]');
   await page.click("text=motion_photos_paused");
@@ -34,8 +36,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   ).toBeVisible();
   
   // add print statement
+  // await page.hover(".hit-markers", { force: true });
   await page.hover("text=img.src = url", { force: true });
-  await page.click(".toggle-widget");
+  await page.click('[data-test-id="SourceLine-8"] [data-test-name="LogPointToggle"]');
   
   // assert print statement added
   await expect(
@@ -43,15 +46,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
       "text=Click on the \nadd\n in the editor to add a print statement"
     )
   ).not.toBeVisible();
-  // await expect(page.locator('text="preloadImage", 77:12')).toBeVisible();
   await expect(page.locator('text="preloadImage", 8')).toHaveCount(2);
   
   // assert unable to edit print statement
-  await expect(page.locator('.text-gray-400')).toBeVisible();
+  await expect(page.locator(".breakpoint-heading-label")).toBeVisible();
   
   // delete print statement
-  await page.hover('.text-gray-400', { force: true });
-  await page.click(".toggle-widget");
+  await page.hover(".breakpoint-heading-label", { force: true });
+  await page.click('[title="Remove all breakpoint from this source"]');
   
   // assert print statement deleted
   await expect(

@@ -26,7 +26,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Invite team members");
   
   // try to invite invalid email address
-  await page.fill('[placeholder="Email address"]', 'invalid');
+  await page.fill('[placeholder="Email address"]', "invalid");
   await page.click("button:has-text('Invite')");
   
   // assert error message shown
@@ -66,10 +66,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const page2 = await context2.newPage();
   await page2.bringToFront();
   await page2.goto(inviteUrl);
-  
+  console.log(inviteUrl);
   // assert taken to accept invite flow
   await assertText(page2, "Almost there!");
-  await assertText(page2, "In order to join your team, we first need you to sign in.");
+  await assertText(
+    page2,
+    "In order to join your team, we first need you to sign in."
+  );
   await assertText(page2, "Sign in with Google");
   
   // open team settings
@@ -89,14 +92,15 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, `Are you sure you want to remove ${email}`);
   await page.click("text=Remove them");
   await page.waitForTimeout(2000);
-  await assertNotText(page, email);
+  await expect(page.locator(`:text("${email}")`)).not.toBeVisible();
   
   // delete team
   await deleteTeam({ page });
   
   // assert team deleted
   await page.waitForTimeout(2000);
-  await assertNotText(page, teamName);
+  await expect(page.locator(`:text("${teamName}")`)).not.toBeVisible();
+  
 
   process.exit();
 })();

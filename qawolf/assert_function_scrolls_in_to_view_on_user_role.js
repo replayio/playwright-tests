@@ -13,7 +13,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=ViewerDevTools");
   
   // open script.js
-  await page.click("text=Search for fileCtrl+P");
+  // await page.click("text=Search for fileCtrl+P");
+  await page.keyboard.press("Control+P");
   await page.keyboard.type('s');
   await page.click('#result-list [role="option"]');
   

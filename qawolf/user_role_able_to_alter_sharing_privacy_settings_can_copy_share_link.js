@@ -27,8 +27,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, 'Privacy Settings');
   
   // ensure privacy set to private
-  const privateButton = page.locator('section:nth-of-type(2) [type="button"] >> text=Test Permissions can view');
-  const publicButton = page.locator('section:nth-of-type(2) [type="button"] >> text=Anyone with the link can view');
+  const privateButton = page.locator('[data-test-id="consoleDockButton"]:has-text("Test Permissions can viewexpand_more")');
+  const publicButton = page.locator('[data-test-id="consoleDockButton"]:has-text("Anyone with the link can viewexpand_more")');
   const publicLink = page.locator('[role="menuitem"] >> text=Anyone with the link');
   const privateLink = page.locator('[role="menuitem"] >> text=Members of Test Permissions');
   
@@ -71,14 +71,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert link copied to clipboard
   await assertText(page, 'Copied');
-  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
+  expect(copiedLink).toEqual(buildUrl('/recording/time-travel--ebf103b3-9b40-4d5b-a9f3-e0c8fe3d4bd5'));
   
   // go to link
   const page2 = await browser.newPage();
   await page2.goto(copiedLink);
   
   // assert page opened with correct url
-  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--4dd31ea6-e332-4973-9c45-7014cd94fefb'));
+  expect(page2.url()).toEqual(buildUrl('/recording/time-travel--ebf103b3-9b40-4d5b-a9f3-e0c8fe3d4bd5'));
 
   process.exit();
 })();

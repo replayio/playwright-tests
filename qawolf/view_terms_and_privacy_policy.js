@@ -1,6 +1,8 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // https://qawolfhq.slack.com/archives/C02K01LSEAE/p1663127885792379
+  
   // log in
   const { page } = await logIn();
   
@@ -22,7 +24,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     page2,
     "Welcome to Replay. Please read on to learn the rules and restrictions that govern"
   );
-  assert(page2.url().includes("/terms-of-use"));
+  assert(page2.url().includes("/terms-of-service"));
+  // 🐺 QA Wolf will create code here
   
   // view privacy policy
   await page.bringToFront();

@@ -2,7 +2,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // launch page
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://www.etsy.com/');
   
@@ -58,6 +60,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert added to cart
   await assertText(multipage, productTitle);
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

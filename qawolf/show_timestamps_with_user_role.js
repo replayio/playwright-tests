@@ -3,27 +3,41 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { page } = await logIn({ userId: 7 });
-  await assertText(page, 'Library');
+  await assertText(page, "Library");
   
   // go to recording
   await page.click(':text("Test Permissions")');
-  await page.click('text=Permissions: Great Scott');
+  await page.click("text=Permissions: Great Scott");
   
   // assert recording loaded
-  await assertText(page, 'Great Scott');
-  await assertText(page, 'DevTools');
+  await assertText(page, "Great Scott");
+  await assertText(page, "DevTools");
   
   // go to DevTools
   await page.click("text=ViewerDevTools");
   
+  // make sure the filter menu is expanded
+  try {
+    await expect(
+      page.locator('[data-test-id="EventTypeFilterInput"]')
+    ).toBeVisible({ timeout: 10 * 1000 });
+  } catch {
+    await page.click(
+      '[data-test-id="ConsoleMenuToggleButton"][title="Open filter menu"]'
+    );
+    await expect(
+      page.locator('[data-test-id="EventTypeFilterInput"]')
+    ).toBeVisible();
+  }
+  
   // assert DevTools loaded
-  await assertText(page, 'Console');
-  await assertNotText(page, '(index)');
+  await assertText(page, "Console");
+  await expect(page.locator(`:text("(index)")`)).not.toBeVisible();
   
   // enable timestamps
-  const showTimestampsCheckbox = page.locator('text=Show Timestamps');
-  const timestamp = page.locator('[role="main"] .timestamp');
-  if(await timestamp.count()) showTimestampsCheckbox.uncheck();
+  const showTimestampsCheckbox = page.locator("#FilterToggle-timestamps");
+  const timestamp = page.locator(':text("0:03")');
+  if (await timestamp.count()) showTimestampsCheckbox.uncheck();
   await page.waitForTimeout(2000);
   expect(await timestamp.count()).toEqual(0);
   expect(await showTimestampsCheckbox.isChecked()).toBeFalsy();
@@ -38,6 +52,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await showTimestampsCheckbox.uncheck();
   expect(await showTimestampsCheckbox.isChecked()).not.toBeTruthy();
   expect(await timestamp.count()).toEqual(0);
+  
 
   process.exit();
 })();

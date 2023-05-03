@@ -16,14 +16,23 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // go to DevTools
   await page.click("text=ViewerDevTools");
   
+  // make sure the filter menu is expanded
+  try {
+    await expect(page.locator('[data-test-id="EventTypeFilterInput"]')).toBeVisible( {timeout: 10 * 1000});
+  } catch {
+    await page.click('[data-test-id="ConsoleMenuToggleButton"][title="Open filter menu"]');
+    await expect(page.locator('[data-test-id="EventTypeFilterInput"]')).toBeVisible();
+  }
+  
   // assert DevTools loaded
   await expect(page.locator('text="Console"')).toBeVisible();
   
   // nav to elements in devTools
-  await page.click(".inspector-panel-button");
+  await page.click('[data-test-id="PanelButton-inspector"]');
   await expect(page.locator('text="Layout"')).toBeVisible();
   
   // open console
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Console");
   await expect(page.locator('text="Layout"')).toBeHidden();
   await expect(page.locator('text="Exceptions"')).toBeVisible();
@@ -36,12 +45,14 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // open outline
   await expect(page.locator('text="Select a source to see available functions"')).toBeHidden();
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Outline");
   await expect(page.locator('text="Select a source to see available functions"')).toBeVisible();
   
   // open print statements
   await expect(page.locator('text="Breakpoints"')).toBeHidden();
   await expect(page.locator('text="Print Statements"')).toBeHidden();
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Print Statements");
   await expect(page.locator('text="Breakpoints"')).toBeVisible();
   await expect(page.locator('text="Print Statements"')).toBeVisible();
@@ -49,6 +60,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // open sources
   await expect(page.locator('text="Sources"')).toBeHidden();
   await expect(page.locator('text="demo"')).toBeHidden();
+  await page.keyboard.press("Control+K");
   await page.click("text=Open Sources");
   await expect(page.locator('text="Sources"')).toBeVisible();
   await expect(page.locator(".folder").first()).toBeVisible();

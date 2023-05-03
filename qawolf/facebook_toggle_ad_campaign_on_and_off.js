@@ -1,15 +1,22 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  // const { browser, context } = await launchReplay();
+  
   // log in to Facebook
-  const { page } = await logInToFacebook(process.env.FACEBOOK_EMAIL_4, process.env.FACEBOOK_PASSWORD_4);
-  await assertText(page, "Helen");
+  const { page } = await logInToFacebook(
+    'qawreplayuser@gmail.com',
+    'Replayfb-qaw1'
+  );
+  
+  await assertText(page, "Richard Qaw");
   
   // go to ads manager
   await page.goto("https://facebook.com/adsmanager/manage");
   
   // view campaigns
-  await page.click('[aria-label="Campaigns"]');
+  await page.click("#CAMPAIGN_GROUP_AdsClassicTab");
   
   // ensure campaign toggled on
   await assertText(page, "Test Campaign");
@@ -25,6 +32,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.check('[data-visualcompletion="ignore"] [type="checkbox"]');
   await page.hover('[data-visualcompletion="ignore"] [type="checkbox"]');
   await assertText(page, "Turn off campaign");
+  
+  // list and upload the replay
+  await uploadReplay();
+  
 
   process.exit();
 })();

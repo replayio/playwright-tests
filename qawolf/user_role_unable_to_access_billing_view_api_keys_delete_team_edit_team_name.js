@@ -2,7 +2,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { browser, page } = await logIn({ userId: 7});
+  const { browser, page } = await logIn({ userId: 7 });
   await assertText(page, "Your Library");
   
   // go to team settings
@@ -11,21 +11,22 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("text=settings");
   
   // assert team seetings loaded
-  await assertText(page, 'Team Members');
-  await assertText(page, 'Chris Burton');
+  await assertText(page, "Team Members");
+  await assertText(page, "Chris Burton");
   
   // assert unable to access billing
-  await assertNotText(page, 'Billing');
+  await expect(page.locator(`:text("Billing")`)).not.toBeVisible();
   
   // assert unable to access API keys
-  await assertNotText(page, 'API Keys');
+  await expect(page.locator(`:text("API Keys")`)).not.toBeVisible();
   
   // assert unable to delete team
-  await assertNotText(page, 'Delete Team');
+  await expect(page.locator(`:text("Delete Team")`)).not.toBeVisible();
   
   // assert unable to change team name
   await page.click("text=Profile");
   await expect(page.locator('.space-y-4 input[type="text"]')).not.toBeVisible();
+  
 
   process.exit();
 })();

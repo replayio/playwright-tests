@@ -1,13 +1,15 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // context: https://qawolfhq.slack.com/archives/C02K01LSEAE/p1663127885792379
+  
   // launch page
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://replay.io');
+  await page.goto("https://replay.io");
   
   // assert page loaded
-  await assertText(page, "Your time travel debugger");
+  await assertText(page, "The time-travel debugger from the future.");
   var replayLinks = await page.$$("text=View in Replay");
   
   // navigate to replay links
@@ -15,10 +17,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     context.waitForEvent("page"),
     replayLinks.forEach((link) => {
       link.click();
-    })
+    }),
   ]);
   
-  await multiPage.waitForLoadState('networkidle');
+  await multiPage.waitForLoadState("networkidle");
   
   // get tabs
   let tabs = multiPage.context().pages();
@@ -39,6 +41,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert comment on Climatescape replay
   await assertText(tabs[1], "SAF+ shows up twice");
+  
 
   process.exit();
 })();

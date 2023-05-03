@@ -10,7 +10,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Login");
   
   // navigate to enterprise plan
-  var buttonLocator = page.locator("text=Email Us").nth('0');
+  await page.click(".plans_tabs__uqDtX button:nth-of-type(4)");
+  await page.waitForTimeout(6000);
+  var buttonLocator = page.locator("#Enterprise a").nth('0');
   var buttonLink = await buttonLocator.getAttribute('href');
   
   // assert link opens mailto

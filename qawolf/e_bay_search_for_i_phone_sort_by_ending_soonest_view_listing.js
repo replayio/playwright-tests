@@ -1,17 +1,18 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
   const page = await context.newPage();
-  await page.goto('https://ebay.com');
+  await page.goto("https://ebay.com");
   
   // search iPhone
   await page.fill('[aria-label="Search for anything"]', "iPhone");
   await page.click('[type="submit"]');
   
   // assert search results
-  await assertNotElement(page, "Andorid");
-  await assertText(page, "results for iphone");
+  await expect(page.locator(':text("Android")')).not.toBeVisible()
+  await expect(page.locator("text=results for iPhone")).toBeVisible();
   
   // sort listings
   await page.click('[aria-label="Sort selector. Best Match selected."]');
@@ -22,13 +23,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // navigate to listing
   const [popup] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.click('.srp-results li.s-item a.s-item__link')
+    page.waitForEvent("popup"),
+    page.click(".srp-results li.s-item a.s-item__link"),
   ]);
   await popup.waitForLoadState();
   
   // assert listing
   await assertText(popup, "iPhone");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

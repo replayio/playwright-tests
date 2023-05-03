@@ -1,8 +1,11 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://react-window.vercel.app/#/examples/list/memoized-list-items');
   
@@ -56,6 +59,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert on RTL layout
   await assertText(page, "<div style={style}>عمود {index}</div>");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

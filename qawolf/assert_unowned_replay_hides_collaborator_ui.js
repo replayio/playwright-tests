@@ -1,13 +1,9 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // If this test fails on "assert collaborator UI is hidden", make 
-  //  sure the replay has been recorded recently (no older than "3mo ago")
-  // Context: https://qawolfhq.slack.com/archives/C02K01LSEAE/p1660862225915889
-  
   // helper
   const url = buildUrl(
-    "/recording/qa-wolf--be0267fe-c058-4fea-b8cd-89bbc4ef7780"
+    "/recording/longer-replay-for-testing--7e7af868-3651-49ed-b02c-4216df943fec"
   );
   
   // log in
@@ -19,10 +15,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForTimeout(3000);
   
   // assert recording loaded
-  const recordingName = page.locator("text=QA Wolf");
-  await expect(recordingName).toBeVisible({ timeout: 30 * 1000 });
+  const recordingName = page.locator("text=Longer Replay for Testing");
+  await expect(recordingName).toBeVisible({ timeout: 3 * 60 * 1000 });
   
-  // try to add collaborator
+  // open share modal
   await page.click("text=ios_shareShare");
   
   // assert share modal opened
@@ -31,10 +27,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // assert collaborator UI is hidden
   const emailInput = page.locator('[placeholder="Email address"]');
   const collaboratorText = page.locator("text=Collaborator");
-  await expect(emailInput).toHaveCount(0);
+  await expect(emailInput).toHaveCount(0); // Author is present - NOTE: It is made public now though
   await expect(collaboratorText).toHaveCount(0);
   await page.mouse.click(0, 0);
   
+  await page.goBack();
   await logOut(page);
   
 

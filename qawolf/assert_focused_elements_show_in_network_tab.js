@@ -3,25 +3,27 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { page } = await logIn({ userId: 8 });
-  await page.goto(
-    buildUrl("/recording/react-todomvc-ass--a09ba001-9b5c-4976-8bdf-5e8d361f2c81")
-  );
+  
+  // go to TodoMVC replay
+  await page.click('[href="/recording/backbonejs-todomvc--c6103fac-79c9-44d0-bf3f-06c00f616c81"]');
   
   // go to recording network tab
   await page.click("text=DevTools");
   await page.click("text=videocam_off");
   await page.click("text=Network");
+  await page.waitForTimeout(5000);
   
   // assert initial network messages
   const messages = page.locator('[role="cell"]');
-  await expect(messages).toHaveCount(85); //85
+  await expect(messages).toHaveCount(90);
   
   // set focus
   await page.click('[title="Start focus edit mode"]');
   await setFocus({ handleLocation: "left", moveToX: 70, page });
   
   // assert new console message count
-  await expect(messages).toHaveCount(30); //30
+  await expect(messages).toHaveCount(5);
+  
 
   process.exit();
 })();

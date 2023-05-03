@@ -2,16 +2,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // go to google
-  const { context } = await launch();
+  // const { context } = await launch();
+  // launch replay browser
+  const { browser, context } = await launchReplay();
   const page = await context.newPage();
   await page.goto('https://www.google.com');
   
   // search
-  await page.fill('input[aria-label="Search"]', "site:wikipedia.org time travel debugging");
-  await page.press('input[aria-label="Search"]', "Enter");
+  await page.fill('[aria-label="Search"]', "site:wikipedia.org time travel debugging");
+  await page.press('[aria-label="Search"]', "Enter");
   
   // assert search
-  await page.waitForSelector('h3:has-text("Time travel debugging - Wikipedia")');
+  await page.waitForSelector('h3:has-text("Time travel debugging")');
   
   // open about this result modal
   await page.click('.g [role="button"] > span');
@@ -25,6 +27,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert close about this result modal
   await assertNotText(page, "About this result");
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

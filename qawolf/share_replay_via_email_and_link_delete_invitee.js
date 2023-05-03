@@ -1,7 +1,7 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  //Context: https://qawolfhq.slack.com/archives/C02K01LSEAE/p1660862225915889
+  // When maintenance is done, please revalidate this bug: https://app.qawolf.com/bug-reports/cl7qxj3nj437235un5mejea99y
   
   // launch page
   const { browser, context, page } = await logIn({ userId: 1 });

@@ -1,28 +1,16 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // go to Airtable
-  const { context } = await launch();
-  const page = await context.newPage();
-  await page.goto('https://airtable.com');
+  // REQ305 Airtable: log in
+  // MAINTENANCE NOTE: if test is showing human verification close out of all tabs manually then rerun
+  const { page, browser, context } = await logInToAirtable();
   
-  // log in 
-  await page.click("text=Sign in");
-  await page.fill('[name="email"]', "replay+airtable@qawolf.email");
-  await page.fill('[name="password"]', process.env.DEFAULT_PASSWORD);
-  await page.locator('button:text("Sign in")').first().click();
+  // // REQ304 Airtable: search for base
+  await page.fill('[aria-label="Find a base or interface"]', "Awesome Base");
+  await expect(page.locator('text=Bases matching "awesome base"')).toBeVisible();
+  await expect(page.locator('[aria-label="Awesome Base"]')).toBeVisible();
   
-  // verification step showing up here - can't even pass manually
-  
-  // assert logged in
-  await page.waitForSelector('[aria-label="Account"]')
-  await assertNotText(page, "Sign in")
-  
-  // search for base
-  await page.fill('[aria-label="Find a base or interface"]', "Awes");
-  
-  // assert base exists
-  await assertElement(page, '[aria-label="Awesome Base"]');
+  await browser.close() // very important to eliminate build up of browsers
 
   process.exit();
 })();

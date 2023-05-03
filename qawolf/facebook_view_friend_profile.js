@@ -1,12 +1,18 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // log in to Facebook
   const { page } = await logInToFacebook();
   
   // view friends list
   await page.click('[aria-label="Friends"]');
-  await assertText(page, "When you have friend requests or suggestions, you'll see them here.");
+  await assertText(
+    page,
+    "When you have friend requests or suggestions, you'll see them here."
+  );
   await page.click("text=All Friends");
   
   // assert friends are listed
@@ -34,6 +40,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // view individual photo
   await page.click('[alt="No photo description available."]');
   await assertElement(page, '[aria-label="Photo Viewer"]');
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

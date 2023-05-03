@@ -1,8 +1,11 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://prosemirror.net/examples/basic/');
   
@@ -29,6 +32,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // redo to italicized
   await page.click('[title="Redo last undone change"]');
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

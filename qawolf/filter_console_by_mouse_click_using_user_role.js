@@ -6,10 +6,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Your Library");
   
   // go to replay
-  await page.click(`:text("Test Permissions")`)
+  await page.click(`:text("Test Permissions")`);
   
   // open replay
-  await page.click('text=Permissions: Great Scott');
+  await page.click("text=Permissions: Great Scott");
   await page.click("text=ViewerDevTools");
   
   // filter console by mouse click
@@ -20,25 +20,31 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   } else {
     await page.click("#toolbox-content-console button");
   }
-  // await page.click("#show-errors");
-  // await page.click("#show-logs");
-  await page.click('text=Mouse');
-  const mouseClickCheckbox = page.locator('[title="View click events"] [type="checkbox"]');
+  
+  await page.click("text=Mouse");
+  const mouseClickCheckbox = page.locator(
+    '[data-test-id="EventTypes-event.mouse.click"] [type="checkbox"]'
+  );
   expect(await mouseClickCheckbox.isChecked()).not.toBeTruthy();
-  await assertNotText(page, 'clientX');
+  await expect(page.locator(':text("MouseEvent")')).not.toBeVisible();
   await mouseClickCheckbox.check();
   await page.waitForTimeout(2000); //give filter time to apply
   
   // assert filter
   expect(await mouseClickCheckbox.isChecked()).toBeTruthy();
-  await assertText(page, 'clientX');
+  await expect(page.locator('[data-test-message-type="event"]')).toHaveCount(5);
   
   // remove filter
   await mouseClickCheckbox.uncheck();
   
   // assert filter removed
   expect(await mouseClickCheckbox.isChecked()).not.toBeTruthy();
-  await assertNotText(page, 'clientX');
+  await expect(
+    page.locator('[data-test-name="Message"] :text("target")')
+  ).toHaveCount(0);
+  
+  await logOut(page);
+  
 
   process.exit();
 })();

@@ -16,7 +16,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('button.filter');
   
   // assert search listings
-  await assertText(page, "Houses & Apartments For Sale in Zürich");
+  await assertText(page, "Houses & Apartments For Sale in 8001 Zürich");
   
   // filter by most recent
   await page.click("text=Our recommendations");

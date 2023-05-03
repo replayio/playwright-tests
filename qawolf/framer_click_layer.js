@@ -23,7 +23,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   assert(subject === 'Your activation link for Framer');
   
   // go to link
-  await page.goto(urls[2]);
+  await page.goto(urls[1]);
   
   // assert page loaded
   await assertText(page, 'Layers');

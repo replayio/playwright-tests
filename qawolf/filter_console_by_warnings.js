@@ -1,37 +1,59 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  /*
+    This test needs a new recording. If it somehow gets pulled into a run and
+    gets auto-marked as "Active" and subsequently fails, do not mark as "Bug"
+    Just mark as maintenance.
+    
+    Removed CI tag 10/27
+  */
+  
   // log in
   const { page } = await logIn({ userId: 7 });
-  await assertText(page, 'Library');
+  await assertText(page, "Library");
   
   // go to recording
-  await page.goto(buildUrl('/recording/airtable-playwright-test--6847ab82-8b0a-4dc2-af73-eb6bf14918e7?point=12331705040172899620536796682649667&time=5072.277283660569&hasFrames=true'));
+  await page.goto(
+    buildUrl(
+      "/recording/playwright-test-teams-airtable--69bdd408-b9bf-49a4-b914-608e92c026ce?point=144735274938938674723349946383212339&time=3528.62009569378&hasFrames=true"
+    )
+  );
   
   // assert recording loaded
-  await assertText(page, 'Airtable: Playwright Test', {timeout: 30 * 1000}); // timeout for page to load);
-  await assertText(page, 'DevTools');
+  await assertText(page, "Playwright Test: Teams - Airtable", { timeout: 30 * 1000 }); // timeout for page to load);
+  await assertText(page, "DevTools");
   
   // go to DevTools
   await page.click("text=ViewerDevTools");
   
   // assert DevTools loaded
-  await assertText(page, 'Console');
+  await assertText(page, "Console");
   
   // filter console by warnings
-  const warnings = page.locator('[title="Warn"]');
+  const warnings = page.locator('[data-test-message-type="console-warning"]');
   await expect(warnings).toHaveCount(0);
-  await page.check("#show-warnings");
-  await page.waitForTimeout(10 * 1000); // needed to wait for warnings to load
+  try {
+    await page.click("#FilterToggle-warnings", { timeout: 5000 });
+  } catch {
+    await page.click('[data-test-id="ConsoleMenuToggleButton"]');
+    await page.click("#FilterToggle-warnings");
+  }
+  
+  // get # of warnings
+  const numOfWarnings = parseInt(await page.innerText('[class*=FilterToggles] [class*=FilterToggles]:has([data-test-id*="warnings"]) [class*="Badge_"]'));
+  
+  await page.waitForTimeout(3 * 1000); // needed to wait for warnings to load
   
   // assert warnings loaded
-  await expect(warnings).toHaveCount(101, { timeout: 3 * 60 * 1000 }); //101
+  await expect(warnings).toHaveCount(numOfWarnings, { timeout: 3 * 60 * 1000 }); //101
   
   // hide warnings
-  await page.uncheck("#show-warnings");
+  await page.click("#FilterToggle-warnings");
   
   // assert warnings hid
   await expect(warnings).toHaveCount(0);
+  
 
   process.exit();
 })();

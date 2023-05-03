@@ -7,12 +7,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.goto("https://replay.io");
   
   // assert page loaded
-  await assertText(page, "Your time travel debugger");
+  await expect(
+    page.locator("text=The time-travel debugger from the future.")
+  ).toBeVisible();
+  
+  // wheel down to social links
+  await page.mouse.wheel(0, 30000);
   
   // view Twitter
   const [page2] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click('.footer_wrapper [href="https://twitter.com/replayio"]'),
+    page.click('[href="https://twitter.com/replayio"]'),
   ]);
   await page2.waitForLoadState("domcontentloaded");
   await page2.bringToFront();
@@ -25,31 +30,36 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page2.close();
   
   // view Discord
-  const [page3] = await Promise.all([
-    page.waitForEvent("popup"),
-    page.click('.footer_wrapper [href="https://replay.io/discord"]'),
-  ]);
-  
-  var discordButton = page.locator(
-    '.footer_wrapper [href="https://replay.io/discord"]'
-  );
+  var discordButton = page.locator('[aria-label="discord"]');
   var discordLink = await discordButton.getAttribute("href");
+  
+  await page.click('[aria-label="discord"][href="/discord"]');
   
   // assert viewing Discord
   assert(discordLink.includes("discord"));
-  await assertText(page3, "Replay");
+  await assertText(page, "Replay");
   
   // close Discord
-  await page3.close();
+  await page.goto("https://replay.io");
   
-  // view GitHub
+  // wheel down to social links
+  await page.mouse.wheel(0, 30000);
+  
+  // view LinkedIn
   const [page4] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click('.footer_wrapper [href="https://github.com/replayio"]'),
+    page.click('[href="https://www.linkedin.com/company/replayio/"]'),
   ]);
   
-  // assert viewing GitHub
-  await expect(page4).toHaveURL("https://github.com/replayio");
+  // assert viewing linkedIn
+  await expect(page4.locator('[data-test-id="nav-logo"]')).toBeVisible();
+  try {
+    await expect(
+      page4.locator("text=New to LinkedIn? Join now").last()
+    ).toBeVisible({ timeout: 5000 });
+  } catch {
+    await page4.click(':text("Already on Linkedin? Sign in")');
+  }
   
 
   process.exit();

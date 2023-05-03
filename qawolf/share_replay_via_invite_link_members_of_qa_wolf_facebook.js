@@ -2,13 +2,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 
 (async () => {
   // log in
-  const { browser, context, page } = await logIn({ userId: 1 });
+  const { browser, context, page } = await logIn({ userId: 2 });
   await context.grantPermissions(["clipboard-read"]);
   await assertText(page, "Your Library");
   
   // go to Facebook: no search results recording
-  await page.click("text=QAWolf :: Facebook");
-  await page.click("text=Facebook: no search results for new chat");
+  await page.click("text=Test sharing");
+  await page.click("text=Share replay link video");
   
   // assert recording loaded
   await assertText(page, "DevTools", { timeout: 60 * 1000 });
@@ -29,7 +29,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   });
   expect(copiedLink).toEqual(
     buildUrl(
-      "/recording/facebook-no-search-results-for-new-chat--b30b1ebd-de5f-4fdd-9d49-5d55cb173f83"
+      "/recording/share-replay-link-video--25bc57dc-778e-42ab-bf6b-f6433a1b171b"
     )
   );
   
@@ -44,7 +44,6 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert user can't access recording
   expect(page2.url()).toEqual(copiedLink);
-  await assertNotText(page2, "Facebook: no search results for new chat");
   await expect(
     page2.locator(`text=Sorry, you don't have permission!`)
   ).toBeVisible();

@@ -3,7 +3,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://www.checklyhq.com/');
+  await page.goto("https://www.checklyhq.com/");
   
   // log in
   await page.click("text=Log in");
@@ -13,18 +13,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert log in
   await assertElement(page, "text=Test Wolf");
-  await assertNotText(page, "Log in");
+  await expect(page.locator(':text("Log in")')).not.toBeVisible();
   
   // create group
   await page.click("#create-check-button");
   
   // close the survey button
   try {
-    await page.click('[aria-label="Survey"] button'); 
+    await page.click('[aria-label="Survey"] button', { timeout: 5000 });
   } catch {}
   
   // click group under create group
-  await page.click(".add-group-button");
+  await page.click(':text("Group Run, manage & alert checks in groups")');
   
   // assert group created
   await assertText(page, "No checks in this group yet!");
@@ -32,8 +32,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // add check
   await page.click("text=Add checks to group");
   await page.click("text=Add existing check(s)");
-  await page.click("th label");
-  await page.click(".button--primary");
+  await page.click(".checks-selector label:left-of(:text('CHECK'))");
+  await page.click(':text("Add selected 2 checks")');
   
   // run api check
   await page.click("text=Run all checks");
@@ -45,6 +45,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(".checks-list-item button");
   await page.click("text=Remove check from Group");
   await page.click(':text("Remove from group")');
+  
 
   process.exit();
 })();

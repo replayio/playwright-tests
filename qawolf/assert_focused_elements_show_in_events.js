@@ -3,9 +3,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
 (async () => {
   // log in
   const { page } = await logIn({ userId: 8 });
-  await page.goto(
-    buildUrl("/recording/react-todomvc--a09ba001-9b5c-4976-8bdf-5e8d361f2c81")
-  );
+  
+  // go to TodoMVC replay
+  await page.click('[href="/recording/backbonejs-todomvc--c6103fac-79c9-44d0-bf3f-06c00f616c81"]');
   
   // go to recording network tab
   await page.click("text=DevTools");
@@ -14,21 +14,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert initial network messages
   const events = page.locator(".event");
-  await expect(events).toHaveCount(38);
+  await expect(events).toHaveCount(33);
   
-  // set left focus
+  // set focus
   await expect(page.locator('[title="Start focus edit mode"]')).toBeVisible();
   await page.click('[title="Start focus edit mode"]');
+  await setFocus({ handleLocation: "right", moveToX: 900, page });
   await setFocus({ handleLocation: "left", moveToX: 300, page });
   
   // assert new event count
-  await expect(events).toHaveCount(0);
+  await expect(events).toHaveCount(23);
   
-  // set right focus
-  await setFocus({ handleLocation: "right", moveToX: 900, page });
-  
-  // assert new event count
-  await expect(events).toHaveCount(21);
 
   process.exit();
 })();

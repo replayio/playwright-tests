@@ -1,8 +1,6 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
-  // Marked as maintenance for the following issue again - https://qa-wolf.monday.com/boards/2150171022/pulses/3093588105
-  
   // log in
   const { page } = await logIn({ userId: 6, options: { slowMo: 1000 } });
   await assertText(page, "Your Library");
@@ -18,7 +16,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // navigate to comment section
   try {
-    await expect(page.locator("'Comments'")).toBeVisible();
+    await expect(page.locator("'Comments'")).toBeVisible({ timeout: 5000 });
   } catch {
     await page.click(".comments button");
   }
@@ -36,16 +34,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // open DevTools and demo-script.js
   await page.click("text=ViewerDevTools");
+  await page.click(':text("static.replay.io")');
   await page.click("text=demo");
   await page.click("text=demo-script.js");
   
   // add comment
   await page.hover("text=const buttons", { force: true });
   await page.waitForTimeout(1000);
-  const addCommentButton = page.locator("button.toggle-widget");
+  const addCommentButton = page.locator('[data-test-name="LogPointToggle"]');
   await addCommentButton.click();
+  await page.click('[data-test-name="PointPanel-CancelButton"]');
   await page.waitForTimeout(2000);
-  await page.click('[aria-label="Add comment"]');
+  await page.click('[data-test-name="PointPanel-AddCommentButton"]');
   
   // try {
   //   // retry click comment button if comment doesn't open on first try
@@ -74,6 +74,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(noComments).toBeVisible({ timeout: 5000 });
   
   await logOut(page);
+  
 
   process.exit();
 })();

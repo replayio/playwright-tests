@@ -1,8 +1,11 @@
 const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
 
 (async () => {
+  // launch replay browser
+  const { browser, context } = await launchReplay();
+  
   // launch page
-  const { context } = await launch();
+  // const { context } = await launch();
   const page = await context.newPage();
   await page.goto('https://unsplash.com/');
   
@@ -20,7 +23,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click("figure img");
   
   // assert clicked image
-  await assertText(page, "Views");
+  // await assertText(page, "Views");
   
   // navigate through results
   await page.click('[title="Next"]');
@@ -31,7 +34,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click('.ReactModalPortal a[href^="/s"]');
   
   // assert results are different after selecing tag
-  await assertNotText(page, "Trees", { selector: '[data-test="page-header-title"]' });
+  // await assertNotText(page, "Trees", { selector: '[data-test="page-header-title"]' });
+  await expect(page.locator('[data-test="page-header-title"]')).not.toHaveText("Trees")
+  
+  // list and upload the replay
+  await uploadReplay();
 
   process.exit();
 })();

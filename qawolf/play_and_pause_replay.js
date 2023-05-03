@@ -4,21 +4,26 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // launch page
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto(buildUrl("/recording/e64e05d0-7e55-4165-aa03-0e026335785a"), {
-    timeout: 2 * 60 * 1000,
-  });
+  await page.goto(
+    buildUrl(
+      "/recording/longer-replay-for-testing--7e7af868-3651-49ed-b02c-4216df943fec"
+    ),
+    {
+      timeout: 2 * 60 * 1000,
+    }
+  );
   
   // assert page loaded
-  await assertText(page, "Replay Example");
+  await assertText(page, "Longer Replay for Testing");
   await page.waitForTimeout(2000);
   
   // click to move to starting position
-  await page.click(':text("Manuel Martín Fernández")');
+  await page.click(':text("Beginning comment")');
   
   // get player time
   const progressLine = page.locator(".progress-line").last();
   let beforePlayTimestamp = await progressLine.getAttribute("style");
-  await expect(beforePlayTimestamp.split(" ")[1]).toMatch(/96./);
+  expect(beforePlayTimestamp.split(" ")[1]).toMatch(/0./);
   
   // play replay
   await page.click('button [src="/images/playback-play.svg"]');
@@ -32,10 +37,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // get player time after pausing
   let afterPlayTimestamp = await progressLine.getAttribute("style");
   await page.waitForTimeout(2000);
-  expect(afterPlayTimestamp.split(" ")[1]).toMatch(/98./);
+  expect(afterPlayTimestamp.split(" ")[1]).toMatch(/12.9/);
   
   // assert video played
   expect(beforePlayTimestamp).not.toEqual(afterPlayTimestamp);
+  
 
   process.exit();
 })();

@@ -5,8 +5,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const { browser, context, page } = await logIn({ userId: 2 });
   await assertText(page, "Your Library");
   
-  // go to Facebook: no search results recording
-  await page.click("text=Test team");
+  // go to Google News recording
+  await page.click("text=Test Team");
   await page.click("text=Google News");
   
   // assert recording loaded
@@ -26,12 +26,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const copiedLink = await page.evaluate(() => {
     return navigator.clipboard.readText();
   });
-  expect(copiedLink).toEqual(buildUrl('/recording/google-news-science-environment--addabc8f-b007-4eb2-9078-d5d7742d9d76'));
+  expect(copiedLink).toEqual(buildUrl('/recording/google-news-science-environment--44b2e972-f2e8-40eb-9909-7213b10b5f03'));
   
   // user with access goes to copied link
   const context2 = await browser.newContext();
   await context2.setExtraHTTPHeaders({
-    Authorization: `Bearer ${process.env.USER_3_API_KEY}`
+    Authorization: `Bearer ${process.env.USER_1_API_KEY}`
   })
   const page2 = await context2.newPage();
   await page2.bringToFront();
@@ -52,7 +52,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // assert user can't access recording
   expect(page3.url()).toEqual(copiedLink);
-  await assertNotText(page3, "Google News");
+  await expect(page3.locator(`:text("Google News")`)).not.toBeVisible();
   await expect(page3.locator(`text=Sorry, you don't have permission!`)).toBeVisible();
   await expect(page3.locator("button")).toHaveText("Request access");
   

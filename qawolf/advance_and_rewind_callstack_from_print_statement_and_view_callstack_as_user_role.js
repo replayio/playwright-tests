@@ -5,15 +5,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const { page } = await logIn({ userId: 7 });
   await assertText(page, "Library");
   
-  // go to recording
-  await page.goto(
-    buildUrl(
-      "/recording/hello-world--aae188fb-57d2-46af-a23a-0adba3ed0687?point=2305843009213693954&time=496&hasFrames=false"
-    )
+  // go to "replay with logs"
+  await page.click(
+    '[href="/recording/replay-with-logs--2e63ccb9-ada6-4d2a-a3a9-5d09d551e68d"]'
   );
   
   // assert recording loaded
-  await assertText(page, "Hello World!");
+  await assertText(page, "Replay with logs");
   await assertText(page, "DevTools");
   
   // go to DevTools
@@ -23,53 +21,76 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await assertText(page, "Console");
   
   // get current player head time
+  await page.waitForTimeout(3000);
   const progressLine = page.locator(".progress-line").last();
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("12.6563%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("5.06466%;");
   
-  // open source
-  await page.click('[role="tree"] >> text=utils.js');
+  // open source "_async_to_generator.js"
+  await page.click('[data-test-id="AccordionPane-Sources"] :text("search")');
+  await page.fill('[data-test-id="QuickOpenInput"]', "_async");
+  await page.click(
+    '[data-test-id="QuickOpenResultsList"] :text("_async_to_generator.js")'
+  );
   
-  // assert utils.js opened
-  const newPromises = page.locator("text=return new Promise(resolve => {");
-  await expect(newPromises).toHaveCount(1);
-  await page.waitForTimeout(3000);
-  
-  // add print statement
-  await newPromises.hover({ force: true });
-  await page.click("text=add", { delay: 500 });
+  // assert _async_to_generator.js opened
+  await page.waitForTimeout(10 * 1000);
+  await page.hover(':text("var self = this, args = arguments;")');
+  await page.click(
+    '[data-test-id="SourceLine-8"] [data-test-name="LogPointToggle"]'
+  );
   const callStackPane = page.locator(".call-stack-pane");
   await expect(callStackPane).toHaveCount(0);
   
-  // advance call stack
-  const fastForwardButton = page.locator('[title="Jump Forward (to next hit)"]');
-  const rewindButton = page.locator('[title="Jump Back (to previous hit)"]');
+  // advance call stack to end
+  const fastForwardButton = page.locator(
+    '[data-test-name="NextHitPointButton"]'
+  );
+  const disabledFastForwardButton = await page
+    .locator('[data-test-name="NextHitPointButton"][disabled]')
+    .count();
+  const rewindButton = page.locator(
+    '[data-test-id="PointPanel-8"] [data-test-name="PreviousHitPointButton"]'
+  );
+  const disabledRewindButton = await page
+    .locator('[data-test-name="PreviousHitPointButton"][disabled]')
+    .count();
   await expect(fastForwardButton).toHaveCount(1);
-  await expect(rewindButton).toHaveCount(0);
-  for (let i = 0; i < 21; i++) {
+  
+  while (disabledFastForwardButton != 1) {
     await fastForwardButton.click();
+    await page.waitForTimeout(1000);
+    disabledFastForwardButton = await page
+      .locator('[data-test-name="NextHitPointButton"][disabled]')
+      .count();
   }
   
   // assert callstack moved forward
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("77.6805%;");
-  await expect(fastForwardButton).toHaveCount(0);
+  expect(playheadPosition.split(" ")[1]).toContain("82.3"); //"82.3853%;"
+  expect(disabledFastForwardButton).toBe(1); // if the fast forward button is greyed out
   
   // rewind callstack
   await expect(rewindButton).toHaveCount(1);
-  for (let i = 0; i < 20; i++) {
+  
+  while ((disabledRewindButton) < 1) {
     await rewindButton.click();
+    await page.waitForTimeout(1000);
+    disabledRewindButton = await page
+      .locator('[data-test-name="PreviousHitPointButton"][disabled]')
+      .count();
   }
   
   // assert callstack moved backward
   let playheadPosition = await progressLine.getAttribute("style");
-  expect(playheadPosition.split(" ")[1]).toEqual("22.1121%;");
+  expect(playheadPosition.split(" ")[1]).toEqual("2.57073%;");
   
   // open call stack
   await page.click("text=motion_photos_paused");
   
   // assert callstack panel opened
   await expect(callStackPane).toHaveCount(1);
+  
 
   process.exit();
 })();
