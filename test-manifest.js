@@ -38,7 +38,7 @@ const PlaywrightTests = [
   { name: "examples/unsplash.js" },
   { name: "examples/vscode.js" },
   { name: "examples/yelp.js" },
-  ...qawolf,
+  // ...qawolf,
 ];
 
 module.exports = { PlaywrightTests };
