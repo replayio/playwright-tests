@@ -23,7 +23,8 @@ const {
   bubbleLogin,
   superblocksLogin,
   navigateTo,
-  openPopup
+  openPopup,
+  runCommand
 } = require("./helpers");
 
 (async () => {

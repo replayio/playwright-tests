@@ -23,12 +23,14 @@ const {
   bubbleLogin,
   superblocksLogin,
   navigateTo,
-  openPopup
+  openPopup,
+  runCommand
 } = require("./helpers");
 
 (async () => {
-  let { browser, context, page } = await logIn({ userId: 6 });
+  const { page } = await logIn({ userId: 11 });
+  
+  // USER 4 having 
 
   process.exit();
-})(););
 })();

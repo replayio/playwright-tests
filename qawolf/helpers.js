@@ -957,6 +957,7 @@ const assert = require("assert");
   bubbleLogin,
   superblocksLogin,
   navigateTo,
-  openPopup
+  openPopup,
+  runCommand
 };
   
