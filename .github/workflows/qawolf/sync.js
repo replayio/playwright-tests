@@ -40,6 +40,15 @@ function formatHelpers(code) {
   const faker = require("faker");
   const { getInbox } = require("./getInbox");
   require("dotenv").config();
+
+  async function runCommand(cmd, { logStdError }) {
+    return new Promise((resolve) => {
+      const [c, ...args] = cmd.split(" ");
+      const proc = require("child_process").spawn(c, args);
+      proc.stderr.on("data", (data) => logStdError?.(data.toString("utf-8")));
+      proc.on("exit", () => resolve());
+    });
+  }
   
   async function launch({ headless } = { headless: false }) {
     const playwright = require("playwright");
