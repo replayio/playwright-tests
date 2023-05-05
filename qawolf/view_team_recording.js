@@ -1,33 +1,12 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "View team recording";
+
   // helper
   const url = buildUrl("/recording/private-recording-test--d27fd0e2-42a4-4f76-a957-34c940b6b162");
   
@@ -47,6 +26,15 @@ const {
   // check the non-team member cannot access it
   await assertText(page, "Sorry, you don't have permission!");
   await assertText(page, "Request access");
+
+  process.exit();
+})();y with a non-team member user
+  // let { page } = await logIn({ userId: 3 });
+  // await page.goto(url);
+  
+  // // check the non-team member cannot access it
+  // await assertText(page, "This is a private replay. Please sign in.");
+  // await assertText(page, "Sign in to Replay");
 
   process.exit();
 })();

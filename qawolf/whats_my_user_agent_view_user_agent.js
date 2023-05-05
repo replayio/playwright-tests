@@ -1,33 +1,12 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "What's my user agent?: view user agent";
+
   // launch replay browser
   const { browser, context } = await launchReplay();
   

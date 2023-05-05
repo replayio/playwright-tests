@@ -1,33 +1,12 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "Assert unowned replay hides collaborator UI";
+
   // helper
   const url = buildUrl(
     "/recording/longer-replay-for-testing--7e7af868-3651-49ed-b02c-4216df943fec"

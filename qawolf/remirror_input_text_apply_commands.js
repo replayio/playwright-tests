@@ -1,49 +1,78 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "Remirror: input text, apply commands";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // launch replay browser
   const { browser, context } = await launchReplay();
   
   // launch page
   // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://remirror.io/');
+  await page.goto("https://remirror.io/");
   
   // assert page loaded
   await assertText(page, "Docs");
   
   // set input
-  await page.type('[contenteditable="true"]',"@j");
+  await page.type('[contenteditable="true"]', "@j");
   
   // select joe
-  await page.press('[contenteditable="true"]',"Enter");
+  await page.press('[contenteditable="true"]', "Enter");
   
   // select text
   await page.keyboard.down("Shift");
@@ -51,10 +80,10 @@ const {
   await page.press('[contenteditable="true"]', "ArrowLeft");
   
   // bold text
-  await page.click("[name='bold']")
+  await page.click("[name='bold']");
   
   // unbold text
-  await page.click("[name='bold']")
+  await page.click("[name='bold']");
   
   // select text
   await page.keyboard.down("Shift");
@@ -68,7 +97,12 @@ const {
   await page.click("[name='underline']");
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  
 
   process.exit();
 })();

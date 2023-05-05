@@ -1,33 +1,62 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "MDN WebGL:  basic scissoring, scissor animation, clear by clicking, view textures from code";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // launch replay browser
   const { browser, context } = await launchReplay();
   
@@ -44,7 +73,9 @@ const {
   ).contentFrame();
   
   // assert viewing page
-  await expect(page.locator(".code-example").first()).toContainText("<p>Result of scissoring.</p>")
+  await expect(page.locator(".code-example").first()).toContainText(
+    "<p>Result of scissoring.</p>"
+  );
   
   // go to Clearing by clicking
   await page.goto(
@@ -72,13 +103,17 @@ const {
   ).contentFrame();
   
   // assert on scissor animation page
-  await expect(page.locator('text=Scissor animation').first()).toBeVisible();
+  await expect(page.locator("text=Scissor animation").first()).toBeVisible();
   
   // start animation
   await frame.click("#animation-onoff");
   
   // assert some text
-  await expect(page.locator('text=A simple WebGL example in which we have some animation fun using scissoring and clearing operations.')).toBeVisible();
+  await expect(
+    page.locator(
+      "text=A simple WebGL example in which we have some animation fun using scissoring and clearing operations."
+    )
+  ).toBeVisible();
   
   // goto texture from code
   await page.goto(
@@ -86,7 +121,14 @@ const {
   );
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.frame = frame;
+  shared.frame = frame;
+  shared.frame = frame;
   
 
   process.exit();

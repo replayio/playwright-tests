@@ -1,33 +1,62 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "Twitter: Create and reply to Tweet";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // launch replay browser
   const { browser, context } = await launchReplay();
   const page = await context.newPage();
@@ -37,7 +66,10 @@ const {
   
   // REQ Log into Twitter
   // Fill the 'Phone, email, or username' input with TWITTER_EMAIL
-  await page.fill('[autocomplete="username"][name="text"]', process.env.TWITTER_EMAIL);
+  await page.fill(
+    '[autocomplete="username"][name="text"]',
+    process.env.TWITTER_EMAIL
+  );
   await page.click(':text("Next")');
   
   // If it asks to Enter phone # or username
@@ -64,11 +96,15 @@ const {
   await page.waitForTimeout(2000);
   
   // clean up - delete tweet
-  while (await page.locator('[data-testid="tweetText"] :text("Bull market!!")').count()) {
-    await page.click('[data-testid="tweet"] [data-testid="caret"]:right-of(:text("Bull market!!")) >> nth=0'); // click kebab
+  while (
+    await page.locator('[data-testid="tweetText"] :text("Bull market!!")').count()
+  ) {
+    await page.click(
+      '[data-testid="tweet"] [data-testid="caret"]:right-of(:text("Bull market!!")) >> nth=0'
+    ); // click kebab
     await page.click('[data-testid="Dropdown"] :text("Delete")');
     await page.click('[data-testid="confirmationSheetConfirm"]');
-    await expect(page.locator('text=Your Tweet was deleted')).toBeVisible();
+    await expect(page.locator("text=Your Tweet was deleted")).toBeVisible();
     await page.waitForTimeout(2000);
   }
   
@@ -77,20 +113,27 @@ const {
   
   // REQ Create tweet
   // Fill the "What's happening?" field with new tweet
-  await page.fill('[data-testid="tweetTextarea_0"][aria-label="Tweet text"]', tweet);
+  await page.fill(
+    '[data-testid="tweetTextarea_0"][aria-label="Tweet text"]',
+    tweet
+  );
   
   // Click the Image icon and upload image
   const [fileChooser] = await Promise.all([
     page.waitForEvent("filechooser"),
   
     // Opens the file chooser.
-    await page.click('[data-testid="toolBar"] [aria-label="Add photos or video"]'),
+    await page.click(
+      '[data-testid="toolBar"] [aria-label="Add photos or video"]'
+    ),
   ]);
   await fileChooser.setFiles("/root/files/avatar.png");
   await page.waitForTimeout(3000);
   
   // Click on 'Add description' below image
-  await page.click('[data-testid="altTextWrapper"][aria-label="Add description"]');
+  await page.click(
+    '[data-testid="altTextWrapper"][aria-label="Add description"]'
+  );
   
   // Fill the 'Description' field with new Description
   const description = "wolf vibes";
@@ -101,24 +144,34 @@ const {
   await page.waitForTimeout(2000);
   
   // Click the 'Tweet' button
-  await page.click('[data-testid="primaryColumn"] [data-testid="tweetButtonInline"]');
-  
+  await page.click(
+    '[data-testid="primaryColumn"] [data-testid="tweetButtonInline"]'
+  );
   
   // Assert After reloading page, we're able to see tweet on Home feed
   // - Image appears correctly
-  await expect(page.locator('[aria-label="wolf vibes"][data-testid="tweetPhoto"]')).toBeVisible();
+  await expect(
+    page.locator('[aria-label="wolf vibes"][data-testid="tweetPhoto"]')
+  ).toBeVisible();
   // - Tweet text appears correctly
-  await expect(page.locator('[data-testid="tweetText"] :text("Bull market!!")')).toBeVisible();
+  await expect(
+    page.locator('[data-testid="tweetText"] :text("Bull market!!")')
+  ).toBeVisible();
   await page.waitForTimeout(4000);
-  
   
   // REQ View tweet on profile
   // Click the 'Profile' button
   await page.click('[data-testid="AppTabBar_Profile_Link"]');
   
   // Assert Recently posted tweets appears under 'Tweets'
-  await expect(page.locator('[data-testid="tweetText"] :text("Bull market!!")')).toBeVisible();
-  await expect(page.locator('[aria-label="wolf vibes"][data-testid="tweetPhoto"]:below(:text("Bull market!!"))')).toBeVisible();
+  await expect(
+    page.locator('[data-testid="tweetText"] :text("Bull market!!")')
+  ).toBeVisible();
+  await expect(
+    page.locator(
+      '[aria-label="wolf vibes"][data-testid="tweetPhoto"]:below(:text("Bull market!!"))'
+    )
+  ).toBeVisible();
   await page.waitForTimeout(4000);
   
   // REQ Reply to tweet
@@ -128,30 +181,51 @@ const {
   
   // Fill the 'Tweet your reply' field with new reply
   const reply = "That's cool!";
-  await page.fill('[data-testid="tweetTextarea_0"][aria-label="Tweet text"]', reply);
+  await page.fill(
+    '[data-testid="tweetTextarea_0"][aria-label="Tweet text"]',
+    reply
+  );
   await page.waitForTimeout(2000);
   
   // Click the 'Reply' button
-  await page.click('[data-testid="cellInnerDiv"] [data-testid="tweetButtonInline"]');
+  await page.click(
+    '[data-testid="cellInnerDiv"] [data-testid="tweetButtonInline"]'
+  );
   
   // Assert Your Tweet was sent notification
   await expect(page.locator('[data-testid="toast"]')).toBeVisible();
   
   // Assert Tweet appears under replies
-  await expect(page.locator(`[data-testid="tweetText"] :text("That's cool!"):below([aria-label="wolf vibes"][data-testid="tweetPhoto"]:below(:text("Bull market!!")))`)).toBeVisible();
+  await expect(
+    page.locator(
+      `[data-testid="tweetText"] :text("That's cool!"):below([aria-label="wolf vibes"][data-testid="tweetPhoto"]:below(:text("Bull market!!")))`
+    )
+  ).toBeVisible();
   await page.waitForTimeout(3000);
   
-  
   // clean up - delete tweet
-  await page.click('[data-testid="tweet"] [data-testid="caret"]:right-of(:text("Bull market!!")) >> nth=0'); // click kebab
+  await page.click(
+    '[data-testid="tweet"] [data-testid="caret"]:right-of(:text("Bull market!!")) >> nth=0'
+  ); // click kebab
   await page.click('[data-testid="Dropdown"] :text("Delete")');
   await page.click('[data-testid="confirmationSheetConfirm"]');
-  await expect(page.locator('text=Your Tweet was deleted')).toBeVisible();
-  await expect(page.locator('[data-testid="tweetText"] :text("Bull market!!")')).not.toBeVisible();
+  await expect(page.locator("text=Your Tweet was deleted")).toBeVisible();
+  await expect(
+    page.locator('[data-testid="tweetText"] :text("Bull market!!")')
+  ).not.toBeVisible();
   await page.waitForTimeout(3000);
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.tweet = tweet;
+  shared.fileChooser = fileChooser;
+  shared.description = description;
+  shared.reply = reply;
+  
 
   process.exit();
 })();

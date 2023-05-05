@@ -1,40 +1,69 @@
-const {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-} = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
 
 (async () => {
+  const TEST_NAME = "PixiJS: view examples";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // launch replay browser
   const { browser, context } = await launchReplay();
   
   // go to PixiJS
   // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://pixijs.io/examples/#/demos-basic/container.js');
+  await page.goto("https://pixijs.io/examples/#/demos-basic/container.js");
   
   // view advanced demos
   await page.click('[data-section="demos-advanced"]');
@@ -57,7 +86,12 @@ const {
   await page.waitForTimeout(5000);
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  
 
   process.exit();
 })();

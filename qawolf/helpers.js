@@ -1,11 +1,11 @@
-const assert = require("assert");
+  const assert = require("assert");
   const { expect } = require("@playwright/test");
   const { assertElement, assertText, getValue } = require("qawolf");
   const faker = require("faker");
   const { getInbox } = require("./getInbox");
   require("dotenv").config();
 
-  async function runCommand(cmd, { logStdError }) {
+  async function runCommand(cmd, { logStdError } = {}) {
     return new Promise((resolve) => {
       const [c, ...args] = cmd.split(" ");
       const proc = require("child_process").spawn(c, args);
@@ -14,18 +14,20 @@ const assert = require("assert");
     });
   }
   
-  async function launch({ headless } = { headless: false }) {
+  async function launch(opts) {
     const playwright = require("playwright");
-    const { getExecutablePath } = require("@replayio/playwright");
-    let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
+    let browserName = opts.browser || process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
   
     const browser = await playwright[browserName].launch({
-      headless,
+      ...opts,
+      headless: "headless" in opts ? opts.headless : false,
       timeout: 60000,
     });
     const context = await browser.newContext();
     return { browser, context };
   }
+
+  const shared = {};
 
   async function assertNotElement(page, element, options) {
     return page.waitForFunction(
@@ -97,18 +99,26 @@ const assert = require("assert");
       })
     );
   
+    let replayPlaywrightPath; 
+    try {
+      replayPlaywrightPath = require.resolve("@replayio/playwright", {
+        paths: ["/root", __dirname]
+      });
+    } catch {
+      replayPlaywrightPath = "/root/node_modules/@replayio/playwright";
+    }
+  
     // launch a replay browser
-    const {
-      getExecutablePath,
-    } = require("/root/node_modules/@replayio/playwright");
+    const { getExecutablePath } = require(replayPlaywrightPath);
+    const browserName = process.env.REPLAY_BROWSER_NAME || "chromium";
     const { browser, context } = await launch({
-      browser: "chrome",
+      browser: browserName,
+      executablePath: getExecutablePath(browserName),
       env: {
         DISPLAY: ":0.0",
         HOME: process.env.HOME,
         RECORD_ALL_CONTENT: 1,
       },
-      executablePath: getExecutablePath("chromium"),
       headless: false,
       ...options,
     });
@@ -117,7 +127,7 @@ const assert = require("assert");
     return { browser, context };
   }
   
-  async function uploadReplay() {
+  async function uploadReplay(page) {
     const domain = await page.evaluate(() => window.location.origin);
     console.log("DOMAIN", domain);
     // list and upload the replay
@@ -184,25 +194,24 @@ const assert = require("assert");
     }
   }
   
-  async function logInToPinterest(context) {
+  async function logInToPinterest(context, options = {}) {
     if (!context) {
       const replay = await launchReplay({ slowMo: 500 });
       context = replay.context;
     }
   
     // login to pinterest
-    // const { context, browser } = await launch({ ...options });
     const page = await context.newPage();
     await page.goto("https://www.pinterest.com/login/");
   
     // fill in
     await page.fill(
       '[data-test-id="emailInputField"] #email',
-      process.env.PINTEREST_EMAIL
+      options.email ? options.email : process.env.PINTEREST_EMAIL
     );
     await page.fill(
       '[data-test-id="passwordInputField"] #password',
-      `${process.env.DEFAULT_PASSWORD}1`
+      options.password ? options.password : process.env.PINTEREST_PASSWORD
     );
     await page.click('[data-test-id="registerFormSubmitButton"] :text("Log in")');
   
@@ -215,7 +224,7 @@ const assert = require("assert");
     try {
       await page.click(':text("Skip for now")', { timeout: 4000 });
     } catch {}
-    return { page, browser, context };
+    return { page, context };
   }
   
   async function logInToLinkedin(context) {
@@ -249,8 +258,8 @@ const assert = require("assert");
       const replay = await launchReplay({
         slowMo: 500,
         proxy: {
-          server: '44.213.56.128:3128'
-        }
+          server: "44.213.56.128:3128",
+        },
       });
       context = replay.context;
     }
@@ -432,7 +441,7 @@ const assert = require("assert");
     } catch (e) {}
     // zoom popup
     try {
-      await expect(page.locator('[aria-label="Zoom Promo Modal"]')).toBeVisible({
+      await expect(page.locator(".ucs-carousel__content")).toBeVisible({
         timeout: 10000,
       });
       await page.click(".ucs-carousel__close");
@@ -555,8 +564,12 @@ const assert = require("assert");
     await page.click('[data-test-id="HeaderAccountsOptionsMenuAccountRep"]');
     await page.click('[data-test-id="action-bar"] :text("Created")');
     await page.click(`[aria-label*="${title}"]`, { position: { x: 50, y: 50 } });
-    await page.hover('[data-test-id="profile-header"]');
-    await page.click(`[aria-label*="${title}"]`, { position: { x: 50, y: 50 } });
+    try {
+      await page.hover('[data-test-id="profile-header"]', { timeout: 5000 });
+      await page.click(`[aria-label*="${title}"]`, {
+        position: { x: 50, y: 50 },
+      });
+    } catch {}
     await page.click(
       '[data-test-id="closeup-action-bar-button"] [aria-label="More options"]'
     );
@@ -642,12 +655,40 @@ const assert = require("assert");
   }
   
   async function navigateTo(page, project) {
-    const [page2] = await Promise.all([
-      page.waitForEvent("popup"),
-      page.click(`[href*="${project}"] >> nth = 0`),
-    ]);
-    await page2.waitForLoadState("domcontentloaded");
-    await page2.bringToFront();
+    var page2;
+    const pages = await page.innerText(
+      '.clickable-element ~ .Group .bubble-element:has-text("OF")'
+    );
+    var pageNum = Number(pages.split(" ")[4]);
+    let mx = 10;
+  
+    while (pageNum > 0 && mx > 0) {
+      try {
+        // assert page is there
+        await expect(page.locator(`[href*="${project}"] >> nth = 0`)).toBeVisible(
+          { timeout: 10 * 1000 }
+        );
+  
+        // click the project
+        const [page3] = await Promise.all([
+          page.waitForEvent("popup"),
+          page.click(`[href*="${project}"] >> nth = 0`),
+        ]);
+        await page3.waitForLoadState("domcontentloaded");
+        await page3.bringToFront();
+  
+        page2 = await page3;
+  
+        // break
+        break;
+      } catch {
+        // go to the next page
+        await page.click('button:text("arrow_forward")');
+      }
+  
+      pageNum -= 1;
+      mx -= 1;
+    }
   
     return { page2 };
   }
@@ -912,15 +953,21 @@ const assert = require("assert");
   }
   
   /**
-   * On editor: goes to workflow tab -> 
-   * adds new event -> 
+   * On editor: goes to workflow tab ->
+   * adds new event ->
    * adds new action to new event
    */
-  async function addEventAddAction(page, eventType, eventName, actionType, actionName) {
+  async function addEventAddAction(
+    page,
+    eventType,
+    eventName,
+    actionType,
+    actionName
+  ) {
     // go to workflow tab
     await page.click(".tabs-2:has-text('Workflow')");
   
-    // add event 
+    // add event
     await page.click("text=Click here to add an event...");
     await page.hover(`text='${eventType}'`);
     await page.click(`text='${eventName}'`);
@@ -931,33 +978,58 @@ const assert = require("assert");
     await page.click(`.actions .item:has-text('${actionName}')`);
   }
   
+  shared.assertNotElement = assertNotElement;
+  shared.assertNotText = assertNotText;
+  shared.buildUrl = buildUrl;
+  shared.deleteTeam = deleteTeam;
+  shared.getBoundingClientRect = getBoundingClientRect;
+  shared.getPlaybarTooltipValue = getPlaybarTooltipValue;
+  shared.launchReplay = launchReplay;
+  shared.uploadReplay = uploadReplay;
+  shared.logIn = logIn;
+  shared.logoutSequence = logoutSequence;
+  shared.logOut = logOut;
+  shared.logInToPinterest = logInToPinterest;
+  shared.logInToLinkedin = logInToLinkedin;
+  shared.logInToFacebook = logInToFacebook;
+  shared.parseInviteUrl = parseInviteUrl;
+  shared.setFocus = setFocus;
+  shared.waitForFrameNavigated = waitForFrameNavigated;
+  shared.logInToAsana = logInToAsana;
+  shared.deleteAllSuperblocks = deleteAllSuperblocks;
+  shared.logInToAirtable = logInToAirtable;
+  shared.getBoundingBox = getBoundingBox;
+  shared.addElementToCanvas = addElementToCanvas;
+  shared.logInToSurveymonkey = logInToSurveymonkey;
+  shared.logInToEtsy = logInToEtsy;
+  shared.createSurveyFromScratch = createSurveyFromScratch;
+  shared.cleanSurveys = cleanSurveys;
+  shared.openPopup = openPopup;
+  shared.deleteSurvey = deleteSurvey;
+  shared.selectAllDelete = selectAllDelete;
+  shared.deleteIdeaPin = deleteIdeaPin;
+  shared.deleteEvenFlows = deleteEvenFlows;
+  shared.deletePin = deletePin;
+  shared.deleteSurvey2 = deleteSurvey2;
+  shared.bubbleLogin = bubbleLogin;
+  shared.extractAppAndPageFromUrl = extractAppAndPageFromUrl;
+  shared.navigateTo = navigateTo;
+  shared.superblocksLogin = superblocksLogin;
+  shared.dragAndDrogPdf = dragAndDrogPdf;
+  shared.downloadS3File = downloadS3File;
+  shared.builderLogin = builderLogin;
+  shared.twitterLogin = twitterLogin;
+  shared.editTwitterProfile = editTwitterProfile;
+  shared.slackLogin = slackLogin;
+  shared.resetSlackProfile = resetSlackProfile;
+  shared.bubbleUrl = bubbleUrl;
+  shared.extractAppAndPageFromUrl = extractAppAndPageFromUrl;
+  shared.addEventAddAction = addEventAddAction;
+  
 
-  module.exports = {
-  assert,
-  assertElement,
-  assertText,
-  expect,
-  faker,
-  getInbox,
-  getValue,
-  launch,
-  launchReplay,
-  uploadReplay,
-  assertNotElement,
-  assertNotText,
-  buildUrl,
-  deleteTeam,
-  getBoundingClientRect,
-  getPlaybarTooltipValue,
-  logIn,
-  logInToFacebook,
-  parseInviteUrl,
-  setFocus,
-  waitForFrameNavigated,
-  bubbleLogin,
-  superblocksLogin,
-  navigateTo,
-  openPopup,
-  runCommand
-};
+  shared.assertElement = assertElement;
+  shared.assertText = assertText;
+  shared.getValue = getValue;
+
+  module.exports = shared;
   
