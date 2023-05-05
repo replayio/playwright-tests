@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "React-window: select examples in list";
+  shared.TEST_NAME = "React-window: select examples in list";
 
   const {
     assertNotElement,

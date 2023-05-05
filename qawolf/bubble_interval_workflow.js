@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Bubble: Interval Workflow";
+  shared.TEST_NAME = "Bubble: Interval Workflow";
 
   const {
     assertNotElement,

@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Notion: search Replay docs";
+  shared.TEST_NAME = "Notion: search Replay docs";
 
   const {
     assertNotElement,
@@ -57,6 +57,8 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
     extractAppAndPageFromUrl,
     addEventAddAction,
   } = shared;
+  
+  shared.TEST_TITLE = "Notion: search Replay docs"
   
   // launch replay browser
   const { browser, context } = await launchReplay();

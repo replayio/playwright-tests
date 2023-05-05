@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "VS Code: create and edit files";
+  shared.TEST_NAME = "VS Code: create and edit files";
 
   const {
     assertNotElement,

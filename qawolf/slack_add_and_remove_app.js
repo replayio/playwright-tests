@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Slack: Add and Remove App";
+  shared.TEST_NAME = "Slack: Add and Remove App";
 
   const {
     assertNotElement,

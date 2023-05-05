@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Asana: Add & Remove Fields";
+  shared.TEST_NAME = "Asana: Add & Remove Fields";
 
   const {
     assertNotElement,

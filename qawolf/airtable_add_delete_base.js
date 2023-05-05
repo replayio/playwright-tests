@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Airtable: Add & Delete Base";
+  shared.TEST_NAME = "Airtable: Add & Delete Base";
 
   const {
     assertNotElement,

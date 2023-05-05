@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Cypress: view test result, expand runtime environment section";
+  shared.TEST_NAME = "Cypress: view test result, expand runtime environment section";
 
   const {
     assertNotElement,

@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Yelp: search for restaurant, view search results";
+  shared.TEST_NAME = "Yelp: search for restaurant, view search results";
 
   const {
     assertNotElement,

@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Surveymonkey: Unable to send survey by email while on free plan";
+  shared.TEST_NAME = "Surveymonkey: Unable to send survey by email while on free plan";
 
   const {
     assertNotElement,

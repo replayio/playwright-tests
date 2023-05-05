@@ -48,6 +48,9 @@ ${code.replace(/^/gm, "  ")}
 }
 
 function formatTest(testName, code) {
+  // TODO [ryanjduffy]: Fix source files with duplicate imports
+  code = code.replace(/extractAppAndPageFromUrl, (?=addEventAddAction)/, "");
+
   return `const shared = require("./helpers");
 const { expect } = require("@playwright/test");
 const { assertElement, assertText, getValue } = require("qawolf");
@@ -57,7 +60,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "${testName}";
+  shared.TEST_NAME = "${testName}";
 
 ${code.replace(/^/gm, "  ")}
 

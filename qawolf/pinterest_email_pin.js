@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Pinterest: Email Pin";
+  shared.TEST_NAME = "Pinterest: Email Pin";
 
   const {
     assertNotElement,

@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Builder.io: Create and Delete New Space";
+  shared.TEST_NAME = "Builder.io: Create and Delete New Space";
 
   const {
     assertNotElement,

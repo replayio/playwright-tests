@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Prosemirror: edit text in editor, italicize text, undo changes, redo changes";
+  shared.TEST_NAME = "Prosemirror: edit text in editor, italicize text, undo changes, redo changes";
 
   const {
     assertNotElement,

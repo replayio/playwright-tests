@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Remirror: input text, apply commands";
+  shared.TEST_NAME = "Remirror: input text, apply commands";
 
   const {
     assertNotElement,

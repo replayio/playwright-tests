@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Wandb: Create and Delete Project";
+  shared.TEST_NAME = "Wandb: Create and Delete Project";
 
   const {
     assertNotElement,

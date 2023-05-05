@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "React virtualized: scroll through list, toggle options";
+  shared.TEST_NAME = "React virtualized: scroll through list, toggle options";
 
   const {
     assertNotElement,

@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Glide: Create and Delete Team";
+  shared.TEST_NAME = "Glide: Create and Delete Team";
 
   const {
     assertNotElement,

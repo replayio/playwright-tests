@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Surveymonkey: Can't create a survey from a template without upgrading";
+  shared.TEST_NAME = "Surveymonkey: Can't create a survey from a template without upgrading";
 
   const {
     assertNotElement,

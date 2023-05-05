@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "MDN WebGL:  basic scissoring, scissor animation, clear by clicking, view textures from code";
+  shared.TEST_NAME = "MDN WebGL:  basic scissoring, scissor animation, clear by clicking, view textures from code";
 
   const {
     assertNotElement,

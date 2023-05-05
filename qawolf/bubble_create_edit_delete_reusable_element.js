@@ -7,7 +7,7 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  const TEST_NAME = "Bubble: Create, Edit, Delete, Reusable element";
+  shared.TEST_NAME = "Bubble: Create, Edit, Delete, Reusable element";
 
   const {
     assertNotElement,
