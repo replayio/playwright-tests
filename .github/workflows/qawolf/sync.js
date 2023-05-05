@@ -5,62 +5,63 @@ import _ from "lodash";
 const authorization = process.env.QAWOLF_API_KEY;
 const teamId = process.env.QAWOLF_TEAM_ID;
 
-const HELPERS = [
-  // library
-  "assert",
-  "assertElement",
-  "assertText",
-  "expect",
-  "faker",
-  "getInbox",
-  "getValue",
-  "launch",
-
-  // helpers
-  "assertNotElement",
-  "assertNotText",
-  "buildUrl",
-  "deleteTeam",
-  "getBoundingClientRect",
-  "getPlaybarTooltipValue",
-  "logIn",
-  "logInToFacebook",
-  "parseInviteUrl",
-  "setFocus",
-  "waitForFrameNavigated",
-];
-
 function formatHelpers(code) {
-  return `const assert = require("assert");
+  return `  const assert = require("assert");
   const { expect } = require("@playwright/test");
   const { assertElement, assertText, getValue } = require("qawolf");
   const faker = require("faker");
   const { getInbox } = require("./getInbox");
   require("dotenv").config();
+
+  async function runCommand(cmd, { logStdError } = {}) {
+    return new Promise((resolve) => {
+      const [c, ...args] = cmd.split(" ");
+      const proc = require("child_process").spawn(c, args);
+      proc.stderr.on("data", (data) => logStdError?.(data.toString("utf-8")));
+      proc.on("exit", () => resolve());
+    });
+  }
   
-  async function launch({ headless } = { headless: false }) {
+  async function launch(opts) {
     const playwright = require("playwright");
-    const { getExecutablePath } = require("@replayio/playwright");
-    let browserName = process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
+    let browserName = opts.browser || process.env.PLAYWRIGHT_CHROMIUM ? "chromium" : "firefox";
   
     const browser = await playwright[browserName].launch({
-      headless,
+      ...opts,
+      headless: "headless" in opts ? opts.headless : false,
       timeout: 60000,
     });
     const context = await browser.newContext();
     return { browser, context };
   }
 
+  const shared = {};
+
 ${code.replace(/^/gm, "  ")}
 
-  module.exports = { ${HELPERS.join(",")} };
+  shared.assertElement = assertElement;
+  shared.assertText = assertText;
+  shared.getValue = getValue;
+
+  module.exports = shared;
   `;
 }
 
-function formatTest(code) {
-  return `const { ${HELPERS.join(",")} } = require("./helpers");
+function formatTest(testName, code) {
+  // TODO [ryanjduffy]: Fix source files with duplicate imports
+  code = code.replace(/extractAppAndPageFromUrl, (?=addEventAddAction)/, "");
+
+  return `const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "${testName}";
+
 ${code.replace(/^/gm, "  ")}
 
   process.exit();
@@ -102,8 +103,16 @@ async function queryTests() {
       id
       name
       status
+      code
       tags {
         name
+      }
+      steps {
+        step {
+          id
+          name
+          code
+        }
       }
     }
   }`);
@@ -133,16 +142,28 @@ async function sync() {
     "qawolf/getInbox.js"
   );
 
-  const helpersCode = await queryFileContent(`helpers.${teamId}`);
-  await writeFile("helpers.js", formatHelpers(helpersCode));
-
   const tests = await queryTests();
+  const isHelperStep = (s) => s.step.id === "clgwxzdpk2062345k6meko044m0";
+  const helpersCode = tests
+    .find((t) => t.steps.some(isHelperStep))
+    ?.steps.find(isHelperStep)?.step.code;
+  // const helpersCode = await queryFileContent(`clgwxzdpk2062345k6meko044m0`);
+
+  await writeFile("helpers.js", formatHelpers(helpersCode));
 
   const promises = tests.map(async (test) => {
     if (test.status === "draft") return;
 
-    const testCode = await queryFileContent(`test.${test.id}`);
-    await writeFile(`${_.snakeCase(test.name)}.js`, formatTest(testCode));
+    const testCode = test.steps.find(
+      (s) => !isHelperStep(s) && s.step.code.includes("await")
+    )?.step.code;
+
+    const filename = _.snakeCase(test.name);
+    if (testCode) {
+      await writeFile(`${filename}.js`, formatTest(test.name, testCode));
+    } else {
+      console.error("Didn't find code for", test.name);
+    }
   });
 
   await Promise.all(promises);

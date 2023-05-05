@@ -1,6 +1,64 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Twitter: Edit and Switch Profile";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // Open Replay browser
   // Twitter login
   const { page, context } = await twitterLogin({ slowMo: 500 });
@@ -178,8 +236,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     page.locator('[data-testid="ProfessionalButton_Switch_To_Professional"]')
   ).toBeVisible();
   
-  // upload 
-  await uploadReplay();
+  // upload
+  await uploadReplay(page);
+  
+  shared.page = page;
+  shared.context = context;
+  shared.name = name;
+  shared.username = username;
+  shared.address = address;
+  shared.bio = bio;
+  shared.site = site;
+  shared.newSite = newSite;
   
 
   process.exit();

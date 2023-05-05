@@ -1,8 +1,66 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "LinkedIn: Create and Comment on Post";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // open replay browser
-  const { browser, context } = await launchReplay({slowMo: 500});
+  const { browser, context } = await launchReplay({ slowMo: 500 });
   
   // login to linkedin
   const { page } = await logInToLinkedin(context);
@@ -81,10 +139,18 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   
   // Assert:
   // Comment is created under Post reply
-  await expect(page.locator(`[class*="comments-comment"] :text("${comment}")`)).toBeVisible();
+  await expect(
+    page.locator(`[class*="comments-comment"] :text("${comment}")`)
+  ).toBeVisible();
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.post = post;
+  shared.comment = comment;
   
 
   process.exit();

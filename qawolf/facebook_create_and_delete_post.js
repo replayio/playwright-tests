@@ -1,6 +1,64 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Facebook: create and delete post";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // launch replay browser
   const { browser, context } = await launchReplay();
   
@@ -14,15 +72,16 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // constants for facebook signup
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
-  const email = "replay" + "+" + "fb" + faker.random.alphaNumeric(5) +  "@qawolf.email";
-  const emailId = email.split('+')[1].split('@')[0];
+  const email =
+    "replay" + "+" + "fb" + faker.random.alphaNumeric(5) + "@qawolf.email";
+  const emailId = email.split("+")[1].split("@")[0];
   console.log(emailId);
   console.log(firstName, lastName, email);
   const password = "Password123!";
   
   // sign up for facebook account
   const page = await context.newPage();
-  await page.goto('https://www.facebook.com/r.php?locale=en_GB&display=page');
+  await page.goto("https://www.facebook.com/r.php?locale=en_GB&display=page");
   
   await page.fill('[aria-label="First name"]', firstName);
   await page.fill('[aria-label="Surname"]', lastName);
@@ -33,7 +92,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.keyboard.type(email);
   await page.waitForTimeout(1000);
   await page.fill('[aria-label="New password"]', password);
-  await page.selectOption('select#year', '1997'); // choose 1999
+  await page.selectOption("select#year", "1997"); // choose 1999
   await page.click('[name="sex"][value="2"]'); // male
   let after = new Date();
   await page.click('[type="submit"]');
@@ -42,8 +101,6 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const { waitForMessage } = getInbox({ id: emailId });
   const { subject } = await waitForMessage({ after });
   console.log(subject);
-  
-  
   
   // view profile
   await page.click('[aria-label="Your profile"]');
@@ -89,7 +146,23 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(page.locator(`:text("${postContent}")`)).not.toBeVisible();
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.firstName = firstName;
+  shared.lastName = lastName;
+  shared.email = email;
+  shared.emailId = emailId;
+  shared.password = password;
+  shared.page = page;
+  shared.after = after;
+  shared.waitForMessage = waitForMessage;
+  shared.subject = subject;
+  shared.post = post;
+  shared.savePost = savePost;
+  shared.moreOptions = moreOptions;
+  shared.postContent = postContent;
   
 
   process.exit();

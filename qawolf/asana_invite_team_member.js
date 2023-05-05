@@ -1,6 +1,65 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Asana: Invite Team Member";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
+  // Arrange:
   // login
   const { page, browser } = await logInToAsana(
     "replay+asana@qawolf.email",
@@ -8,48 +67,56 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   );
   
   // clean test
-  while (await page.locator("text=QA Team").count()) {
-    await page.click(`:text("QA Team")`);
-    const text = await page.innerText("h1");
-    await page.click('[aria-label="Show options"]');
-    await page.waitForTimeout(500);
-    await page.click("#delete_team");
-    await page.click(':text("Delete team…")');
-    await page.type('[name="DeleteTeamSettings-delete"]', text);
-    await page.click(".DangerButton");
-    await expect(page.locator('[role="alert"]')).toBeVisible();
-    await page.click('[aria-label="Close this notification"]');
-    await page.waitForTimeout(1000);
-  }
+  await page.click(`:text("QA's First Team")`);
+  try {
+    await expect(page.locator(':text("asana2@qawolf.email")')).toBeVisible();
   
-  // create team
-  await page.click(':text("Create")');
-  await page.click('[role="menu"] :text("Team")');
-  const teamName = `QA Team ` + Date.now().toString().slice(-4);
-  await page.fill(
-    '[placeholder="For example: \\"Marketing\\" or \\"Design\\""]',
-    teamName
-  );
-  await page.click(':text("Create new team")');
+    // Click the 'Manage members' button
+    await page.click(':text("Manage members")');
+    await page.waitForTimeout(2000);
+    await page.hover(':text("Team settings")');
   
-  // assert team
-  await expect(page.locator(`text=${teamName}`)).toHaveCount(2);
+    // Click the 'Member' option
+    await page.click(
+      '.TeamSettingsDialogListFullMemberRow:has-text("asana2") :text("Member")'
+    );
   
-  // delete team
-  await page.click('[aria-label="Show options"]');
-  await page.click(':text("Delete QA Team")');
-  await page.click(':text("Delete team…")');
-  await page.fill('[name="DeleteTeamSettings-delete"]', teamName);
-  await page.click(".DangerButton");
-  await expect(page.locator('[role="alert"]')).toBeVisible();
-  await page.click('[aria-label="Close this notification"]');
+    // Click the 'Remove from team' button
+    await page.click(`:text-is("Remove from team")`);
   
-  // assert deleted
-  await page.click(':text("Home")');
-  await expect(page.locator(`text=${teamName}`)).toHaveCount(0);
+    // Click the 'Remove Access' button
+    await page.click(':text-is("Remove Access")');
   
-  // upload replay
-  await uploadReplay();
+    // Invited Team member is no longer visible
+    await expect(page.locator(':text("asana2@qawolf.email")')).not.toBeVisible();
+  
+    // exit
+    await page.click('[aria-label="Close this dialog"]');
+  } catch {}
+  
+  // Act:
+  // Click the '+' icon next to a team
+  await page.click('[aria-label="Add to this team"]');
+  
+  // Click the 'Invite people' button
+  await page.click(':text("Invite people")');
+  
+  // Enter email address
+  const after = new Date();
+  const { email, waitForMessage } = getInbox({ id: "asana2" });
+  await page.fill('[placeholder*="name@dummy"]', email);
+  await page.keyboard.press("Enter");
+  
+  // Click Send
+  await page.click(':text-is("Send")');
+  
+  // Assert:
+  // Team Member is added
+  await page.click(`:text("QA's First Team")`);
+  await expect(page.locator(':text("asana2@qawolf.email"):visible').last()).toBeVisible();
+  
+  shared.page = page;
+  shared.browser = browser;
   
 
   process.exit();

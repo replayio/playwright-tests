@@ -1,6 +1,64 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Storybook: open story, zoom in and out, activate tab";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // helpers
   const selectors = {
     toolbarButtonByTitle: function (title) {
@@ -30,7 +88,9 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // launch page
   // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto("https://storybooks-official.netlify.app/?path=/story/ui-panel--default");
+  await page.goto(
+    "https://storybooks-official.netlify.app/?path=/story/ui-panel--default"
+  );
   
   // open addons/label
   await page.click(':text("A11y")');
@@ -48,7 +108,15 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click(selectors.toolbarButtonByTitle("Zoom out"));
   }
   
-  const tabs = ["Story", "Actions", "Events", "Knobs", "CSS Resources", "Accessibility", "Tests"];
+  const tabs = [
+    "Story",
+    "Actions",
+    "Events",
+    "Knobs",
+    "CSS Resources",
+    "Accessibility",
+    "Tests",
+  ];
   
   // activate tabs
   for (let tab of tabs) {
@@ -57,7 +125,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   }
   
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.selectors = selectors;
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.tabs = tabs;
   
 
   process.exit();

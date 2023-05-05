@@ -1,19 +1,77 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Glide: Create and Delete Team";
+
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // Open Replay Browser
   const { browser, context } = await launchReplay({ slowMo: 1000 });
   
   // Navigate to https://www.glideapps.com/
   const page = await context.newPage();
-  await page.goto('https://www.glideapps.com/');
+  await page.goto("https://www.glideapps.com/");
   
   // REQ Log into Glide
   // Click the 'Log in' button
   const [page2] = await Promise.all([
-    context.waitForEvent('page'),
-    page.locator(':text("Log In")').click() // Opens a new tab
-  ])
+    context.waitForEvent("page"),
+    page.locator(':text("Log In")').click(), // Opens a new tab
+  ]);
   await page2.waitForLoadState();
   
   // Fill the Email input with GLIDE_EMAIL
@@ -23,7 +81,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   let after = new Date();
   await page2.click(':text("Sign in with Email")');
   
-  const { waitForMessage } = getInbox({ id: 'glide' });
+  const { waitForMessage } = getInbox({ id: "glide" });
   const { subject, urls, text } = await waitForMessage({ after });
   console.log(subject, urls);
   const url = urls[10];
@@ -32,9 +90,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // Sign in with link sent to email
   await page2.goto(url);
   
-  // Assert Able to log into Glide with Replay Browser 
-  await expect(page2.locator('text=QA Wolf Replay')).toBeVisible();
-  
+  // Assert Able to log into Glide with Replay Browser
+  await expect(page2.locator("text=QA Wolf Replay")).toBeVisible();
   
   const teamName = "Certified QA Lovers";
   
@@ -57,7 +114,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     // Click the 'Delete' button in confirmation prompt
     await page2.click('[data-testid="button-normal"][label="Delete"]');
   
-    // Assert Team is deleted successfully 
+    // Assert Team is deleted successfully
     await expect(page2.locator(`text=${teamName} >> nth=0`)).not.toBeVisible();
   }
   
@@ -97,12 +154,23 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // Click the 'Delete' button in confirmation prompt
   await page2.click('[data-testid="button-normal"][label="Delete"]');
   
-  // Assert Team is deleted successfully 
+  // Assert Team is deleted successfully
   await expect(page2.locator(`text=${teamName} >> nth=0`)).not.toBeVisible();
   
-  
   // Call uploadReplay helper
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.page2 = page2;
+  shared.after = after;
+  shared.waitForMessage = waitForMessage;
+  shared.subject = subject;
+  shared.urls = urls;
+  shared.text = text;
+  shared.url = url;
+  shared.teamName = teamName;
   
 
   process.exit();

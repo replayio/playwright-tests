@@ -1,6 +1,16 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const shared = require("./helpers");
+const { expect } = require("@playwright/test");
+const { assertElement, assertText, getValue } = require("qawolf");
+const faker = require("faker");
+const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
+  shared.TEST_NAME = "Airtable: Base - Share view";
+
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
+  
   // REQ305 Airtable: log in
   const { page, browser } = await logInToAirtable({ permissions: ["clipboard-read", "clipboard-write"]});
   
@@ -34,6 +44,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await expect(page2.locator('[aria-label="Notes column header (Long text field)"]')).toBeVisible();
   await expect(page2.locator('[aria-label="Attachments column header (Attachment field)"]')).toBeVisible();
   await expect(page2.locator('[aria-label="Status column header (Single select field)"]')).toBeVisible();
+  
+  
+  shared.page = page;
+  shared.browser = browser;
+  shared.copiedLink = copiedLink;
+  shared.context = context;
+  shared.page2 = page2;
 
   process.exit();
 })();
