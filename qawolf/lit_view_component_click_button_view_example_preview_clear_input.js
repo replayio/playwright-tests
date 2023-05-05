@@ -1,4 +1,26 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // navigate to page
@@ -6,8 +28,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   const { browser, context } = await launchReplay();
   // const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://lit.dev/playground/');
-  
+  await page.goto("https://lit.dev/playground/");
+
   // helpers
   const selectors = {
     drawer: {
@@ -17,56 +39,69 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
       },
     },
   };
-  
+
   // navigate to full component
   await page.click(selectors.drawer.sampleByPath("examples/full-component"));
-  
+
   // grab preview frame and button
-  var frame = await (await page.waitForSelector('[title="Project preview"]', { timeout: 120 * 1000 })).contentFrame();
-  const buttonText = await frame.$('my-element >> span.planet');
-  
+  var frame = await (
+    await page.waitForSelector('[title="Project preview"]', {
+      timeout: 120 * 1000,
+    })
+  ).contentFrame();
+  const buttonText = await frame.$("my-element >> span.planet");
+
   // assert button text
-  assert(await buttonText.innerText() === "World");
-  
+  assert((await buttonText.innerText()) === "World");
+
   // change button text
   await frame.click("my-element:not(.mars)");
-  
+
   // assert button text
-  assert(await buttonText.innerText() === "Mars");
-  
+  assert((await buttonText.innerText()) === "Mars");
+
   // navigate to slotting children
   await page.click(selectors.drawer.sampleByPath("examples/slotting-children"));
-  
+
   // wait for frame to load
   await page.waitForTimeout(5 * 1000);
-  
+
   // grab preview frame and results
-  var frame = await (await page.waitForSelector('[title="Project preview"]')).contentFrame();
-  const resultsText = await frame.$('p');
-  
+  var frame = await (
+    await page.waitForSelector('[title="Project preview"]')
+  ).contentFrame();
+  const resultsText = await frame.$("p");
+
   // assert results text
-  assert(await resultsText.innerText() === "Use the slot element to render children");
-  
+  assert(
+    (await resultsText.innerText()) ===
+      "Use the slot element to render children"
+  );
+
   // navigate to ifDefined directive
-  await page.click(selectors.drawer.sampleByPath("examples/directive-if-defined"));
-  
+  await page.click(
+    selectors.drawer.sampleByPath("examples/directive-if-defined")
+  );
+
   // wait for frame to load
   await page.waitForTimeout(5 * 1000);
-  
+
   // grab preview frame
-  var frame = await (await page.waitForSelector('[title="Project preview"]')).contentFrame();
-  
+  var frame = await (
+    await page.waitForSelector('[title="Project preview"]')
+  ).contentFrame();
+
   // assert input already has beach
-  await assertText(frame, "beach", {selector: "#name"})
-  
+  await assertText(frame, "beach", { selector: "#name" });
+
   // clear input
-  await frame.fill('#name', "");
-  
+  await frame.fill("#name", "");
+
   // assert input has been cleared
-  await assertText(frame, "", {selector: "#name"});
-  
+  await assertText(frame, "", { selector: "#name" });
+
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
 
   process.exit();
 })();

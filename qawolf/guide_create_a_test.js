@@ -1,9 +1,33 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://www.qawolf.com/guides/create-a-test?user_id=ckyf23vxd000508jkhjvv47xg');
+  await page.goto(
+    "https://www.qawolf.com/guides/create-a-test?user_id=ckyf23vxd000508jkhjvv47xg"
+  );
   await page.click("#wolf-name");
   await page.click("#wolf-name");
   await page.click("#wolf-name");

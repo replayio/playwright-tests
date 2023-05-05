@@ -1,4 +1,26 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // login
@@ -6,7 +28,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     "replay+asana@qawolf.email",
     process.env.ASANA_PASSWORD
   );
-  
+
   // clean test
   while (await page.locator("text=QA Team").count()) {
     await page.click(`:text("QA Team")`);
@@ -21,7 +43,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click('[aria-label="Close this notification"]');
     await page.waitForTimeout(1000);
   }
-  
+
   // create team
   await page.click(':text("Create")');
   await page.click('[role="menu"] :text("Team")');
@@ -31,10 +53,10 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     teamName
   );
   await page.click(':text("Create new team")');
-  
+
   // assert team
   await expect(page.locator(`text=${teamName}`)).toHaveCount(2);
-  
+
   // delete team
   await page.click('[aria-label="Show options"]');
   await page.click(':text("Delete QA Team")');
@@ -43,14 +65,13 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.click(".DangerButton");
   await expect(page.locator('[role="alert"]')).toBeVisible();
   await page.click('[aria-label="Close this notification"]');
-  
+
   // assert deleted
   await page.click(':text("Home")');
   await expect(page.locator(`text=${teamName}`)).toHaveCount(0);
-  
+
   // upload replay
-  await uploadReplay();
-  
+  await uploadReplay(page);
 
   process.exit();
 })();

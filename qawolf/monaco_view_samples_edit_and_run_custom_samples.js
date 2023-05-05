@@ -1,4 +1,26 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // helpers
@@ -20,7 +42,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     "creating-the-diffeditor-inline-diff-example",
     "creating-the-diffeditor-navigating-a-diff",
   ];
-  
+
   const selectors = {
     tabs: ".tabArea",
     get run() {
@@ -33,8 +55,8 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     runner: "#runner",
     runnerContainer: "#container",
   };
-  
-  const code =`
+
+  const code = `
   // The Monaco Editor can be easily created, given an
   // empty container and an options literal.
   // Two members of the literal are "value" and "language".
@@ -43,51 +65,53 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   monaco.editor.create(document.getElementById("container"), {
     value: "async function hello() {alert('Hello world!');}",
     language: "javascript"
-  })`
-  
+  })`;
+
   const waitForRunner = waitForFrameNavigated(/runner/);
-  
+
   // launch page
   const { context } = await launch();
   const page = await context.newPage();
-  await page.goto('https://microsoft.github.io/monaco-editor/playground.html');
-  
+  await page.goto("https://microsoft.github.io/monaco-editor/playground.html");
+
   // cycle through examples
-  for (i=2; i<32; i++) {
-    if ( i == 5 ) {
+  for (i = 2; i < 32; i++) {
+    if (i == 5) {
       i++;
     }
     await page.selectOption(selectors.select, `${i}`);
     var frame = await waitForRunner(page);
-    await frame.waitForSelector('.monaco-editor');
-  };
-  
+    await frame.waitForSelector(".monaco-editor");
+  }
+
   await page.selectOption(selectors.select, `9`);
-  
+
   // clear input
-  await page.click('.monaco-editor');
-  
+  await page.click(".monaco-editor");
+
   // seelct all code
-  await page.press('.monaco-editor', "Control+a");
-  
+  await page.press(".monaco-editor", "Control+a");
+
   // delete code
-  await page.press('.monaco-editor', "Backspace");
-  
+  await page.press(".monaco-editor", "Backspace");
+
   // add code
   for (let line of code.trim().split("\n")) {
-    await page.type('.monaco-editor', line);
-  
+    await page.type(".monaco-editor", line);
+
     // clear any auto-complete dialogs
-    await page.press('.monaco-editor textarea.inputarea', "Escape");
-    await page.press('.monaco-editor textarea.inputarea', "Enter");
-  
+    await page.press(".monaco-editor textarea.inputarea", "Escape");
+    await page.press(".monaco-editor textarea.inputarea", "Enter");
+
     // Clear any auto-inserted content
-    await page.press('.monaco-editor textarea.inputarea', "Control+Shift+ArrowRight");
-    await page.press('.monaco-editor textarea.inputarea', "Delete");
-  
+    await page.press(
+      ".monaco-editor textarea.inputarea",
+      "Control+Shift+ArrowRight"
+    );
+    await page.press(".monaco-editor textarea.inputarea", "Delete");
+
     await page.waitForTimeout(100);
-  };
-  
+  }
 
   process.exit();
 })();

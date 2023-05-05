@@ -1,15 +1,37 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // https://qawolfhq.slack.com/archives/C02K01LSEAE/p1663127885792379
-  
+
   // log in
   const { page } = await logIn();
-  
+
   // open settings - legal
   await page.click("text=View settings");
   await page.click("text=Legal");
-  
+
   // view terms of use
   const [page2] = await Promise.all([
     page.waitForEvent("popup"),
@@ -17,7 +39,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   ]);
   await page2.waitForLoadState("domcontentloaded");
   await page2.bringToFront();
-  
+
   // assert terms of use
   await assertText(page2, "Terms of Use");
   await assertText(
@@ -26,7 +48,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   );
   assert(page2.url().includes("/terms-of-service"));
   // 🐺 QA Wolf will create code here
-  
+
   // view privacy policy
   await page.bringToFront();
   const [page3] = await Promise.all([
@@ -35,16 +57,15 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   ]);
   await page3.waitForLoadState("domcontentloaded");
   await page3.bringToFront();
-  
+
   // assert privacy policy
   await assertText(page3, "Privacy Policy");
   await assertText(page3, "At Replay, we take your privacy seriously");
   assert(page3.url().includes("/privacy-policy"));
-  
+
   await page.bringToFront();
   await page.click(".modal-close");
   await logOut(page);
-  
 
   process.exit();
 })();

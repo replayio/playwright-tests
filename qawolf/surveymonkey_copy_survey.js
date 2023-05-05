@@ -85,7 +85,7 @@ const {
   await expect(page.locator(`:text("${survey}"):visible`)).toHaveCount(0);
 
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
 
   process.exit();
 })();

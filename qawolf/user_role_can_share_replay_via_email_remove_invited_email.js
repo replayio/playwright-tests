@@ -1,27 +1,49 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // helper
   const { email, waitForMessage } = getInbox({ new: true });
-  
+
   // log in
   const { browser, page } = await logIn({ userId: 7 });
   await assertText(page, "Library");
-  
+
   // go to replay
   await page.click("text=Greater Scott");
-  
+
   // assert replay loaded
   await assertText(page, "Greater Scott");
   await assertText(page, "DevTools");
-  
+
   // go to share settings
   await page.click("text=ios_shareShare");
-  
+
   // assert share settings loaded
   await assertText(page, "Add People");
   await assertText(page, "Copy Link");
-  
+
   // delete invitees
   const collaborator = page.locator("text=replay+");
   await page.waitForTimeout(2000);
@@ -32,21 +54,21 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click(".delete");
     await page.waitForTimeout(1000);
   }
-  
+
   // invite collaborator
   await page.fill('[placeholder="Email address"]', email);
   await page.click("form button");
   await assertText(page, "Invited");
   const { subject, urls } = await waitForMessage({ timeout: 5 * 60 * 1000 });
-  
+
   // assert email in people list
   const invitedEmail = page.locator(email);
   await assertText(page, email);
   await assertText(page, "Collaborator");
-  
+
   // assert email arrived
   expect(subject).toEqual("You've been invited to view Greater Scott");
-  
+
   /* 
     The encrypted invite link shows up in a random spot in the email urls array.
     The rest of the test is handled by a loop that opens a new page using each encrypted url
@@ -60,11 +82,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     const newPageNumber = await browser.newPage();
     await newPageNumber.goto(urls[i]);
     pageNumber += 1;
-  
+
     try {
       await assertText(newPageNumber, "Greater Scott", { timeout: 7 * 1000 });
       await assertText(newPageNumber, "DevTools", { timeout: 7 * 1000 });
-  
+
       // found the correct page - time to break the loop
       return;
     } catch (e) {
@@ -75,7 +97,6 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
       }
     }
   }
-  
 
   process.exit();
 })();
