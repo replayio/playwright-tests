@@ -31,6 +31,7 @@ const HELPERS = [
   "superblocksLogin",
   "navigateTo",
   "openPopup",
+  "runCommand",
 ];
 
 function formatHelpers(code) {
