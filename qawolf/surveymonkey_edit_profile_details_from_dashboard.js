@@ -76,7 +76,7 @@ const {
   expect(await page.inputValue("#job_level")).toBe(randomLevel);
 
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
 
   process.exit();
 })();

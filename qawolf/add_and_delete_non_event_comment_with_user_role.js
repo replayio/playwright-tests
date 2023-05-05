@@ -1,4 +1,26 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // helpers
@@ -11,17 +33,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.click("button >> text=Delete comment");
     // await page.click("text=Start");
   };
-  
+
   // log in
   const { page } = await logIn({ userId: 7, options: { slowMo: 1000 } });
   await assertText(page, "Your Library");
-  
+
   // go to replay
   // await page.click('[title="Test Commenters"]');
   await page.click(':text("Test Commenters")');
   await page.click("text=User role non-event comment test");
   await page.waitForTimeout(8000); // wait for page to load
-  
+
   // confirm starter comment exists and no others
   try {
     await expect(page.locator('text="Starter comment"')).toBeVisible();
@@ -43,15 +65,17 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     await page.keyboard.press("Enter");
     await expect(page.locator('text="Starter comment"')).toBeVisible();
   }
-  
+
   // delete leftover comments
   await page.click("text=Starter comment");
-  const secondCommentBlock = page.locator('.border-transparent [type="button"]');
+  const secondCommentBlock = page.locator(
+    '.border-transparent [type="button"]'
+  );
   while (await secondCommentBlock.count()) {
     await page.click('.border-transparent [type="button"]');
     await deleteCommentsAndReplies(page);
   }
-  
+
   // advance to last event and resume play head
   await page.click("text=0:02");
   var initialPlayerTime = await getValue(page, ".timeline span");
@@ -62,29 +86,30 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   await page.waitForTimeout(2000);
   var newPlayerTime = await getValue(page, ".timeline span");
   expect(newPlayerTime).toEqual("0:04");
-  
+
   // add comment
   await page.waitForTimeout(2000);
   await page.click("body");
-  await page.click('[data-test-name="ContextMenuItem"]:has-text("Add comment")');
+  await page.click(
+    '[data-test-name="ContextMenuItem"]:has-text("Add comment")'
+  );
   await page.fill(
     '.CommentCard_Unpublished__CscYc [contenteditable="true"]',
     "Here is my comment"
   );
   await page.keyboard.press("Enter");
-  
+
   // assert comment loaded
   await expect(page.locator('text="Here is my comment"')).toBeVisible();
-  
+
   // delete comment
   await page.waitForTimeout(5000);
   await page.click(':text("more_vert") >> nth=1');
   await deleteCommentsAndReplies(page);
-  
+
   // assert comment deleted
   await page.waitForTimeout(5000); // wait for page to load
   await expect(page.locator('text="Here is my comment"')).not.toBeVisible();
-  
 
   process.exit();
 })();

@@ -1,17 +1,39 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // log in to Facebook
   const { page } = await logInToFacebook(
-    'qawreplayuser@gmail.com',
-    'Replayfb-qaw1'
+    "qawreplayuser@gmail.com",
+    "Replayfb-qaw1"
   );
-  
+
   await assertText(page, "Richard Qaw");
-  
+
   // go to ads manager
   await page.goto("https://facebook.com/adsmanager/manage");
-  
+
   // dismiss banner if present
   try {
     await expect(page.locator('[role="alert"]')).not.toBeVisible({
@@ -20,7 +42,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   } catch {
     await page.locator('[role="alert"] :text("close​")').click();
   }
-  
+
   // reload if error occurs
   try {
     await expect(
@@ -31,20 +53,20 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   } catch {
     await page.reload();
   }
-  
+
   // dismiss updates pop up
   if (await page.locator("text=Add payment method").count()) {
     await page.click(':text("Close​")');
   }
-  
+
   // create new campaign
   await page.click("text=Create");
-  
+
   // choose campaign objective
   await assertText(page, "Choose a campaign objective");
   await page.click("#objectiveContainerOUTCOME_AWARENESS");
   await page.click("text=Continue");
-  
+
   // rename campaign
   const campaignName = faker.commerce.productName();
   await page.waitForSelector("text=Campaign Name");
@@ -53,7 +75,7 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     campaignName
   );
   await page.click("text=Next");
-  
+
   // set ad name
   await expect(page.locator('text="Ad set name"')).toBeVisible();
   await page.fill(
@@ -67,27 +89,26 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   } catch {}
   await page.fill('#tip [placeholder="$X.XX"]', faker.commerce.price(1, 20));
   await page.click('[style="display: inline-block;"] [type="button"]'); // Next button bottom right
-  
+
   // preview campaign
   await assertText(page, "Ad");
-  
+
   // close campaign
   await page.waitForTimeout(1000);
   await page.click(':text("Close") >> nth=-1');
   await page.waitForTimeout(1000);
   await assertText(page, "Publish draft items?");
   await page.click(":text('Close'):left-of(:text('Publish Draft Items'))");
-  
+
   // delete campaign
   await page.click("#CAMPAIGN_GROUP_AdsClassicTab");
   await page.click("#pe_toolbar >> text=More");
   await page.click('[data-testid="ContextualLayerRoot"] >> text=Delete');
   await page.click(":text('Delete'):right-of(:text('Cancel'))");
   await expect(page.locator(`text=${campaignName}`)).not.toBeVisible();
-  
+
   // list and upload the replay
-  await uploadReplay();
-  
+  await uploadReplay(page);
 
   process.exit();
 })();

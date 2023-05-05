@@ -110,7 +110,7 @@ const {
   await deletePin(page, title);
 
   // list and upload the replay
-  await uploadReplay();
+  await uploadReplay(page);
 
   process.exit();
 })();

@@ -1,9 +1,31 @@
-const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,assertNotElement,assertNotText,buildUrl,deleteTeam,getBoundingClientRect,getPlaybarTooltipValue,logIn,logInToFacebook,parseInviteUrl,setFocus,waitForFrameNavigated } = require("./helpers");
+const {
+  assert,
+  assertElement,
+  assertText,
+  expect,
+  faker,
+  getInbox,
+  getValue,
+  launch,
+  launchReplay,
+  uploadReplay,
+  assertNotElement,
+  assertNotText,
+  buildUrl,
+  deleteTeam,
+  getBoundingClientRect,
+  getPlaybarTooltipValue,
+  logIn,
+  logInToFacebook,
+  parseInviteUrl,
+  setFocus,
+  waitForFrameNavigated,
+} = require("./helpers");
 
 (async () => {
   // launch replay browser
   const { browser, context } = await launchReplay({ slowMo: 1000 });
-  
+
   // constants for facebook signup
   // const firstName = faker.name.firstName();
   // const lastName = faker.name.lastName();
@@ -12,11 +34,11 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // console.log(emailId);
   // console.log(firstName, lastName, email);
   // const password = "Password123!";
-  
+
   // // sign up for facebook account
   // const page = await context.newPage();
   // await page.goto('https://www.facebook.com/r.php?locale=en_GB&display=page');
-  
+
   // await page.fill('[aria-label="First name"]', firstName);
   // await page.fill('[aria-label="Surname"]', lastName);
   // await page.click('[aria-label="Mobile number or email address"]');
@@ -30,14 +52,12 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
   // await page.click('[name="sex"][value="2"]'); // male
   // let after = new Date();
   // await page.click('[type="submit"]');
-  
+
   // // get email
   // const { waitForMessage } = getInbox({ id: emailId });
   // const { subject } = await waitForMessage({ after });
   // console.log(subject);
-  
-  
-  
+
   // log in to Facebook
   const { page } = await logInToFacebook(
     process.env.FACEBOOK_EMAIL_5,
@@ -45,36 +65,37 @@ const { assert,assertElement,assertText,expect,faker,getInbox,getValue,launch,as
     context
   );
   await assertText(page, "James");
-  
+
   // go to ads manager
   await page.goto("https://facebook.com/adsmanager/manage");
-  
+
   // view campaigns
   await page.click("#CAMPAIGN_GROUP_AdsClassicTab");
   await assertText(page, "Test Campaign");
-  
+
   // duplicate campaign
   await page.check('[role="presentation"] [type="checkbox"]');
   await page.click("#pe_toolbar >> text=Duplicate");
   await page.waitForSelector("text=Duplicate");
   await page.click("#pe_duplicate_create_button");
-  
+
   // delete duplicate campaign
   await page.click('[aria-pressed="false"]');
-  await page.click('[data-testid="campaign-structure-item-action-menu-delete"]');
+  await page.click(
+    '[data-testid="campaign-structure-item-action-menu-delete"]'
+  );
   await assertText(page, "Do you want to delete the");
   await page.click("text=CancelDelete >> text=Delete");
-  
+
   // navigate to campaigns
   await page.click('button:has-text("Close")');
   await page.click("text=ClosePublish draft items >> text=Close");
-  
+
   // assert navigated to campaigns
   await assertText(page, "Campaigns");
-  
+
   // list and upload the replay
-  await uploadReplay();
-  
+  await uploadReplay(page);
 
   process.exit();
 })();
