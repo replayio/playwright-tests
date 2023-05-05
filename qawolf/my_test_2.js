@@ -30,4 +30,5 @@ const {
   let { browser, context, page } = await logIn({ userId: 6 });
 
   process.exit();
+})(););
 })();
