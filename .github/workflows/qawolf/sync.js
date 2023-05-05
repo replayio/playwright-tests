@@ -6,7 +6,6 @@ const authorization = process.env.QAWOLF_API_KEY;
 const teamId = process.env.QAWOLF_TEAM_ID;
 
 const HELPERS = [
-  // library
   "assert",
   "assertElement",
   "assertText",
@@ -15,8 +14,8 @@ const HELPERS = [
   "getInbox",
   "getValue",
   "launch",
-
-  // helpers
+  "launchReplay",
+  "uploadReplay",
   "assertNotElement",
   "assertNotText",
   "buildUrl",
@@ -28,6 +27,10 @@ const HELPERS = [
   "parseInviteUrl",
   "setFocus",
   "waitForFrameNavigated",
+  "bubbleLogin",
+  "superblocksLogin",
+  "navigateTo",
+  "openPopup",
 ];
 
 function formatHelpers(code) {
@@ -53,12 +56,12 @@ function formatHelpers(code) {
 
 ${code.replace(/^/gm, "  ")}
 
-  module.exports = { ${HELPERS.join(",")} };
+  module.exports = {\n  ${HELPERS.join(",\n  ")}\n};
   `;
 }
 
 function formatTest(code) {
-  return `const { ${HELPERS.join(",")} } = require("./helpers");
+  return `const {\n  ${HELPERS.join(",\n  ")}\n} = require("./helpers");
 
 (async () => {
 ${code.replace(/^/gm, "  ")}
