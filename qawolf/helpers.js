@@ -108,8 +108,11 @@ async function launchReplay(options = {}) {
 
   // launch a replay browser
   const { getExecutablePath } = require(replayPlaywrightPath);
-  const chromiumPath = getExecutablePath("chromium");
-  const firefoxPath = getExecutablePath("firefox");
+  const chromiumPath =
+    process.env.REPLAY_CHROMIUM_EXECUTABLE_PATH ||
+    getExecutablePath("chromium");
+  const firefoxPath =
+    process.env.REPLAY_FIREFOX_EXECUTABLE_PATH || getExecutablePath("firefox");
 
   const browserName = chromiumPath ? "chrome" : firefoxPath ? "firefox" : null;
 
