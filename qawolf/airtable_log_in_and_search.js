@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Airtable: log in and search";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // REQ305 Airtable: log in
   // MAINTENANCE NOTE: if test is showing human verification close out of all tabs manually then rerun
   const { page, browser, context } = await logInToAirtable();
@@ -17,15 +21,11 @@ const { getInbox } = require("./getInbox");
   await expect(page.locator('[aria-label="Awesome Base"]')).toBeVisible();
   
   await browser.close() // very important to eliminate build up of browsers
-
-  process.exit();
-})();gn in")
   
-  // search for base
-  await page.fill('[aria-label="Find a base or interface"]', "Awes");
   
-  // assert base exists
-  await assertElement(page, '[aria-label="Awesome Base"]');
+  shared.page = page;
+  shared.browser = browser;
+  shared.context = context;
 
   process.exit();
 })();

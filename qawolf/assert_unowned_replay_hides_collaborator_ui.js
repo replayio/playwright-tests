@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Assert unowned replay hides collaborator UI";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // helper
   const url = buildUrl(
     "/recording/longer-replay-for-testing--7e7af868-3651-49ed-b02c-4216df943fec"
@@ -40,6 +44,13 @@ const { getInbox } = require("./getInbox");
   await page.goBack();
   await logOut(page);
   
+  
+  
+  shared.url = url;
+  shared.page = page;
+  shared.recordingName = recordingName;
+  shared.emailInput = emailInput;
+  shared.collaboratorText = collaboratorText;
 
   process.exit();
 })();

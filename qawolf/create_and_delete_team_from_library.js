@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Create and delete team from library";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // log in
   const { browser, page } = await logIn({ userId: 3 });
   await assertText(page, "Your Library");
@@ -107,6 +111,21 @@ const { getInbox } = require("./getInbox");
   await page.waitForTimeout(2000);
   await expect(page.locator(`:text("${teamName}")`)).not.toBeVisible();
   
+  
+  
+  shared.browser = browser;
+  shared.page = page;
+  shared.testTeamLink = testTeamLink;
+  shared.teamName = teamName;
+  shared.email = email;
+  shared.waitForMessage = waitForMessage;
+  shared.newTeamLibrary = newTeamLibrary;
+  shared.html = html;
+  shared.subject = subject;
+  shared.text = text;
+  shared.inviteUrl = inviteUrl;
+  shared.context2 = context2;
+  shared.page2 = page2;
 
   process.exit();
 })();

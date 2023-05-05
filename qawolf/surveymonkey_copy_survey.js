@@ -4,9 +4,61 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Surveymonkey: Copy survey";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // REQ471 Surveymonkey: Login
   const { page } = await logInToSurveymonkey();
   
@@ -28,7 +80,9 @@ const { getInbox } = require("./getInbox");
   await page.waitForTimeout(5000);
   await page.click(':text("SUMMARY")');
   await page.click(':text("Dashboard")');
-  await expect(page.locator(`:text-is("Copy of ${survey}"):visible`)).toHaveCount(1);
+  await expect(page.locator(`:text-is("Copy of ${survey}"):visible`)).toHaveCount(
+    1
+  );
   
   // REQ475 Surveymonkey: Delete survey
   await page.waitForTimeout(5000);
@@ -37,24 +91,27 @@ const { getInbox } = require("./getInbox");
   const deleteSurveyItem = await page.locator(
     // `.survey-item:has-text("${survey}")`
     `.survey-item:has-text("${survey}")`
-  
   );
   // await deleteSurveyItem.first().locator(".more-options").scrollIntoViewIfNeeded()
   // await deleteSurveyItem.first().locator(".more-options").click();
-  await deleteSurveyItem.first().locator(".more-options").scrollIntoViewIfNeeded()
+  await deleteSurveyItem
+    .first()
+    .locator(".more-options")
+    .scrollIntoViewIfNeeded();
   await deleteSurveyItem.first().locator(".more-options").click();
   await page.click(':text-is("Delete"):visible');
   await page.click(':text-is("DELETE"):visible');
-  
   
   await page.waitForTimeout(5000);
   await page.reload();
   
   const deleteSurveyItem = await page.locator(
     `.survey-item:has-text("${survey}")`
-  
   );
-  await deleteSurveyItem.first().locator(".more-options").scrollIntoViewIfNeeded()
+  await deleteSurveyItem
+    .first()
+    .locator(".more-options")
+    .scrollIntoViewIfNeeded();
   await deleteSurveyItem.first().locator(".more-options").click();
   await page.click(':text-is("Delete"):visible');
   await page.click(':text-is("DELETE"):visible');
@@ -62,11 +119,19 @@ const { getInbox } = require("./getInbox");
   //
   
   await page.reload();
-  await expect(page.locator(`:text-is("Copy of ${survey}"):visible`)).toHaveCount(0);
+  await expect(page.locator(`:text-is("Copy of ${survey}"):visible`)).toHaveCount(
+    0
+  );
   await expect(page.locator(`:text("${survey}"):visible`)).toHaveCount(0);
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.page = page;
+  shared.survey = survey;
+  shared.deleteSurveyItem = deleteSurveyItem;
+  shared.deleteSurveyItem = deleteSurveyItem;
+  
 
   process.exit();
 })();

@@ -4,9 +4,61 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Bubble: Create, Edit, Delete, Reusable element";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // bubble log in
   const { context, page, browser } = await bubbleLogin();
   
@@ -29,7 +81,7 @@ const { getInbox } = require("./getInbox");
   await page2.fill(".text-entry input", "Button for re-use");
   
   // create reusable element
-  const elementName = "reply-element";
+  const elementName = "spark-element"; // change this name when needed
   await page2.click(':text("New reusable...")');
   await page2.fill(".new-page-name", elementName);
   await page2.click(".btn-create");
@@ -47,8 +99,8 @@ const { getInbox } = require("./getInbox");
   await page2.click(".self");
   
   // change name
-  await page2.click('[class="static-title"]:has-text("reply-element")');
-  await page2.fill('.name-input', "Updated reply-element");
+  await page2.click('[class="static-title"]:has-text("spark-element")'); // change this name when needed
+  await page2.fill(".name-input", "Updated spark-element"); // change this name when needed
   await page2.keyboard.press("Escape");
   
   // wait for page to update
@@ -78,7 +130,13 @@ const { getInbox } = require("./getInbox");
     page2.locator(`.add_element:has-text("Updated ${elementName}")`)
   ).not.toBeVisible();
   
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.context = context;
+  shared.page = page;
+  shared.browser = browser;
+  shared.page2 = page2;
+  shared.elementName = elementName;
   
 
   process.exit();

@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Create team: invite team by link, limit access to domain, no invites dialog appears";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // log in
   const { browser, page } = await logIn({ userId: 7 });
   await assertText(page, "Your Library");
@@ -105,6 +109,20 @@ const { getInbox } = require("./getInbox");
       timeout: 7000,
     });
   
+  
+  
+  shared.browser = browser;
+  shared.page = page;
+  shared.teamNumber = teamNumber;
+  shared.testTeamLink = testTeamLink;
+  shared.teamName = teamName;
+  shared.inviteLink = inviteLink;
+  shared.context2 = context2;
+  shared.page2 = page2;
+  shared.restrictedInviteLink = restrictedInviteLink;
+  shared.context3 = context3;
+  shared.page3 = page3;
+  shared.newTeamLibrary = newTeamLibrary;
 
   process.exit();
 })();

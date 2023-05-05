@@ -4,12 +4,64 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Slack: Edit Profile";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // open replay browser
   // login to slack
-  const { slackPage:page, context } = await slackLogin({ slowMo: 1000 });
+  const { slackPage: page, context } = await slackLogin({ slowMo: 1000 });
   
   // Act:
   // Click the profile icon button
@@ -74,10 +126,18 @@ const { getInbox } = require("./getInbox");
   // - Name pronounciation
   await page.click('[data-qa="member_profile_pane"] :text("Edit")');
   await page.mouse.click(300, 50);
-  await expect(page.locator('[data-qa="slack_kit_scrollbar"] #real_name-input')).toHaveValue(fullName);
-  await expect(page.locator('[data-qa="slack_kit_scrollbar"] #display_name-input')).toHaveValue(displayName);
-  await expect(page.locator('[data-qa="slack_kit_scrollbar"] #title-input')).toHaveValue(`Updated ${title}`);
-  await expect(page.locator('[data-qa="slack_kit_scrollbar"] #name_pronunciation-input')).toHaveValue(`Updated ${pronounciation}`);
+  await expect(
+    page.locator('[data-qa="slack_kit_scrollbar"] #real_name-input')
+  ).toHaveValue(fullName);
+  await expect(
+    page.locator('[data-qa="slack_kit_scrollbar"] #display_name-input')
+  ).toHaveValue(displayName);
+  await expect(
+    page.locator('[data-qa="slack_kit_scrollbar"] #title-input')
+  ).toHaveValue(`Updated ${title}`);
+  await expect(
+    page.locator('[data-qa="slack_kit_scrollbar"] #name_pronunciation-input')
+  ).toHaveValue(`Updated ${pronounciation}`);
   
   // Arrange:
   // Navigate to Profile
@@ -86,9 +146,7 @@ const { getInbox } = require("./getInbox");
   // Act:
   // Click on Edit next to Contact information
   await page.waitForTimeout(2000);
-  await page.click(
-    '[data-qa="member_profile_pane"] :text("Edit") >> nth = 1'
-  );
+  await page.click('[data-qa="member_profile_pane"] :text("Edit") >> nth = 1');
   
   // Email cannot be updated
   await expect(
@@ -133,7 +191,14 @@ const { getInbox } = require("./getInbox");
   ).not.toBeVisible();
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.page = page;
+  shared.context = context;
+  shared.fullName = fullName;
+  shared.displayName = displayName;
+  shared.title = title;
+  shared.pronounciation = pronounciation;
   
 
   process.exit();

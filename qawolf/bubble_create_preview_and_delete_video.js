@@ -4,20 +4,67 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Bubble: Create, preview, and delete video";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // bubble log in
   const { context, page, browser } = await bubbleLogin();
   
   // navigate to project 'Testing videosreplay'
-  try {
-    const { page2 } = await navigateTo(page, "testing-videosreplay", {timeout: 5000});
-  } catch {
-    // try next page if "testing-videosreplay" isn't there
-    await page.click("div:nth-of-type(3).fixed");
-    const { page2 } = await navigateTo(page, "testing-videosreplay");
-  }
+  await page.click("div:nth-of-type(3).fixed");
+  const { page2 } = await navigateTo(page, "testing-videosreplay", {});
   
   // cleanup
   try {
@@ -67,7 +114,12 @@ const { getInbox } = require("./getInbox");
   await expect(page3.locator(".Video")).not.toBeVisible();
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.context = context;
+  shared.page = page;
+  shared.browser = browser;
+  shared.page3 = page3;
   
 
   process.exit();

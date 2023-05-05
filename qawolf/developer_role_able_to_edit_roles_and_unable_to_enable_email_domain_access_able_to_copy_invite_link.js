@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Developer role: able to edit roles and unable to enable email domain access, able to copy invite link";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // log in
   const { browser, page } = await logIn({ userId: 10 });
   await expect(page.locator(':text("Your Library")').first()).toBeVisible();
@@ -56,6 +60,12 @@ const { getInbox } = require("./getInbox");
   // assert copiedLink page loaded
   await expect(page2.locator('text=Replay').first()).toBeVisible();
   await expect(page2.locator('button >> text=Sign in with Google')).toBeVisible();
+  
+  
+  shared.browser = browser;
+  shared.page = page;
+  shared.copiedLink = copiedLink;
+  shared.page2 = page2;
 
   process.exit();
 })();

@@ -4,9 +4,61 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Superblocks: Add Main Components";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // log into superblocks
   const { context, page, browser } = await superblocksLogin({ slowMo: 1000 });
   
@@ -65,7 +117,7 @@ const { getInbox } = require("./getInbox");
   await page.mouse.move(350, 170);
   await page.mouse.up();
   
-  // assert table loads correctly 
+  // assert table loads correctly
   await expect(page.locator(':text-is("photo") >> nth = 0')).toBeVisible();
   
   // view component in preview
@@ -102,14 +154,23 @@ const { getInbox } = require("./getInbox");
   
   // assert Button display correctly
   await expect(previewPage.locator(':text("This is the Button")')).toBeVisible();
-  await expect(previewPage.locator('button:has-text("This is the Button")')).toBeEnabled();
+  await expect(
+    previewPage.locator('button:has-text("This is the Button")')
+  ).toBeEnabled();
   await previewPage.close();
   
   // delete component
   await deleteAllSuperblocks(page);
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.context = context;
+  shared.page = page;
+  shared.browser = browser;
+  shared.previewPage = previewPage;
+  shared.previewPage = previewPage;
+  shared.previewPage = previewPage;
   
 
   process.exit();

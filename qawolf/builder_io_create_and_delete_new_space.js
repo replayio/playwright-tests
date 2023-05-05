@@ -4,9 +4,61 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Builder.io: Create and Delete New Space";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // Open Replay Browser
   // Login to Builder
   const { page, context } = await builderLogin({ slowMo: 500 });
@@ -88,7 +140,7 @@ const { getInbox } = require("./getInbox");
   
   // Navigate to Space page
   await page.bringToFront();
-  await page.click('[role="dialog"] [type="button"]');
+  await page.click('[role="dialog"] button:has(svg):visible');
   
   // Act:
   // Hover over Sidebar and click 'Account Settings'
@@ -107,8 +159,14 @@ const { getInbox } = require("./getInbox");
   // Assert:
   // Space is archived with 'This space is archived' msg
   await expect(page.locator(':text("This space is archived")')).toBeVisible();
+  await uploadReplay(page);
   
-  await uploadReplay();
+  shared.page = page;
+  shared.context = context;
+  shared.projectName = projectName;
+  shared.page2 = page2;
+  shared.framePage = framePage;
+  shared.iconContainers = iconContainers;
   
 
   process.exit();

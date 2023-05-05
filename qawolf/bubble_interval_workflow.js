@@ -4,11 +4,64 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Bubble: Interval Workflow";
 
+  const {
+    assertNotElement,
+    assertNotText,
+    buildUrl,
+    deleteTeam,
+    getBoundingClientRect,
+    getPlaybarTooltipValue,
+    launchReplay,
+    uploadReplay,
+    logIn,
+    logoutSequence,
+    logOut,
+    logInToPinterest,
+    logInToLinkedin,
+    logInToFacebook,
+    parseInviteUrl,
+    setFocus,
+    waitForFrameNavigated,
+    logInToAsana,
+    deleteAllSuperblocks,
+    logInToAirtable,
+    getBoundingBox,
+    addElementToCanvas,
+    logInToSurveymonkey,
+    logInToEtsy,
+    createSurveyFromScratch,
+    cleanSurveys,
+    openPopup,
+    deleteSurvey,
+    selectAllDelete,
+    deleteIdeaPin,
+    deleteEvenFlows,
+    deletePin,
+    deleteSurvey2,
+    bubbleLogin,
+    extractAppAndPageFromUrl,
+    navigateTo,
+    superblocksLogin,
+    dragAndDrogPdf,
+    downloadS3File,
+    builderLogin,
+    twitterLogin,
+    editTwitterProfile,
+    slackLogin,
+    resetSlackProfile,
+    bubbleUrl,
+    extractAppAndPageFromUrl,
+    addEventAddAction,
+  } = shared;
+  
   // bubble log in
   const { context, page, browser } = await bubbleLogin({ slowMo: 700 });
+  
   /// navigate to project 'Testing Button:Replay'
   const { page2 } = await navigateTo(page, "replay-link-map-text");
   
@@ -85,7 +138,9 @@ const { getInbox } = require("./getInbox");
   await page2.click("text=Value");
   
   // assert Value set up correctly
-  await expect(page2.locator(`:text("Text A's trigger_counter + 1")`)).toBeVisible();
+  await expect(
+    page2.locator(`:text("Text A's trigger_counter + 1")`)
+  ).toBeVisible();
   
   // go to Design tab
   await page2.click(".tabs-1:has-text('Design')");
@@ -122,7 +177,16 @@ const { getInbox } = require("./getInbox");
   await previewPage.close();
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  shared.context = context;
+  shared.page = page;
+  shared.browser = browser;
+  shared.page2 = page2;
+  shared.previewPage = previewPage;
+  shared.starting = starting;
+  shared.newtime = newtime;
+  shared.latestTime = latestTime;
   
 
   process.exit();

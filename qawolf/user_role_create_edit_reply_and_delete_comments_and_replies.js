@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "User role: create, edit, reply and delete comments and replies";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // helper
   const deleteCommentsAndReplies = async (page) => {
     await page.click("text=Delete comment and replies", {
@@ -157,6 +161,13 @@ const { getInbox } = require("./getInbox");
   ).not.toBeVisible({ timeout: 10 * 1000 });
   await expect(page.locator('text="Here is my delete reply!"')).not.toBeVisible();
   
+  
+  
+  shared.deleteCommentsAndReplies = deleteCommentsAndReplies;
+  shared.page = page;
+  shared.thirdCommentBlock = thirdCommentBlock;
+  shared.progressLine = progressLine;
+  shared.reply = reply;
 
   process.exit();
 })();

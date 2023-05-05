@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Surveymonkey: Send survey via link";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // REQ471 Surveymonkey: Login
   const { page, browser } = await logInToSurveymonkey({
     permissions: ["clipboard-read", "clipboard-write"],
@@ -74,7 +78,16 @@ const { getInbox } = require("./getInbox");
   await expect(page.locator(`:text-is("${survey}")`)).not.toBeVisible(); // One row but haveCount is 2
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  
+  shared.page = page;
+  shared.browser = browser;
+  shared.survey = survey;
+  shared.copiedLink = copiedLink;
+  shared.context2 = context2;
+  shared.page2 = page2;
+  shared.deleteSurveyItem = deleteSurveyItem;
 
   process.exit();
 })();

@@ -113,7 +113,7 @@
     const browserName = process.env.REPLAY_BROWSER_NAME || "chromium";
     const { browser, context } = await launch({
       browser: browserName,
-      executablePath: getExecutablePath(browserName),
+      shared: process.env.RECORD_REPLAY_NO_RECORD || getExecutablePath(browserName),
       env: {
         DISPLAY: ":0.0",
         HOME: process.env.HOME,

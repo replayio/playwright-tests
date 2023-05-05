@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "View team recording";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // helper
   const url = buildUrl("/recording/private-recording-test--d27fd0e2-42a4-4f76-a957-34c940b6b162");
   
@@ -26,15 +30,13 @@ const { getInbox } = require("./getInbox");
   // check the non-team member cannot access it
   await assertText(page, "Sorry, you don't have permission!");
   await assertText(page, "Request access");
-
-  process.exit();
-})();y with a non-team member user
-  // let { page } = await logIn({ userId: 3 });
-  // await page.goto(url);
   
-  // // check the non-team member cannot access it
-  // await assertText(page, "This is a private replay. Please sign in.");
-  // await assertText(page, "Sign in to Replay");
+  
+  shared.url = url;
+  shared.browser = browser;
+  shared.context = context;
+  shared.page = page;
+  shared.page = page;
 
   process.exit();
 })();

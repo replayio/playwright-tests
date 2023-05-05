@@ -5,35 +5,6 @@ import _ from "lodash";
 const authorization = process.env.QAWOLF_API_KEY;
 const teamId = process.env.QAWOLF_TEAM_ID;
 
-const HELPERS = [
-  "assert",
-  "assertElement",
-  "assertText",
-  "expect",
-  "faker",
-  "getInbox",
-  "getValue",
-  "launch",
-  "launchReplay",
-  "uploadReplay",
-  "assertNotElement",
-  "assertNotText",
-  "buildUrl",
-  "deleteTeam",
-  "getBoundingClientRect",
-  "getPlaybarTooltipValue",
-  "logIn",
-  "logInToFacebook",
-  "parseInviteUrl",
-  "setFocus",
-  "waitForFrameNavigated",
-  "bubbleLogin",
-  "superblocksLogin",
-  "navigateTo",
-  "openPopup",
-  "runCommand",
-];
-
 function formatHelpers(code) {
   return `  const assert = require("assert");
   const { expect } = require("@playwright/test");
@@ -82,6 +53,8 @@ const { expect } = require("@playwright/test");
 const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
+
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
   const TEST_NAME = "${testName}";
@@ -178,10 +151,9 @@ async function sync() {
   const promises = tests.map(async (test) => {
     if (test.status === "draft") return;
 
-    const testCode =
-      test.steps.find(
-        (s) => !isHelperStep(s) && s.step.code.includes("await launch")
-      )?.step.code || test.code;
+    const testCode = test.steps.find(
+      (s) => !isHelperStep(s) && s.step.code.includes("await")
+    )?.step.code;
 
     const filename = _.snakeCase(test.name);
     if (testCode) {

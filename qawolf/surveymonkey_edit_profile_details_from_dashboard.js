@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Surveymonkey: Edit profile details from dashboard";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // REQ471 Surveymonkey: Login
   const { page } = await logInToSurveymonkey();
   
@@ -45,7 +49,16 @@ const { getInbox } = require("./getInbox");
   expect(await page.inputValue("#job_level")).toBe(randomLevel);
   
   // upload replay
-  await uploadReplay();
+  await uploadReplay(page);
+  
+  
+  shared.page = page;
+  shared.role = role;
+  shared.random = random;
+  shared.randomRole = randomRole;
+  shared.level = level;
+  shared.random = random;
+  shared.randomLevel = randomLevel;
 
   process.exit();
 })();

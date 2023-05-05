@@ -4,9 +4,13 @@ const { assertElement, assertText, getValue } = require("qawolf");
 const faker = require("faker");
 const { getInbox } = require("./getInbox");
 
+Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
+
 (async () => {
   const TEST_NAME = "Team settings: invite team members by link";
 
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, extractAppAndPageFromUrl, addEventAddAction } = shared;
+  
   // log in
   const { context, page } = await logIn({ userId: 9 });
   await context.grantPermissions(['clipboard-read']);
@@ -45,6 +49,13 @@ const { getInbox } = require("./getInbox");
   // assert Google log in page loaded
   await assertText(page, 'Sign in with Google');
   await assertText(page, 'to continue to Replay');
+  
+  
+  shared.context = context;
+  shared.page = page;
+  shared.h1 = h1;
+  shared.inviteButton = inviteButton;
+  shared.copiedLink = copiedLink;
 
   process.exit();
 })();
