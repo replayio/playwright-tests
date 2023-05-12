@@ -9,55 +9,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Slack: Edit Profile";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // open replay browser
   // login to slack
@@ -83,7 +35,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   const pronounciation = "re-pley";
   
   // reset profile name
-  await resetSlackProfile(page);
+  await resetSlackProfile(page, fullName, displayName, title, pronounciation);
   await page.click('[data-qa="member_profile_pane"] :text("Edit")');
   await page.waitForTimeout(2000);
   await page.mouse.click(300, 50);
@@ -128,10 +80,10 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.mouse.click(300, 50);
   await expect(
     page.locator('[data-qa="slack_kit_scrollbar"] #real_name-input')
-  ).toHaveValue(fullName);
+  ).toHaveValue(`Updated ${fullName}`);
   await expect(
     page.locator('[data-qa="slack_kit_scrollbar"] #display_name-input')
-  ).toHaveValue(displayName);
+  ).toHaveValue(`Updated ${displayName}`);
   await expect(
     page.locator('[data-qa="slack_kit_scrollbar"] #title-input')
   ).toHaveValue(`Updated ${title}`);

@@ -9,21 +9,20 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Bubble: Create HTML and Image";
 
-  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, extractAppAndPageFromUrl, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // bubble log in
   const { context, page, browser } = await bubbleLogin();
   
   // Navigate to App
   // navigate to project 'Testing Button:Replay'
-  const { page2 } = await navigateTo(page, "testing-buttonsreplay");
+  const { page2 } = await navigateTo(page, "Testing Buttons:Replay");
   
   // cleanup
   try {
-      await page2.click(':text("Cancel")');
+    await page2.click(':text("Cancel")');
   } catch {}
   await selectAllDelete(page2);
-  
   
   // REQ Create and preview HTML document
   // Click the 'HTML' button
@@ -41,25 +40,22 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   var previewPage = await openPopup(page2, "text=Preview");
   
   // Assert HTML elements/text display correctly
-  await expect(previewPage.locator('text=I am HTML')).toBeVisible();
+  await expect(previewPage.locator("text=I am HTML")).toBeVisible();
   
   await previewPage.waitForTimeout(3000);
   previewPage.close();
   
   page2.bringToFront();
   
-  
   // REQ Delete HTML
   // Click the created HTML
-  await page2.click('.HTML.selected');
+  await page2.click(".HTML.selected");
   
   // Press the Delete key
   await page2.keyboard.press("Delete");
   
   // Assert Able to delete HTML
-  await expect(page2.locator('.HTML.selected')).not.toBeVisible();
-  
-  
+  await expect(page2.locator(".HTML.selected")).not.toBeVisible();
   
   // REQ Create and preview image
   // Click the 'Image' button
@@ -76,7 +72,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   ]);
   await fileChooser.setFiles("/root/files/qawolf.pdf");
   
-  
   // wait for preview to update
   await page2.waitForTimeout(3000);
   
@@ -84,7 +79,9 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   var previewPage = await openPopup(page2, "text=Preview");
   
   // Assert Image loads correctly
-  await expect(previewPage.locator(".bubble-element.Image >> nth=0")).toBeVisible();
+  await expect(
+    previewPage.locator(".bubble-element.Image >> nth=0")
+  ).toBeVisible();
   
   await previewPage.waitForTimeout(3000);
   previewPage.close();
@@ -93,17 +90,16 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   
   // REQ Delete image
   // Click the created Image
-  await page2.click('.page-element img');
+  await page2.click(".page-element img");
   
   // Press the Delete key
   await page2.keyboard.press("Delete");
   
   // Assert Able to delete Image
-  await expect(page2.locator('.page-element img')).not.toBeVisible();
+  await expect(page2.locator(".page-element img")).not.toBeVisible();
   
   // REQ Call uploadReplay helper
   await uploadReplay(page);
-  
   
   shared.context = context;
   shared.page = page;
@@ -112,6 +108,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   shared.previewPage = previewPage;
   shared.fileChooser = fileChooser;
   shared.previewPage = previewPage;
+  
 
   process.exit();
 })();

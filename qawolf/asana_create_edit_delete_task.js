@@ -9,55 +9,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Asana: Create, Edit, & Delete Task";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // login
   const { page, browser } = await logInToAsana(
@@ -83,12 +35,12 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   // clean test
   while (await page.locator("text=QA task").count()) {
     await page.hover(`:text("QA task") >> nth=1`);
-    await page.click(':text("Details")');
+    await page.click('[aria-label="Details"]');
     await page.waitForTimeout(500);
     await page.click('[aria-label="More actions for this task"]');
     await page.waitForTimeout(500);
     await page.click(':text("Delete task")');
-    await page.click(':text("First Test Project")');
+    // await page.click(':text("First Test Project")');
     await expect(page.locator('[role="alert"]')).toBeVisible();
     await page.click('[aria-label="Close this notification"]');
     await page.waitForTimeout(1000);
@@ -106,9 +58,9 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   
   // edit task
   await page.hover(`:text("${taskName}") >> nth=1`);
-  await page.click(':text("Details")');
+  await page.click('[aria-label="Details"]');
   const newTask = `QA Task ` + Date.now().toString().slice(-4);
-  await page.fill('[aria-label="Task Name"]', newTask);
+  await page.fill('[placeholder="Write a task name"]', newTask);
   await page.keyboard.press("Enter");
   await page.mouse.click(0, 0);
   await page.click('[aria-label="Close details"]');
@@ -118,7 +70,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   
   // delete task
   await page.hover(`:text("${newTask}") >> nth=1`);
-  await page.click(':text("Details")');
+  await page.click('[aria-label="Details"]');
   await page.click('[aria-label="More actions for this task"]');
   await page.waitForTimeout(500);
   await page.click(':text("Delete task")');

@@ -99,10 +99,10 @@
       })
     );
   
-    let replayPlaywrightPath; 
+    let replayPlaywrightPath;
     try {
       replayPlaywrightPath = require.resolve("@replayio/playwright", {
-        paths: ["/root", __dirname]
+        paths: ["/root", __dirname],
       });
     } catch {
       replayPlaywrightPath = "/root/node_modules/@replayio/playwright";
@@ -113,12 +113,14 @@
     const browserName = process.env.REPLAY_BROWSER_NAME || "chromium";
     const { browser, context } = await launch({
       browser: browserName,
-      executablePath: process.env.REPLAY_BROWSER_EXECUTABLE_PATH || getExecutablePath(browserName),
+      executablePath:
+        process.env.REPLAY_BROWSER_EXECUTABLE_PATH ||
+        getExecutablePath(browserName),
       env: {
         DISPLAY: ":0.0",
         HOME: process.env.HOME,
         RECORD_ALL_CONTENT: 1,
-        RECORD_REPLAY_METADATA: JSON.stringify({title: shared.TEST_TITLE})
+        RECORD_REPLAY_METADATA: JSON.stringify({ title: shared.TEST_TITLE }),
       },
       headless: false,
       ...options,
@@ -235,22 +237,16 @@
     }
   
     // login to linkedin
-    // const { context, browser } = await launch({ ...options });
+    context.addCookies(JSON.parse(process.env.LINKEDIN_COOKIES));
     const page = await context.newPage();
     await page.goto("https://www.linkedin.com/login");
   
-    // fill in
-    await page.fill('[aria-label="Email or Phone"]', process.env.LINKEDIN_EMAIL);
-    await page.fill('[aria-label="Password"]', process.env.LINKEDIN_PASSWORD);
-    // Click the 'Sign in' button
-    await page.click('[aria-label="Sign in"]');
-  
     // assert you're logged in
-    // await expect(
-    //   page.locator('[data-test-id="addPinButton"] :text("Create")')
-    // ).toBeVisible();
+    await expect(
+      page.locator('[data-test-app-aware-link=""]:has-text("My Network")')
+    ).toBeVisible();
   
-    return { page, browser, context };
+    return { page, context };
   }
   
   async function logInToFacebook(email, password, context) {
@@ -345,9 +341,17 @@
     await page.click(".LoginPasswordForm-loginButton");
   
     // assert dashboard
-    await expect(page.locator(".GlobalTopbar-asanaLogo")).toBeVisible({
-      timeout: 60000,
-    });
+    try {
+      await expect(page.locator(".GlobalTopbar-asanaLogo")).toBeVisible({
+        timeout: 60000,
+      });
+    } catch {
+      await expect(
+        page.locator(
+          ':text("Good evening, QA"), :text("Good afternoon, QA"), :text("Good morning, QA")'
+        )
+      ).toBeVisible();
+    }
   
     return { page, browser };
   }
@@ -656,41 +660,19 @@
   }
   
   async function navigateTo(page, project) {
-    var page2;
-    const pages = await page.innerText(
-      '.clickable-element ~ .Group .bubble-element:has-text("OF")'
-    );
-    var pageNum = Number(pages.split(" ")[4]);
-    let mx = 10;
+    await expect(page.locator(`:text-is("${project}") >> nth = 0`)).toBeVisible({
+      timeout: 10 * 1000,
+    });
   
-    while (pageNum > 0 && mx > 0) {
-      try {
-        // assert page is there
-        await expect(page.locator(`[href*="${project}"] >> nth = 0`)).toBeVisible(
-          { timeout: 10 * 1000 }
-        );
+    // click the project
+    const [page3] = await Promise.all([
+      page.waitForEvent("popup"),
+      page.click(`:text-is("${project}") >> nth = 0`),
+    ]);
+    await page3.waitForLoadState("domcontentloaded");
+    await page3.bringToFront();
   
-        // click the project
-        const [page3] = await Promise.all([
-          page.waitForEvent("popup"),
-          page.click(`[href*="${project}"] >> nth = 0`),
-        ]);
-        await page3.waitForLoadState("domcontentloaded");
-        await page3.bringToFront();
-  
-        page2 = await page3;
-  
-        // break
-        break;
-      } catch {
-        // go to the next page
-        await page.click('button:text("arrow_forward")');
-      }
-  
-      pageNum -= 1;
-      mx -= 1;
-    }
-  
+    const page2 = await page3;
     return { page2 };
   }
   
@@ -926,10 +908,17 @@
     await expect(
       slackPage.locator('[data-qa="team-menu-trigger"]')
     ).toBeVisible();
+    await slackPage.waitForTimeout(5000);
     return { slackPage, context };
   }
   
-  async function resetSlackProfile(page) {
+  async function resetSlackProfile(
+    page,
+    fullName,
+    displayName,
+    title,
+    pronounciation
+  ) {
     await page.fill('[data-qa="slack_kit_scrollbar"] #real_name-input', fullName);
     await page.fill("#display_name-input", displayName);
     await page.fill('[data-qa="slack_kit_scrollbar"] #title-input', title);
@@ -944,13 +933,6 @@
     return `${process.env.DEFAULT_URL}site/${app}/version-test/${page}?${
       process.env.QUERY_STRING || ""
     }`;
-  }
-  
-  function extractAppAndPageFromUrl(pageUrl) {
-    const appName = pageUrl.split("/version-test/")[0].split("/").at(-1);
-    const pageName = pageUrl.split("/version-test/")[1].split("?")[0];
-  
-    return { appName, pageName };
   }
   
   /**
@@ -1024,7 +1006,6 @@
   shared.slackLogin = slackLogin;
   shared.resetSlackProfile = resetSlackProfile;
   shared.bubbleUrl = bubbleUrl;
-  shared.extractAppAndPageFromUrl = extractAppAndPageFromUrl;
   shared.addEventAddAction = addEventAddAction;
   
 

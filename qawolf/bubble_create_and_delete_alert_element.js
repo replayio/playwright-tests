@@ -7,39 +7,38 @@ const { getInbox } = require("./getInbox");
 Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 
 (async () => {
-  shared.TEST_NAME = "Airtable: Duplicate Base";
+  shared.TEST_NAME = "Bubble: Create and Delete Alert Element";
 
   const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
-  // REQ305 Airtable: log in
-  const { page } = await logInToAirtable();
   
-  // clean test
-  while (await page.locator("text=Awesome Base copy").count()) {
-    await page.click('[aria-label="Awesome Base copy"]', {button: "right"});
-    await page.click(':text("Delete base")');
-    await page.click(".focusFirstInModal");
-    await page.waitForTimeout(500);
-  }
+  // bubble log in
+  const { context, page, browser } = await bubbleLogin();
   
-  // REQ468 Airtable: Duplicate Base
-  await page.click('[aria-label="Awesome Base"]', {button: "right"});
-  await page.click(':text("Duplicate base")');
-  await page.waitForTimeout(500);
-  await page.click(':text("Duplicate base")');
+  // navigate to project 'Testing Button:Replay'
+  const { page2 } = await navigateTo(page, "alertreplay");
   
-  await expect(page.locator('text=Awesome Base copy')).toBeVisible();
+  // cleanup
+  try {
+    await page2.click(':text("Cancel")');
+    await page2.waitForTimeout(3000);
+  } catch {}
+  await selectAllDelete(page2);
   
-  // REQ452 Airtable: Delete base
-  await page.click('[aria-label="Awesome Base copy"]', {button: "right"});
-  await page.click(':text("Delete base")');
-  await page.waitForTimeout(500);
-  await page.click(".focusFirstInModal");
+  // Arrange:
+  // Act:
+  // Click the 'Alert' button
+  await page2.click(':text("Alert") >> nth=0');
   
-  await page.waitForTimeout(4000);
-  await expect(page.locator('text=copy')).toBeHidden();
+  // Drag Alert across canvas
+  await page2.mouse.click(350, 170);
   
+  // Assert:
+  // Alert is created
+  await expect(page2.locator(`:text("Alert A") >> nth = 0`)).toBeVisible();
   
   shared.page = page;
+  shared.page2 = page2;
+  
 
   process.exit();
 })();

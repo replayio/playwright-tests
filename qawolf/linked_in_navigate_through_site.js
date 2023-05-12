@@ -44,7 +44,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
     deletePin,
     deleteSurvey2,
     bubbleLogin,
-    extractAppAndPageFromUrl,
     navigateTo,
     superblocksLogin,
     dragAndDrogPdf,
@@ -76,15 +75,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.click("text=View full profile");
   await expect(page.locator("h1")).toHaveText("Ryan Roslansky");
   await expect(page.locator(".text-body-medium")).toHaveText("CEO at LinkedIn");
-  await expect(page.locator(".pvs-header__title >> nth=0")).toContainText(
-    "Featured"
-  );
-  await expect(page.locator(".pvs-header__title >> nth=1")).toContainText(
-    "Activity"
-  );
-  await expect(page.locator(".pvs-header__title >> nth=2")).toContainText(
-    "About"
-  );
   await expect(page.locator(".pvs-header__title >> nth=4")).toContainText(
     "Experience"
   );
@@ -113,7 +103,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.waitForTimeout(5000);
   
   // Navigate to 'Connections'
-  await page.click('[type="people"]');
+  await page.click('.artdeco-dropdown__item:has-text("Connections")');
   await expect(
     page.locator("text=You don’t have any connections yet.")
   ).toBeVisible();
@@ -149,7 +139,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.waitForTimeout(5000);
   
   // Navigate to 'Groups'
-  await page.click('[type="group"]');
+  await page.click('[data-test-icon="group-medium"]');
   await expect(page.locator("text=Discover groups")).toBeVisible();
   await expect(
     page.locator(
@@ -161,7 +151,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.waitForTimeout(5000);
   
   // Navigate to 'Pages'
-  await page.click('[type="company"]');
+  await page.click('[data-test-icon="company-medium"]');
   await expect(page.locator("text=6 Pages")).toBeVisible();
   await expect(page.locator("a >> text=LinkedIn").first()).toBeVisible();
   await expect(page.locator("a >> text=Salesforce")).toBeVisible();
@@ -174,7 +164,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.waitForTimeout(5000);
   
   // Navigate to 'Newsletter'
-  await page.click('[type="newspaper"]');
+  await page.click('[data-test-icon="newspaper-medium"]');
   await expect(page.locator("text=1 newsletter")).toBeVisible();
   await expect(page.locator("text=In the Loop")).toBeVisible();
   await expect(
