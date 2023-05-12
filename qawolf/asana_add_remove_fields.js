@@ -9,61 +9,35 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Asana: Add & Remove Fields";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
+  
+  // nav to asana landing page
+  const { context, browser } = await launchReplay({ slowMo: 1000 });
+  const page = await context.newPage();
+  await page.goto("https://app.asana.com/-/login");
+  
   
   // login
-  const { page } = await logInToAsana(
-    process.env.ASANA_EMAIL,
-    process.env.ASANA_PASSWORD
-  );
+  await page.fill(".LoginEmailForm-emailInput", process.env.ASANA_EMAIL3);
+  await page.click(".LoginEmailForm-continueButton");
+  await page.fill('[type="password"]', process.env.ASANA_PASSWORD);
+  let after = new Date();
+  await page.click(".LoginPasswordForm-loginButton");
+  
+  try {
+    // assert dashboard
+    await expect(page.locator(':text("Good evening, QA"), :text("Good afternoon, QA"), :text("Good morning, QA")')).toBeVisible();
+  } catch {
+    // if can't log in, need to go to log in link from email
+    const { waitForMessage } = getInbox({ id: "asana3" });
+    const { urls } = await waitForMessage({ after });
+    console.log(urls[1]); // log in link
+  
+    await page.goto(urls[1]);
+    await page.click(".LoginConfirmView-logInButton"); // click Log in
+    await expect(page.locator(':text("Good evening, QA"), :text("Good afternoon, QA"), :text("Good morning, QA")')).toBeVisible();
+  }
+  
   
   // nav to first test project
   await page.click(':text("First Test Project")');

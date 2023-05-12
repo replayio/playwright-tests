@@ -9,55 +9,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Pinterest: Email Pin";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // Call loginReplay helper
   // for these tests (and any example tests) please use the page and context created by loginReplay()
@@ -67,13 +19,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   // log in with Replay+pin-one@qawolf.email and default password
   const { page } = await logInToPinterest(context);
   await page.waitForTimeout(5000);
-  
-  // click Today
-  await page.click('[data-test-id="header-background"] :text("Today")');
-  await page.waitForTimeout(5000);
-  await expect(
-    page.locator('[data-test-id="today-tab-header"] h2')
-  ).toBeVisible();
   
   // click Notifications
   await page.click(

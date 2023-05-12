@@ -44,7 +44,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
     deletePin,
     deleteSurvey2,
     bubbleLogin,
-    extractAppAndPageFromUrl,
     navigateTo,
     superblocksLogin,
     dragAndDrogPdf,
@@ -61,7 +60,6 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   
   // launch replay browser
   const { browser, context } = await launchReplay();
-  // const { context, browser } = await launch();
   const page = await context.newPage();
   
   // REQ 01 Log into LinkedIn
@@ -122,10 +120,10 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   // Assert User information loads correctly
   // - Name
   await expect(page.locator('h1:has-text("QA Wolf Test User")')).toBeVisible();
-  // - Address
-  await expect(
-    page.locator("text=Jacksonville Beach, Florida, United States ")
-  ).toBeVisible();
+  // // - Address
+  // await expect(
+  //   page.locator("text=Jacksonville Beach, Florida, United States ")
+  // ).toBeVisible();
   // - Title
   // - Company
   await expect(

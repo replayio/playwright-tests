@@ -9,55 +9,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Asana: Send New Message";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // login
   const { page, browser } = await logInToAsana(
@@ -77,12 +29,13 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
       '[placeholder="Type the name of a team, a project, or people"]',
       "Asana"
     );
-    await page.click(':text("QWQA Wolfreplay+asana@qawolf.email")', {
+    await page.click(':text("QWQA Wolfreplay+asana1@qawolf.email")', {
       force: true,
     });
   } catch {}
   
   const message = `Test Message ` + Date.now().toString().slice(-4);
+  console.log(message);
   await page.fill('[aria-label="Edit message draft"]', message);
   await page.click(`.PrimaryButton:has-text("Send")`);
   

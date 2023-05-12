@@ -9,55 +9,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
 (async () => {
   shared.TEST_NAME = "Pinterest: Create Idea Pin";
 
-  const {
-    assertNotElement,
-    assertNotText,
-    buildUrl,
-    deleteTeam,
-    getBoundingClientRect,
-    getPlaybarTooltipValue,
-    launchReplay,
-    uploadReplay,
-    logIn,
-    logoutSequence,
-    logOut,
-    logInToPinterest,
-    logInToLinkedin,
-    logInToFacebook,
-    parseInviteUrl,
-    setFocus,
-    waitForFrameNavigated,
-    logInToAsana,
-    deleteAllSuperblocks,
-    logInToAirtable,
-    getBoundingBox,
-    addElementToCanvas,
-    logInToSurveymonkey,
-    logInToEtsy,
-    createSurveyFromScratch,
-    cleanSurveys,
-    openPopup,
-    deleteSurvey,
-    selectAllDelete,
-    deleteIdeaPin,
-    deleteEvenFlows,
-    deletePin,
-    deleteSurvey2,
-    bubbleLogin,
-    extractAppAndPageFromUrl,
-    navigateTo,
-    superblocksLogin,
-    dragAndDrogPdf,
-    downloadS3File,
-    builderLogin,
-    twitterLogin,
-    editTwitterProfile,
-    slackLogin,
-    resetSlackProfile,
-    bubbleUrl,
-    extractAppAndPageFromUrl,
-    addEventAddAction,
-  } = shared;
+  const { assertNotElement, assertNotText, buildUrl, deleteTeam, getBoundingClientRect, getPlaybarTooltipValue, launchReplay, uploadReplay, logIn, logoutSequence, logOut, logInToPinterest, logInToLinkedin, logInToFacebook, parseInviteUrl, setFocus, waitForFrameNavigated, logInToAsana, deleteAllSuperblocks, logInToAirtable, getBoundingBox, addElementToCanvas, logInToSurveymonkey, logInToEtsy, createSurveyFromScratch, cleanSurveys, openPopup, deleteSurvey, selectAllDelete, deleteIdeaPin, deleteEvenFlows, deletePin, deleteSurvey2, bubbleLogin, navigateTo, superblocksLogin, dragAndDrogPdf, downloadS3File, builderLogin, twitterLogin, editTwitterProfile, slackLogin, resetSlackProfile, bubbleUrl, addEventAddAction } = shared;
   
   // launch replay
   const { browser, context } = await launchReplay({ slowMo: 500 });
@@ -72,14 +24,14 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   await page.click(':text-is("Create Idea Pin")');
   await expect(
     page.locator(
-      ':text("Start fresh with a new Idea Pin or keep designing a recent draft")'
+      ':text("Start creating Pins")'
     )
   ).toBeVisible();
   await page.waitForTimeout(5000);
   
   // upload pin and create
   await page.click(
-    '[data-test-id="storyboard-create-button"] :text("Create new")'
+    '[type="button"] :text("Create new")'
   );
   page.once("filechooser", (chooser) =>
     chooser.setFiles("/root/files/large.jpg").catch((err) => console.log(err))
@@ -89,7 +41,7 @@ Object.entries(shared).forEach(([k,v]) => globalThis[k] = v);
   // fill out idea pin creation form and submit
   const title = `${faker.name.findName()} ${Date.now().toString().slice(-4)}`;
   await page.fill(
-    '[data-test-id="storyboard-details-list"] #storyboard-selector-title',
+    '#storyboard-selector-title',
     title
   );
   
